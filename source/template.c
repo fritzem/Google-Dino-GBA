@@ -1,34 +1,32 @@
+#include "tonc.h"
 
-#include <gba_console.h>
-#include <gba_video.h>
-#include <gba_interrupt.h>
-#include <gba_systemcalls.h>
-#include <gba_input.h>
-#include <stdio.h>
-#include <stdlib.h>
+u16 __key_curr, __key_prev;
 
-//---------------------------------------------------------------------------------
-// Program entry point
-//---------------------------------------------------------------------------------
-int main(void) {
-//---------------------------------------------------------------------------------
-
-
-	// the vblank interrupt must be enabled for VBlankIntrWait() to work
-	// since the default dispatcher handles the bios flags no vblank handler
-	// is required
-	irqInit();
-	irqEnable(IRQ_VBLANK);
-
-	consoleDemoInit();
-
-	// ansi escape sequence to set print co-ordinates
-	// /x1b[line;columnH
-	iprintf("\x1b[10;10HHello World!\n");
-
-	while (1) {
-		VBlankIntrWait();
-	}
+void key_poll()
+{
+    __key_prev= __key_curr;
+    __key_curr= ~REG_KEYINPUT & KEY_MASK;
 }
 
+//testing ground
+int main()
+{
+    REG_DISPCNT= DCNT_MODE3 | DCNT_BG2;
+
+    m3_mem[80][120]= CLR_RED;
+    m3_mem[80][136]= CLR_LIME;
+    m3_mem[96][120]= CLR_BLUE;
+
+    while(1) {
+    	vid_vsync();
+    	m3_mem[80][120]= CLR_BLUE;
+
+    	key_poll();
+    	if (key_is_down(KEY_A))
+    	{
+    		m3_mem[80][120]= CLR_RED;
+    	}
+    }
+    return 0;
+}
 
