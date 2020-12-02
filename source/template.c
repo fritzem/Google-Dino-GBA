@@ -17,6 +17,7 @@ int main()
     OBJ_ATTR *maro = &obj_buffer[0];
 
     obj_set_attr(maro, ATTR0_SQUARE, ATTR1_SIZE_8, ATTR2_PALBANK(0));
+    obj_set_pos(maro, 100, 50);
 
     while(1) {
     	vid_vsync();
@@ -27,6 +28,8 @@ int main()
     	{
     		
     	}
+
+    	oam_copy(oam_mem, obj_buffer, 1);
     }
     return 0;
 }
