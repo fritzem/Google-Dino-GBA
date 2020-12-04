@@ -1,6 +1,7 @@
 #ifndef DINO_SHEET_HELPER_H
 #define DINO_SHEET_HELPER_H
 
+#include <stdlib.h>
 #include "tonc.h"
 
 //Sprite Indices
@@ -66,5 +67,27 @@
 
 #define hiSI 0xDA
 
+//
+
+typedef struct REPLAY_OBJ_SET {
+	OBJ_ATTR* replay;
+	OBJ_ATTR* replayTail;
+} REPLAY_OBJ_SET, REPLAY_OBJ_SET;
+
+INLINE REPLAY_OBJ_SET *createReplaySet(OBJ_ATTR *obj, OBJ_ATTR *obj2)
+{
+	struct REPLAY_OBJ_SET *set = malloc(sizeof(REPLAY_OBJ_SET));
+	set->replay = 
+		obj_set_attr(obj, ATTR0_SQUARE, ATTR1_SIZE_32,  replaySI | ATTR2_PALBANK(0));
+	set->replayTail = 
+		obj_set_attr(obj2, ATTR0_TALL, ATTR1_SIZE_16 | ATTR1_HFLIP, replayTailSI | ATTR2_PALBANK(0));
+	return set;
+}
+
+INLINE void setReplayPos(REPLAY_OBJ_SET *set, int x, int y)
+{
+	obj_set_pos(set->replay, x, y);
+	obj_set_pos(set->replayTail, x + 32, y);
+}
 
 #endif

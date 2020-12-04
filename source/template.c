@@ -17,12 +17,17 @@ int main()
     REG_DISPCNT= DCNT_OBJ | DCNT_OBJ_2D;
 
     OBJ_ATTR *dinoHead = &obj_buffer[0];
+    
 
-    obj_set_attr(dinoHead, ATTR0_SQUARE, ATTR1_SIZE_32,  fullMoonSI | ATTR2_PALBANK(0));
+    REPLAY_OBJ_SET *replaySet = createReplaySet(&obj_buffer[1],&obj_buffer[2]);
+
+    obj_set_attr(dinoHead, ATTR0_SQUARE, ATTR1_SIZE_32,  dinoHeadSI | ATTR2_PALBANK(0));
 	 //obj_set_attr(maro2, ATTR0_SQUARE, ATTR1_HFLIP | ATTR1_SIZE_8, ATTR2_PALBANK(0));
 
     u32 x = 100, y = 50;
+    u32 metaX = 75, metaY = 100;
     obj_set_pos(dinoHead, x, y);
+    setReplayPos(replaySet, metaX, metaY);
     //obj_set_pos(maro2, y, x);
 
     while(1) {
@@ -33,11 +38,12 @@ int main()
     	if (key_is_down(KEY_A))
     	{
     		x += 1;
+    		metaX += 1;
     	}
 
-    	//obj_set_pos(maro, x / 2, y);
-    	//obj_set_pos(maro2, y / 2, x);
-    	oam_copy(oam_mem, obj_buffer, 1);
+    	obj_set_pos(dinoHead, x / 2, y);
+    	setReplayPos(replaySet, metaX / 2, metaY);
+    	oam_copy(oam_mem, obj_buffer, 3);
     }
     return 0;
 }
