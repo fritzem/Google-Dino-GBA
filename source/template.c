@@ -2,6 +2,7 @@
 #include "tonc.h"
 #include "maro.h"
 #include "dinoSheet.h"
+#include "dinoSheetHelper.h"
 
 OBJ_ATTR obj_buffer[128];
 OBJ_AFFINE *obj_aff_buffer= (OBJ_AFFINE*)obj_buffer;
@@ -17,7 +18,7 @@ int main()
 
     OBJ_ATTR *dinoHead = &obj_buffer[0];
 
-    obj_set_attr(dinoHead, ATTR0_SQUARE, ATTR1_SIZE_32,  26 | ATTR2_PALBANK(0));
+    obj_set_attr(dinoHead, ATTR0_SQUARE, ATTR1_SIZE_32,  fullMoonSI | ATTR2_PALBANK(0));
 	 //obj_set_attr(maro2, ATTR0_SQUARE, ATTR1_HFLIP | ATTR1_SIZE_8, ATTR2_PALBANK(0));
 
     u32 x = 100, y = 50;
