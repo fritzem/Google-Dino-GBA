@@ -21,6 +21,7 @@ int main()
 
     REPLAY_OBJ_SET *replaySet = createReplaySet(&obj_buffer[1],&obj_buffer[2]);
     BIRD_OBJ_SET *birdSet = createBirdSet(&obj_buffer[4],&obj_buffer[5]);
+    NUM_OBJ_SET *numSet = createNumSet(&obj_buffer[6]);
 
     obj_set_attr(dinoHead, ATTR0_SQUARE, ATTR1_SIZE_32,  dinoHeadSI | ATTR2_PALBANK(0));
     obj_set_attr(smallTest, ATTR0_SQUARE, ATTR1_SIZE_8,  star1_SI | ATTR2_PALBANK(0));
@@ -32,8 +33,8 @@ int main()
     setReplayPos(replaySet, metaX, metaY);
 
     setBirdPos(birdSet, 50, 50);
-    //obj_set_pos(maro2, y, x);
     
+    setNumPos(numSet, 100, 20);
 
     u16 counter = 0;
 
@@ -54,10 +55,12 @@ int main()
             counter = 0;
         }
 
+        setNumValue(numSet, x);
+
     	obj_set_pos(dinoHead, 0, 0);
     	obj_set_pos(smallTest, x - 50, y);
     	setReplayPos(replaySet, metaX / 2, metaY);
-    	oam_copy(oam_mem, obj_buffer, 10);
+    	oam_copy(oam_mem, obj_buffer, 20);
     }
     return 0;
 }

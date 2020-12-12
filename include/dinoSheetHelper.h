@@ -35,6 +35,7 @@
 #define birdBeakSI 0x44
 #define birdFlapDownSI 0x80
 #define birdFlapUpSI 0x84
+#define birdFlapTrans (birdFlapDownSI ^ birdFlapUpSI)
 
 #define star1_SI 0x46
 #define star2_SI 0x48
@@ -56,6 +57,7 @@
 #define num7_SI 0x98
 #define num8_SI 0x9A
 #define num9_SI 0x9C
+INLINE int numToSI(int x) {return num0_SI + (x * 0x2);}
 
 #define charG_SI 0xCC
 #define charA_SI 0xCE
@@ -115,11 +117,62 @@ INLINE void setBirdPos(BIRD_OBJ_SET *set, int x, int y)
 
 INLINE void toggleBirdFlap(BIRD_OBJ_SET *set)
 {
-	set->birdTorso->attr2 ^= 0x4;
+	set->birdTorso->attr2 ^= birdFlapTrans;
 	set->birdTorso->attr0 = ((set->birdTorso->attr0) & 0xFF00) | 
 		(u8)(((set->birdTorso->attr0) & 0xFF) + (((-(set->flap) | 1) * 8)));
 	set->flap ^= 0x1;
 }
+
+//Used for both score and hiscore
+typedef struct NUM_OBJ_SET {
+	OBJ_ATTR* num0;
+	OBJ_ATTR* num1;
+	OBJ_ATTR* num2;
+	OBJ_ATTR* num3;
+	OBJ_ATTR* num4;
+} NUM_OBJ_SET, NUM_OBJ_SET;
+
+//Give an index, five entries total are used
+INLINE NUM_OBJ_SET *createNumSet(OBJ_ATTR *index)
+{
+	struct NUM_OBJ_SET *set = malloc(sizeof(NUM_OBJ_SET));
+	set->num0 =
+		obj_set_attr(index, ATTR0_SQUARE, ATTR1_SIZE_16, num0_SI | ATTR2_PALBANK(0));
+	set->num1 =
+		obj_set_attr(index + 1, ATTR0_SQUARE, ATTR1_SIZE_16, num0_SI | ATTR2_PALBANK(0));
+	set->num2 =
+		obj_set_attr(index + 2, ATTR0_SQUARE, ATTR1_SIZE_16, num0_SI | ATTR2_PALBANK(0));
+	set->num3 =
+		obj_set_attr(index + 3, ATTR0_SQUARE, ATTR1_SIZE_16, num0_SI | ATTR2_PALBANK(0));
+	set->num4 =
+		obj_set_attr(index + 4, ATTR0_SQUARE, ATTR1_SIZE_16, num0_SI | ATTR2_PALBANK(0));
+	return set;
+}
+
+INLINE void setNumPos(NUM_OBJ_SET *set, int x, int y)
+{
+	obj_set_pos(set->num0, x, y);
+	obj_set_pos(set->num1, x + 11, y);
+	obj_set_pos(set->num2, x + 22, y);
+	obj_set_pos(set->num3, x + 33, y);
+	obj_set_pos(set->num4, x + 44, y);
+}
+
+INLINE void setNumValue(NUM_OBJ_SET *set, int num)
+{
+	int val = num % 10;
+	BFN_SET(set->num4->attr2, numToSI(val), ATTR2_ID);
+	val = (num % 100 - val) / 10;
+	BFN_SET(set->num3->attr2, numToSI(val), ATTR2_ID);
+	val = (num % 1000 - val) / 100;
+	BFN_SET(set->num2->attr2, numToSI(val), ATTR2_ID);
+	val = (num % 10000 - val) / 1000;
+	BFN_SET(set->num1->attr2, numToSI(val), ATTR2_ID);
+	val = (num % 100000 - val) / 10000;
+	BFN_SET(set->num0->attr2, numToSI(val), ATTR2_ID);
+}
+
+
 
 
 #endif
