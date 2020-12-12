@@ -36,9 +36,9 @@
 #define birdFlapDownSI 0x80
 #define birdFlapUpSI 0x84
 
-#define Star1_SI 0x46
-#define Star2_SI 0x48
-#define Star3_SI 0x88
+#define star1_SI 0x46
+#define star2_SI 0x48
+#define star3_SI 0x88
 
 #define fullMoonTopSI 0xE8
 #define moon1_SI 0x100
@@ -67,7 +67,7 @@
 
 #define hiSI 0xDA
 
-//
+//Metasprite helper methods
 
 typedef struct REPLAY_OBJ_SET {
 	OBJ_ATTR* replay;
@@ -89,5 +89,45 @@ INLINE void setReplayPos(REPLAY_OBJ_SET *set, int x, int y)
 	obj_set_pos(set->replay, x, y);
 	obj_set_pos(set->replayTail, x + 32, y);
 }
+
+typedef struct BIRD_OBJ_SET {
+	OBJ_ATTR* beak;
+	OBJ_ATTR* birdTorso;
+	bool flap;
+} BIRD_OBJ_SET, BIRD_OBJ_SET;
+
+INLINE BIRD_OBJ_SET *createBirdSet(OBJ_ATTR *obj, OBJ_ATTR *obj2)
+{
+	struct BIRD_OBJ_SET *set = malloc(sizeof(BIRD_OBJ_SET));
+	set->beak =
+		obj_set_attr(obj, ATTR0_SQUARE, ATTR1_SIZE_16, birdBeakSI | ATTR2_PALBANK(0));
+	set->birdTorso =
+		obj_set_attr(obj2, ATTR0_SQUARE, ATTR1_SIZE_32, birdFlapUpSI | ATTR2_PALBANK(0));
+	set->flap = false;
+	return set;
+}
+
+INLINE void setBirdPos(BIRD_OBJ_SET *set, int x, int y)
+{
+	obj_set_pos(set->beak, x, y);
+	obj_set_pos(set->birdTorso, x + 16, y + (set->flap ? 4 : (-4)));
+}
+
+INLINE void toggleBirdFlap(BIRD_OBJ_SET *set)
+{
+	if (set->flap)
+	{
+		set->birdTorso->attr0 = set->birdTorso->attr0 - 8;
+		set->birdTorso->attr2 = set->birdTorso->attr2 | 0x4;
+		set->flap = false;
+	}
+	else
+	{
+		set->birdTorso->attr0 = set->birdTorso->attr0 + 8;
+		set->birdTorso->attr2 = set->birdTorso->attr2 ^ 0x4;
+		set->flap = true;
+	}
+}
+
 
 #endif

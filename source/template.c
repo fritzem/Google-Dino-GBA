@@ -10,30 +10,37 @@ OBJ_AFFINE *obj_aff_buffer= (OBJ_AFFINE*)obj_buffer;
 //testing ground
 int main()
 {
-	 memcpy(&tile_mem[4][0], dinoSheetTiles, dinoSheetTilesLen);
+	memcpy(&tile_mem[4][0], dinoSheetTiles, dinoSheetTilesLen);
     memcpy(pal_obj_mem, dinoSheetPal, dinoSheetPalLen);
 
-	 oam_init(obj_buffer, 128);
+	oam_init(obj_buffer, 128);
     REG_DISPCNT= DCNT_OBJ | DCNT_OBJ_2D;
 
     OBJ_ATTR *dinoHead = &obj_buffer[0];
-    
+    OBJ_ATTR *smallTest = &obj_buffer[3];
 
     REPLAY_OBJ_SET *replaySet = createReplaySet(&obj_buffer[1],&obj_buffer[2]);
+    BIRD_OBJ_SET *birdSet = createBirdSet(&obj_buffer[4],&obj_buffer[5]);
 
     obj_set_attr(dinoHead, ATTR0_SQUARE, ATTR1_SIZE_32,  dinoHeadSI | ATTR2_PALBANK(0));
+    obj_set_attr(smallTest, ATTR0_SQUARE, ATTR1_SIZE_8,  star1_SI | ATTR2_PALBANK(0));
 	 //obj_set_attr(maro2, ATTR0_SQUARE, ATTR1_HFLIP | ATTR1_SIZE_8, ATTR2_PALBANK(0));
 
     u32 x = 100, y = 50;
     u32 metaX = 75, metaY = 100;
     obj_set_pos(dinoHead, x, y);
     setReplayPos(replaySet, metaX, metaY);
+
+    setBirdPos(birdSet, 50, 50);
     //obj_set_pos(maro2, y, x);
+    
+
+    u16 counter = 0;
 
     while(1) {
     	vid_vsync();
 
-
+        counter++;
     	key_poll();
     	if (key_is_down(KEY_A))
     	{
@@ -41,9 +48,16 @@ int main()
     		metaX += 1;
     	}
 
+        if (counter == 30) 
+        {
+            toggleBirdFlap(birdSet);
+            counter = 0;
+        }
+
     	obj_set_pos(dinoHead, x / 2, y);
+    	obj_set_pos(smallTest, x - 50, y);
     	setReplayPos(replaySet, metaX / 2, metaY);
-    	oam_copy(oam_mem, obj_buffer, 3);
+    	oam_copy(oam_mem, obj_buffer, 10);
     }
     return 0;
 }
