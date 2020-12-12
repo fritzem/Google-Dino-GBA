@@ -54,7 +54,7 @@ int main()
             counter = 0;
         }
 
-    	obj_set_pos(dinoHead, x / 2, y);
+    	obj_set_pos(dinoHead, 0, 0);
     	obj_set_pos(smallTest, x - 50, y);
     	setReplayPos(replaySet, metaX / 2, metaY);
     	oam_copy(oam_mem, obj_buffer, 10);
