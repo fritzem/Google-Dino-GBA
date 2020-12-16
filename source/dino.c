@@ -13,8 +13,16 @@ int main()
 	memcpy(&tile_mem[4][0], dinoSheetTiles, dinoSheetTilesLen);
     memcpy(pal_obj_mem, dinoSheetPal, dinoSheetPalLen);
 
+    memcpy(pal_bg_mem, dinoSheetPal, dinoSheetPalLen);
+    memcpy(&tile_mem[0][0], dinoSheetTiles, dinoSheetTilesLen);
+
+    whiteOutBG();
+    backgroundInit();
+
+    REG_BG0CNT = BG_CBB(0) | BG_SBB(31) | BG_4BPP | BG_REG_32x32;
+
 	oam_init(obj_buffer, 128);
-    REG_DISPCNT= DCNT_OBJ | DCNT_OBJ_2D;
+    REG_DISPCNT= DCNT_OBJ | DCNT_OBJ_2D | DCNT_BG0;
 
     OBJ_ATTR *dinoHead = &obj_buffer[0];
     OBJ_ATTR *smallTest = &obj_buffer[3];

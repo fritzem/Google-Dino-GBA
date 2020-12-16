@@ -69,6 +69,10 @@ INLINE int numToSI(int x) {return num0_SI + (x * 0x2);}
 
 #define hiSI 0xDA
 
+//Terrain 
+
+#define blankTile_SI 0x359
+
 //Metasprite helper methods
 
 typedef struct REPLAY_OBJ_SET {
@@ -172,7 +176,17 @@ INLINE void setNumValue(NUM_OBJ_SET *set, int num)
 	BFN_SET(set->num0->attr2, numToSI(val), ATTR2_ID);
 }
 
+//Terrain helpers
 
+INLINE void whiteOutBG() {
+	se_fill(&se_mem[31][0], blankTile_SI);
+}
 
+//x1819
+INLINE void backgroundInit() {
+	for (int i = 0; i < 32; i++) {
+		se_plot(&se_mem[31][0], i, 19, 0x2C0 + i);
+	}
+}
 
 #endif
