@@ -57,6 +57,8 @@ int main()
     		metaX += 1;
     	}
 
+    	REG_BG0HOFS = x - 100;
+
         if (counter == 30) 
         {
             toggleBirdFlap(birdSet);

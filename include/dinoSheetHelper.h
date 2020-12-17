@@ -184,7 +184,7 @@ INLINE void whiteOutBG() {
 
 //x1819
 INLINE void backgroundInit() {
-	for (int i = 0; i < 32; i++) {
+	for (int i = 0; i < 30; i++) {
 		se_plot(&se_mem[31][0], i, 19, 0x2C0 + i);
 	}
 }
