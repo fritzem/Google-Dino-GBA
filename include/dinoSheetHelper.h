@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 #include "tonc.h"
+#include "dino.h"
 
 //Sprite Indices
 #define replaySI 0x0
@@ -174,6 +175,43 @@ INLINE void setNumValue(NUM_OBJ_SET *set, int num)
 	BFN_SET(set->num1->attr2, numToSI(val), ATTR2_ID);
 	val = (num % 100000 - val) / 10000;
 	BFN_SET(set->num0->attr2, numToSI(val), ATTR2_ID);
+}
+
+typedef struct DINO_OBJ_SET {
+	OBJ_ATTR* dinoTorso;
+	OBJ_ATTR* dinoTail;
+	OBJ_ATTR* dinoLegs;
+	OBJ_ATTR* dinoWink;
+} DINO_OBJ_SET, DINO_OBJ_SET;
+
+//Give an index, four entries total are used
+INLINE DINO_OBJ_SET *createDinoSet(OBJ_ATTR *index) {
+	struct DINO_OBJ_SET *set = malloc(sizeof(DINO_OBJ_SET));
+	set->dinoTorso = 
+		obj_set_attr(index, ATTR0_SQUARE, ATTR1_SIZE_32, dinoHeadSI | ATTR2_PALBANK(0));
+	set->dinoTail =
+		obj_set_attr(index + 1, ATTR0_SQUARE, ATTR1_SIZE_16, dinoTailSI | ATTR2_PALBANK(0));
+	set->dinoLegs =
+		obj_set_attr(index + 2, ATTR0_WIDE, ATTR1_SIZE_16, dinoFeet1_SI | ATTR2_PALBANK(0));
+	set->dinoWink =
+		obj_set_attr(index + 3, ATTR0_SQUARE, ATTR1_SIZE_8, dinoWinkSI | ATTR2_PALBANK(0));
+	return set;
+}
+
+//Set bottom-left dino position
+INLINE void setDinoPos(DINO_OBJ_SET *set, DINO_STATE *dino, int x, int y) {
+	if (dino->status == DUCKING) {
+
+	} else {
+		obj_set_pos(set->dinoTorso, x + 16, y - 48);
+		obj_set_pos(set->dinoTail, x, y - 32);
+		obj_set_pos(set->dinoLegs, x, y - 16);
+		obj_set_pos(set->dinoWink, x + 24, y - 48);
+	}
+}
+
+INLINE void dinoGraphicsUpdate(DINO_OBJ_SET *set, DINO_STATE *dino) {
+
 }
 
 //Terrain helpers

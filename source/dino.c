@@ -1,6 +1,7 @@
 #include <string.h>
 #include "tonc.h"
 #include "maro.h"
+#include "dino.h"
 #include "dinoSheet.h"
 #include "dinoSheetHelper.h"
 
@@ -11,10 +12,10 @@ OBJ_AFFINE *obj_aff_buffer= (OBJ_AFFINE*)obj_buffer;
 int main()
 {
 	memcpy(&tile_mem[4][0], dinoSheetTiles, dinoSheetTilesLen);
-    memcpy(pal_obj_mem, dinoSheetPal, dinoSheetPalLen);
+  memcpy(pal_obj_mem, dinoSheetPal, dinoSheetPalLen);
 
-    memcpy(pal_bg_mem, dinoSheetPal, dinoSheetPalLen);
-    memcpy(&tile_mem[0][0], dinoSheetTiles, dinoSheetTilesLen);
+  memcpy(pal_bg_mem, dinoSheetPal, dinoSheetPalLen);
+  memcpy(&tile_mem[0][0], dinoSheetTiles, dinoSheetTilesLen);
 
     whiteOutBG();
     backgroundInit();

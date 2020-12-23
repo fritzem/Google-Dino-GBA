@@ -2,3 +2,4 @@ vbalink.ini
 build/
 *.gba
 *.elf
+*.nlz
