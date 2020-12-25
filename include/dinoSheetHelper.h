@@ -102,15 +102,52 @@ typedef struct DINO_OBJ_SET {
 	OBJ_ATTR* dinoWink;
 } DINO_OBJ_SET, DINO_OBJ_SET;
 
+typedef struct CLOUD_OBJ_SET {
+	OBJ_ATTR* cloudL;
+	OBJ_ATTR* cloudR;
+} CLOUD_OBJ_SET, CLOUD_OBJ_SET;
+
+typedef struct MOON_OBJ_SET {
+	OBJ_ATTR* moonChunk0;
+	OBJ_ATTR* moonChunk1;
+	OBJ_ATTR* moonChunk2;
+	OBJ_ATTR* moonChunk3;
+} MOON_OBJ_SET, MOON_OBJ_SET;
+
+typedef struct STAR_OBJ_SET {
+	OBJ_ATTR* star;
+} STAR_OBJ_SET, STAR_OBJ_SET;
+
+typedef struct OBSTACLE_OBJ_SET {
+	OBJ_ATTR* obstacleChunk0;
+	OBJ_ATTR* obstacleChunk1;
+	OBJ_ATTR* obstacleChunk2;
+	OBJ_ATTR* obstacleChunk3;
+} OBSTACLE_OBJ_SET, OBSTACLE_OBJ_SET;
+
+typedef struct GAMEOVER_OBJ_SET {
+	OBJ_ATTR* g;
+	OBJ_ATTR* a;
+	OBJ_ATTR* m;
+	OBJ_ATTR* e;
+	OBJ_ATTR* o;
+	OBJ_ATTR* v;
+	OBJ_ATTR* r;
+} GAMEOVER_OBJ_SET, GAMEOVER_OBJ_SET;
+
+
 //Metasprite struct manipulators
 REPLAY_OBJ_SET *createReplaySet(OBJ_ATTR *obj, OBJ_ATTR *obj2);
 void setReplayPos(REPLAY_OBJ_SET *set, int x, int y);
+
 BIRD_OBJ_SET *createBirdSet(OBJ_ATTR *obj, OBJ_ATTR *obj2);
 void setBirdPos(BIRD_OBJ_SET *set, int x, int y);
 void toggleBirdFlap(BIRD_OBJ_SET *set);
+
 NUM_OBJ_SET *createNumSet(OBJ_ATTR *index);
 void setNumPos(NUM_OBJ_SET *set, int x, int y);
 void setNumValue(NUM_OBJ_SET *set, int num);
+
 DINO_OBJ_SET *createDinoSet(OBJ_ATTR *index);
 void setDinoPos(DINO_OBJ_SET *set, bool ducking, int x, int y);
 void dinoGraphicsUpdate(DINO_OBJ_SET *set);
