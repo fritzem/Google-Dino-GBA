@@ -13,39 +13,61 @@ DINO_STATE *dinoState;
 int main()
 {	
 	init();
-
-  u32 x = 100;
-  u16 counter = 0;
-
+	int test = 0;
   while(1) {
   	vid_vsync();
-
-    counter++;
   	
     input();
-  	REG_BG0HOFS = x - 100;
+    update();
 
-      if (counter == 30) 
-      {
-          toggleBirdFlap(birdSet0);
-          toggleBirdFlap(birdSet1);
-          counter = 0;
-      }
-
-      setNumValue(scoreSet, x);
+    if (key_is_down(KEY_A)) {
+    	test++;
+    }
+    REG_BG0HOFS = test;
 
   	oam_copy(oam_mem, obj_buffer, 64);
   }
   return 0;
 }
 
+void update() {
+	dinoGraphicsUpdate(dinoSet);
+}
+
 void input() {
 	key_poll();
-  	if (key_hit(KEY_A))
-  	{
-  		//x += 1;
-  		toggleReplayHide(replaySet);
+  	if ((key_hit(KEY_A) || key_hit(KEY_UP))
+  			&& (dinoState->status == WAITING || dinoState->status == RUNNING)) {
+  			jump();
+  			return;
+  	} else if ((key_released(KEY_A) || key_released(KEY_UP)) 
+  							&& dinoState->status == CRASHED) {
+  		reset();
+  		return; 
   	}
+  	if (key_hit(KEY_DOWN)) {
+  		if (dinoState->status == JUMPING) {
+  			dinoState->speedDrop = true;
+  		} else if (dinoState->status == RUNNING){
+  			dinoState->status = DUCKING;
+  			setDinoDucking(dinoSet);
+  		}
+  	} else if (key_released(KEY_DOWN)) {
+  		if (dinoState->status == JUMPING) {
+  			dinoState->speedDrop = false;
+  		} else if (dinoState->status == DUCKING){
+  			dinoState->status = RUNNING;
+  			setDinoUpright(dinoSet);
+  		}
+  	}
+}
+
+void jump() {
+	dinoState->status = RUNNING;
+}
+
+void reset() {
+
 }
 
 void init() {
@@ -76,7 +98,7 @@ void initGraphics() {
 
 void initGame() {
 	gameState = malloc(sizeof(GAME_STATE));
-	//initState(gameState);
+	initState(gameState);
 	dinoState = malloc(sizeof(DINO_STATE));
 	initDino(dinoState);
 }

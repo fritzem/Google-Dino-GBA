@@ -26,13 +26,13 @@
 #define dinoWinkSI 0x1E
 #define dinoDeadeyeSI 0x1F
 #define dinoTailSI 0x5E
-#define dinoFeet1_SI 0x110
-#define dinoFeet2_SI 0x112
-#define dinoFeet3_SI 0x116
-#define dinoCrouchSI 0x14C
-#define dinoCrouchFeet1_SI 0x11A
-#define dinoCrouchFeet2_SI 0x15A
-#define deadDinoSI 0x196
+#define dinoFeet0_SI 0x110
+#define dinoFeet1_SI 0x114
+#define dinoFeet2_SI 0x118
+#define dinoCrouchSI 0x150
+#define dinoCrouchFeet0_SI 0x11C
+#define dinoCrouchFeet1_SI 0x15C
+#define deadDinoSI 0x198
 
 #define birdBeakSI 0x44
 #define birdFlapDownSI 0x80
@@ -188,8 +188,12 @@ HI_OBJ_SET *createHiSet(OBJ_ATTR *obj0, OBJ_ATTR *obj1);
 void setHiPos(HI_OBJ_SET *set, int x, int y);
 
 DINO_OBJ_SET *createDinoSet(OBJ_ATTR *index);
-void setDinoPos(DINO_OBJ_SET *set, bool ducking, int x, int y);
+void setDinoPos(DINO_OBJ_SET *set, int x, int y);
 void dinoGraphicsUpdate(DINO_OBJ_SET *set);
+void setDinoUpright(DINO_OBJ_SET *set);
+void setDinoDucking(DINO_OBJ_SET *set);
+void setDinoCrashed(DINO_OBJ_SET *set);
+
 
 void initSets();
 void assembleSets();

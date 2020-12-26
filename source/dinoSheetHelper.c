@@ -134,26 +134,56 @@ DINO_OBJ_SET *createDinoSet(OBJ_ATTR *index) {
 	set->dinoTail =
 		obj_set_attr(index + 1, ATTR0_SQUARE, ATTR1_SIZE_16, dinoTailSI | ATTR2_PALBANK(0));
 	set->dinoLegs =
-		obj_set_attr(index + 2, ATTR0_WIDE, ATTR1_SIZE_32, dinoFeet1_SI | ATTR2_PALBANK(0));
+		obj_set_attr(index + 2, ATTR0_WIDE, ATTR1_SIZE_32, dinoFeet0_SI | ATTR2_PALBANK(0));
 	set->dinoWink =
 		obj_set_attr(index, ATTR0_SQUARE | ATTR0_HIDE, ATTR1_SIZE_8, dinoWinkSI);
 	return set;
 }
 
-//Set bottom-left dino position
-void setDinoPos(DINO_OBJ_SET *set, bool ducking, int x, int y) {
-	if (ducking) {
-
-	} else {
-		y = 160 - 48 - y;
-		obj_set_pos(set->dinoTorso, x + 16, y);
-		obj_set_pos(set->dinoTail, x, y + 16);
-		obj_set_pos(set->dinoLegs, x, y + 32);
-		obj_set_pos(set->dinoWink, x + 24, y);
-	}
+//Set bottom-left dino position (only upright)
+void setDinoPos(DINO_OBJ_SET *set, int x, int y) {
+	y = 160 - 48 - y;
+	obj_set_pos(set->dinoTorso, x + 16, y);
+	obj_set_pos(set->dinoTail, x, y + 16);
+	obj_set_pos(set->dinoLegs, x, y + 32);
+	obj_set_pos(set->dinoWink, x + 24, y);
 }
 
 void dinoGraphicsUpdate(DINO_OBJ_SET *set) {
+	int y = SCREEN_HEIGHT - 48 - dinoState->yPos;
+	int crouchY = SCREEN_HEIGHT - 32 - dinoState->yPos;
+	switch (dinoState->status) {
+		case CRASHED:
+			break;
+		case DUCKING:
+			obj_set_pos(set->dinoTorso, dinoState->xPos, crouchY);
+			obj_set_pos(set->dinoLegs, dinoState->xPos + 8, crouchY + 16);
+			break;
+		case JUMPING:
+		case RUNNING:
+		case WAITING:
+			obj_set_pos(set->dinoTorso, dinoState->xPos + 16, y);
+			obj_set_pos(set->dinoTail, dinoState->xPos, y + 16);
+			obj_set_pos(set->dinoLegs, dinoState->xPos, y + 32);
+			obj_set_pos(set->dinoWink, dinoState->xPos + 24, y);
+			break;
+	}
+}
+
+void setDinoUpright(DINO_OBJ_SET *set) {
+	obj_set_attr(set->dinoTorso, ATTR0_SQUARE, ATTR1_SIZE_32, dinoHeadSI | ATTR2_PALBANK(0));
+	obj_set_attr(set->dinoTail, ATTR0_SQUARE, ATTR1_SIZE_16, dinoTailSI | ATTR2_PALBANK(0));
+	obj_set_attr(set->dinoLegs, ATTR0_WIDE, ATTR1_SIZE_32, dinoFeet0_SI | ATTR2_PALBANK(0));
+	obj_set_attr(set->dinoWink, ATTR0_SQUARE | ATTR0_HIDE, ATTR1_SIZE_8, dinoWinkSI | ATTR2_PALBANK(0));
+}
+
+void setDinoDucking(DINO_OBJ_SET *set) {
+	obj_set_attr(set->dinoTorso, ATTR0_WIDE, ATTR1_SIZE_64, dinoCrouchSI | ATTR2_PALBANK(0));
+	obj_set_attr(set->dinoLegs, ATTR0_WIDE, ATTR1_SIZE_32, dinoCrouchFeet1_SI | ATTR2_PALBANK(0));
+	obj_hide(set->dinoTail);
+}
+
+void setDinoCrashed(DINO_OBJ_SET *set) {
 
 }
 
@@ -187,7 +217,7 @@ void assembleSets() {
   setNumPos(hiScoreSet, 107, 10);
   setHiPos(hiSet, 74, 10);
   setNumPos(scoreSet, 174, 10);
-  setDinoPos(dinoSet, false, 0, 0);
+  setDinoPos(dinoSet, 0, 0);
 }
 
 //Terrain helpers
