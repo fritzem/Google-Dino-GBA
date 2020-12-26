@@ -6,6 +6,7 @@ REPLAY_OBJ_SET *replaySet;
 BIRD_OBJ_SET *birdSet0;
 BIRD_OBJ_SET *birdSet1;
 NUM_OBJ_SET *hiScoreSet;
+HI_OBJ_SET *hiSet;
 NUM_OBJ_SET *scoreSet;
 DINO_OBJ_SET *dinoSet;
 CLOUD_OBJ_SET *cloudSet0;
@@ -27,9 +28,9 @@ REPLAY_OBJ_SET *createReplaySet(OBJ_ATTR *obj, OBJ_ATTR *obj2)
 {
 	struct REPLAY_OBJ_SET *set = malloc(sizeof(REPLAY_OBJ_SET));
 	set->replay = 
-		obj_set_attr(obj, ATTR0_SQUARE, ATTR1_SIZE_32,  replaySI | ATTR2_PALBANK(0));
+		obj_set_attr(obj, ATTR0_SQUARE | ATTR0_HIDE, ATTR1_SIZE_32,  replaySI | ATTR2_PALBANK(0));
 	set->replayTail = 
-		obj_set_attr(obj2, ATTR0_TALL, ATTR1_SIZE_16 | ATTR1_HFLIP, replayTailSI | ATTR2_PALBANK(0));
+		obj_set_attr(obj2, ATTR0_TALL | ATTR0_HIDE, ATTR1_SIZE_16 | ATTR1_HFLIP, replayTailSI | ATTR2_PALBANK(0));
 	return set;
 }
 
@@ -37,6 +38,12 @@ void setReplayPos(REPLAY_OBJ_SET *set, int x, int y)
 {
 	obj_set_pos(set->replay, x, y);
 	obj_set_pos(set->replayTail, x + 32, y);
+}
+
+void toggleReplayHide(REPLAY_OBJ_SET *set)
+{
+	set->replay->attr0 ^= attr0Visibility;
+	set->replayTail->attr0 ^= attr0Visibility;
 }
 
 BIRD_OBJ_SET *createBirdSet(OBJ_ATTR *obj, OBJ_ATTR *obj2)
@@ -104,6 +111,21 @@ void setNumValue(NUM_OBJ_SET *set, int num)
 	BFN_SET(set->num0->attr2, numToSI(val), ATTR2_ID);
 }
 
+HI_OBJ_SET *createHiSet(OBJ_ATTR *obj0, OBJ_ATTR *obj1)
+{
+	struct HI_OBJ_SET *set = malloc(sizeof(HI_OBJ_SET));
+	set->hi0 =
+		obj_set_attr(obj0, ATTR0_SQUARE, ATTR1_SIZE_16, hiSI | ATTR2_PALBANK(0));
+	set->hi1 =
+		obj_set_attr(obj1, ATTR0_TALL, ATTR1_SIZE_8, (hiSI + 2) | ATTR2_PALBANK(0));
+	return set;
+}
+
+void setHiPos(HI_OBJ_SET *set, int x, int y) {
+	obj_set_pos(set->hi0, x, y);
+	obj_set_pos(set->hi1, x + 16, y);
+}
+
 //Give an index, four entries total are used
 DINO_OBJ_SET *createDinoSet(OBJ_ATTR *index) {
 	struct DINO_OBJ_SET *set = malloc(sizeof(DINO_OBJ_SET));
@@ -138,10 +160,11 @@ void dinoGraphicsUpdate(DINO_OBJ_SET *set) {
 void initSets() {
   replaySet = createReplaySet(&obj_buffer[0],&obj_buffer[1]);
 	birdSet0 = createBirdSet(&obj_buffer[2],&obj_buffer[3]);
-	//birdSet1
-	//hiScoreSet
-	scoreSet = createNumSet(&obj_buffer[4]);
-	dinoSet = createDinoSet(&obj_buffer[9]);
+	birdSet1 = createBirdSet(&obj_buffer[4],&obj_buffer[5]);
+	hiScoreSet = createNumSet(&obj_buffer[6]);
+	hiSet = createHiSet(&obj_buffer[11], &obj_buffer[12]);
+	scoreSet = createNumSet(&obj_buffer[13]);
+	dinoSet = createDinoSet(&obj_buffer[18]);
 	//cloudSet0
 	//cloudSet1
 	//cloudSet2
@@ -154,6 +177,17 @@ void initSets() {
 	//obstacleSet0
 	//obstacleSet1
 	//gameoverSet
+}
+
+void assembleSets() {
+	setReplayPos(replaySet, 103, 65);
+	setBirdPos(birdSet0, 50, 50);
+  setBirdPos(birdSet1, 75, 75);
+  toggleBirdFlap(birdSet1);
+  setNumPos(hiScoreSet, 107, 10);
+  setHiPos(hiSet, 74, 10);
+  setNumPos(scoreSet, 174, 10);
+  setDinoPos(dinoSet, false, 0, 0);
 }
 
 //Terrain helpers

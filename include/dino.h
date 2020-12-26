@@ -7,6 +7,7 @@
 extern OBJ_ATTR obj_buffer[];
 extern OBJ_AFFINE *obj_aff_buffer;
 
+void input();
 void init();
 void initMem();
 void initGraphics();

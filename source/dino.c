@@ -7,17 +7,12 @@
 OBJ_ATTR obj_buffer[128];
 OBJ_AFFINE *obj_aff_buffer= (OBJ_AFFINE*)obj_buffer;
 
+GAME_STATE *gameState;
+DINO_STATE *dinoState;
+
 int main()
 {	
 	init();
-	
-
-  DINO_STATE *dinoState = malloc(sizeof(DINO_STATE));
-  initDino(dinoState);
-
-  setBirdPos(birdSet0, 50, 50);
-  setNumPos(scoreSet, 100, 20);
-  setDinoPos(dinoSet, false, 0, 0);
 
   u32 x = 100;
   u16 counter = 0;
@@ -25,18 +20,15 @@ int main()
   while(1) {
   	vid_vsync();
 
-      counter++;
-  	key_poll();
-  	if (key_is_down(KEY_A))
-  	{
-  		x += 1;
-  	}
-
+    counter++;
+  	
+    input();
   	REG_BG0HOFS = x - 100;
 
       if (counter == 30) 
       {
           toggleBirdFlap(birdSet0);
+          toggleBirdFlap(birdSet1);
           counter = 0;
       }
 
@@ -45,6 +37,15 @@ int main()
   	oam_copy(oam_mem, obj_buffer, 64);
   }
   return 0;
+}
+
+void input() {
+	key_poll();
+  	if (key_hit(KEY_A))
+  	{
+  		//x += 1;
+  		toggleReplayHide(replaySet);
+  	}
 }
 
 void init() {
@@ -68,12 +69,16 @@ void initGraphics() {
 
 	oam_init(obj_buffer, 128);
 	initSets();
+	assembleSets();
 
   REG_DISPCNT= DCNT_OBJ | DCNT_OBJ_2D | DCNT_BG0;
 }
 
 void initGame() {
-
+	gameState = malloc(sizeof(GAME_STATE));
+	//initState(gameState);
+	dinoState = malloc(sizeof(DINO_STATE));
+	initDino(dinoState);
 }
 
 //bitmap display

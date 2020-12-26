@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include "tonc.h"
 
+#define attr0Visibility 0x200
+
 //Sprite Indices
 #define replaySI 0x0
 #define replayTailSI 0x0
@@ -103,6 +105,13 @@ typedef struct NUM_OBJ_SET {
 extern NUM_OBJ_SET *hiScoreSet;
 extern NUM_OBJ_SET *scoreSet;
 
+typedef struct HI_OBJ_SET {
+	OBJ_ATTR* hi0;
+	OBJ_ATTR* hi1;
+} HI_OBJ_SET, HI_OBJ_SET;
+
+extern HI_OBJ_SET *hiSet;
+
 typedef struct DINO_OBJ_SET {
 	OBJ_ATTR* dinoTorso;
 	OBJ_ATTR* dinoTail;
@@ -164,6 +173,7 @@ extern GAMEOVER_OBJ_SET *gameoverSet;
 
 //Metasprite struct manipulators
 REPLAY_OBJ_SET *createReplaySet(OBJ_ATTR *obj, OBJ_ATTR *obj2);
+void toggleReplayHide(REPLAY_OBJ_SET *set);
 void setReplayPos(REPLAY_OBJ_SET *set, int x, int y);
 
 BIRD_OBJ_SET *createBirdSet(OBJ_ATTR *obj, OBJ_ATTR *obj2);
@@ -174,11 +184,15 @@ NUM_OBJ_SET *createNumSet(OBJ_ATTR *index);
 void setNumPos(NUM_OBJ_SET *set, int x, int y);
 void setNumValue(NUM_OBJ_SET *set, int num);
 
+HI_OBJ_SET *createHiSet(OBJ_ATTR *obj0, OBJ_ATTR *obj1);
+void setHiPos(HI_OBJ_SET *set, int x, int y);
+
 DINO_OBJ_SET *createDinoSet(OBJ_ATTR *index);
 void setDinoPos(DINO_OBJ_SET *set, bool ducking, int x, int y);
 void dinoGraphicsUpdate(DINO_OBJ_SET *set);
 
 void initSets();
+void assembleSets();
 
 //Background helpers
 void whiteOutBG();
