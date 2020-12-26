@@ -1,6 +1,26 @@
 #include "dinoSheetHelper.h"
 #include "dino.h"
 #include "tonc.h"
+
+REPLAY_OBJ_SET *replaySet;
+BIRD_OBJ_SET *birdSet0;
+BIRD_OBJ_SET *birdSet1;
+NUM_OBJ_SET *hiScoreSet;
+NUM_OBJ_SET *scoreSet;
+DINO_OBJ_SET *dinoSet;
+CLOUD_OBJ_SET *cloudSet0;
+CLOUD_OBJ_SET *cloudSet1;
+CLOUD_OBJ_SET *cloudSet2;
+CLOUD_OBJ_SET *cloudSet3;
+CLOUD_OBJ_SET *cloudSet4;
+CLOUD_OBJ_SET *cloudSet5;
+MOON_OBJ_SET *moonSet;
+STAR_OBJ_SET *starSet0;
+STAR_OBJ_SET *starSet1;
+OBSTACLE_OBJ_SET *obstacleSet0;
+OBSTACLE_OBJ_SET *obstacleSet1;
+GAMEOVER_OBJ_SET *gameoverSet;
+
 //Metasprite helper methods
 
 REPLAY_OBJ_SET *createReplaySet(OBJ_ATTR *obj, OBJ_ATTR *obj2)
@@ -115,6 +135,27 @@ void dinoGraphicsUpdate(DINO_OBJ_SET *set) {
 
 }
 
+void initSets() {
+  replaySet = createReplaySet(&obj_buffer[0],&obj_buffer[1]);
+	birdSet0 = createBirdSet(&obj_buffer[2],&obj_buffer[3]);
+	//birdSet1
+	//hiScoreSet
+	scoreSet = createNumSet(&obj_buffer[4]);
+	dinoSet = createDinoSet(&obj_buffer[9]);
+	//cloudSet0
+	//cloudSet1
+	//cloudSet2
+	//cloudSet3
+	//cloudSet4
+	//cloudSet5
+	//moonSet
+	//starSet0
+	//starSet1
+	//obstacleSet0
+	//obstacleSet1
+	//gameoverSet
+}
+
 //Terrain helpers
 
 void whiteOutBG() {
@@ -127,3 +168,4 @@ void backgroundInit() {
 		se_plot(&se_mem[31][0], i, 19, 0x2C0 + i);
 	}
 }
+

@@ -4,6 +4,9 @@
 #define DROP_VELOCITY -5
 #define GRAVITY 6
 
+extern OBJ_ATTR obj_buffer[];
+extern OBJ_AFFINE *obj_aff_buffer;
+
 void init();
 void initMem();
 void initGraphics();
@@ -15,7 +18,7 @@ typedef struct GAME_STATE {
 
 } GAME_STATE, GAME_STATE;
 
-extern GAME_STATE gameState;
+extern GAME_STATE *gameState;
 
 enum dinoStatus{CRASHED, DUCKING, JUMPING, RUNNING, WAITING};
 
@@ -30,7 +33,7 @@ typedef struct DINO_STATE {
 	bool speedDrop;
 } DINO_STATE, DINO_STATE;
 
-extern DINO_STATE dinoState;
+extern DINO_STATE *dinoState;
 
 INLINE void initDino(DINO_STATE * dino) {
 	dino->xPos = 0;

@@ -80,11 +80,16 @@ typedef struct REPLAY_OBJ_SET {
 	OBJ_ATTR* replayTail;
 } REPLAY_OBJ_SET, REPLAY_OBJ_SET;
 
+extern REPLAY_OBJ_SET *replaySet;
+
 typedef struct BIRD_OBJ_SET {
 	OBJ_ATTR* beak;
 	OBJ_ATTR* birdTorso;
 	BOOL flap;
 } BIRD_OBJ_SET, BIRD_OBJ_SET;
+
+extern BIRD_OBJ_SET *birdSet0;
+extern BIRD_OBJ_SET *birdSet1;
 
 //Used for both score and hiscore
 typedef struct NUM_OBJ_SET {
@@ -95,6 +100,9 @@ typedef struct NUM_OBJ_SET {
 	OBJ_ATTR* num4;
 } NUM_OBJ_SET, NUM_OBJ_SET;
 
+extern NUM_OBJ_SET *hiScoreSet;
+extern NUM_OBJ_SET *scoreSet;
+
 typedef struct DINO_OBJ_SET {
 	OBJ_ATTR* dinoTorso;
 	OBJ_ATTR* dinoTail;
@@ -102,10 +110,19 @@ typedef struct DINO_OBJ_SET {
 	OBJ_ATTR* dinoWink;
 } DINO_OBJ_SET, DINO_OBJ_SET;
 
+extern DINO_OBJ_SET *dinoSet;
+
 typedef struct CLOUD_OBJ_SET {
 	OBJ_ATTR* cloudL;
 	OBJ_ATTR* cloudR;
 } CLOUD_OBJ_SET, CLOUD_OBJ_SET;
+
+extern CLOUD_OBJ_SET *cloudSet0;
+extern CLOUD_OBJ_SET *cloudSet1;
+extern CLOUD_OBJ_SET *cloudSet2;
+extern CLOUD_OBJ_SET *cloudSet3;
+extern CLOUD_OBJ_SET *cloudSet4;
+extern CLOUD_OBJ_SET *cloudSet5;
 
 typedef struct MOON_OBJ_SET {
 	OBJ_ATTR* moonChunk0;
@@ -114,9 +131,14 @@ typedef struct MOON_OBJ_SET {
 	OBJ_ATTR* moonChunk3;
 } MOON_OBJ_SET, MOON_OBJ_SET;
 
+extern MOON_OBJ_SET *moonSet;
+
 typedef struct STAR_OBJ_SET {
 	OBJ_ATTR* star;
 } STAR_OBJ_SET, STAR_OBJ_SET;
+
+extern STAR_OBJ_SET *starSet0;
+extern STAR_OBJ_SET *starSet1;
 
 typedef struct OBSTACLE_OBJ_SET {
 	OBJ_ATTR* obstacleChunk0;
@@ -124,6 +146,9 @@ typedef struct OBSTACLE_OBJ_SET {
 	OBJ_ATTR* obstacleChunk2;
 	OBJ_ATTR* obstacleChunk3;
 } OBSTACLE_OBJ_SET, OBSTACLE_OBJ_SET;
+
+extern OBSTACLE_OBJ_SET *obstacleSet0;
+extern OBSTACLE_OBJ_SET *obstacleSet1;
 
 typedef struct GAMEOVER_OBJ_SET {
 	OBJ_ATTR* g;
@@ -135,6 +160,7 @@ typedef struct GAMEOVER_OBJ_SET {
 	OBJ_ATTR* r;
 } GAMEOVER_OBJ_SET, GAMEOVER_OBJ_SET;
 
+extern GAMEOVER_OBJ_SET *gameoverSet;
 
 //Metasprite struct manipulators
 REPLAY_OBJ_SET *createReplaySet(OBJ_ATTR *obj, OBJ_ATTR *obj2);
@@ -152,7 +178,11 @@ DINO_OBJ_SET *createDinoSet(OBJ_ATTR *index);
 void setDinoPos(DINO_OBJ_SET *set, bool ducking, int x, int y);
 void dinoGraphicsUpdate(DINO_OBJ_SET *set);
 
+void initSets();
+
 //Background helpers
 void whiteOutBG();
 void backgroundInit();
+
+
 #endif

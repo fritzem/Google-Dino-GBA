@@ -12,19 +12,11 @@ int main()
 	init();
 	
 
-	
-
-
-  //REPLAY_OBJ_SET *replaySet = createReplaySet(&obj_buffer[0],&obj_buffer[1]);
-  BIRD_OBJ_SET *birdSet = createBirdSet(&obj_buffer[2],&obj_buffer[3]);
-  NUM_OBJ_SET *numSet = createNumSet(&obj_buffer[4]);
-  DINO_OBJ_SET *dinoSet = createDinoSet(&obj_buffer[9]);
-
   DINO_STATE *dinoState = malloc(sizeof(DINO_STATE));
   initDino(dinoState);
 
-  setBirdPos(birdSet, 50, 50);
-  setNumPos(numSet, 100, 20);
+  setBirdPos(birdSet0, 50, 50);
+  setNumPos(scoreSet, 100, 20);
   setDinoPos(dinoSet, false, 0, 0);
 
   u32 x = 100;
@@ -44,13 +36,13 @@ int main()
 
       if (counter == 30) 
       {
-          toggleBirdFlap(birdSet);
+          toggleBirdFlap(birdSet0);
           counter = 0;
       }
 
-      setNumValue(numSet, x);
+      setNumValue(scoreSet, x);
 
-  	oam_copy(oam_mem, obj_buffer, 20);
+  	oam_copy(oam_mem, obj_buffer, 64);
   }
   return 0;
 }
@@ -75,6 +67,8 @@ void initGraphics() {
   REG_BG0CNT = BG_CBB(0) | BG_SBB(31) | BG_4BPP | BG_REG_32x32;
 
 	oam_init(obj_buffer, 128);
+	initSets();
+
   REG_DISPCNT= DCNT_OBJ | DCNT_OBJ_2D | DCNT_BG0;
 }
 
