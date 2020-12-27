@@ -1,9 +1,14 @@
 #ifndef DINO_H
 #define DINO_H
 
-#define INIITAL_JUMP_VELOCITY 100
-#define DROP_VELOCITY 25
-#define GRAVITY 6
+#define INITIAL_JUMP_VELOCITY 100
+#define DROP_VELOCITY -50
+#define SPEED_DROP_COEFFICIENT 3
+#define MIN_JUMP_HEIGHT 30
+#define GRAVITY -6
+
+#define JUMP_HIT (key_hit(KEY_A) || key_hit(KEY_UP))
+#define JUMP_RELEASED (key_released(KEY_A) || key_released(KEY_UP))
 
 extern OBJ_ATTR obj_buffer[];
 extern OBJ_AFFINE *obj_aff_buffer;
@@ -12,7 +17,9 @@ void update();
 
 void input();
 void jump();
-void reset();
+void updateJump();
+void endJump();
+void resetDino();
 
 void init();
 void initMem();

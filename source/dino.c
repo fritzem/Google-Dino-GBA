@@ -31,24 +31,32 @@ int main()
 }
 
 void update() {
+	if (dinoState->status == JUMPING)
+		updateJump();
+
+
+
 	dinoGraphicsUpdate(dinoSet);
 }
 
 void input() {
 	key_poll();
-  	if ((key_hit(KEY_A) || key_hit(KEY_UP))
-  			&& (dinoState->status == WAITING || dinoState->status == RUNNING)) {
+  	if (JUMP_HIT && (dinoState->status == WAITING || dinoState->status == RUNNING)) {
   			jump();
   			return;
-  	} else if ((key_released(KEY_A) || key_released(KEY_UP)) 
-  							&& dinoState->status == CRASHED) {
-  		reset();
+  	} else if (JUMP_RELEASED) {
+  		if (dinoState->status == JUMPING)
+  			endJump();
+  		else if (dinoState->status == CRASHED)
+  			//resetGame();
   		return; 
   	}
+
   	if (key_hit(KEY_DOWN)) {
   		if (dinoState->status == JUMPING) {
   			dinoState->speedDrop = true;
-  		} else if (dinoState->status == RUNNING){
+  			dinoState->jumpVelocity = -1;
+  		} else if (dinoState->status == RUNNING) {
   			dinoState->status = DUCKING;
   			setDinoDucking(dinoSet);
   		}
@@ -63,11 +71,40 @@ void input() {
 }
 
 void jump() {
-	dinoState->status = RUNNING;
+	dinoState->status = JUMPING;
+	dinoState->speedDrop = false;
+	dinoState->jumpVelocity = INITIAL_JUMP_VELOCITY; // - speed/10 ??
 }
 
-void reset() {
+void updateJump() {
+	if (dinoState->speedDrop)
+		dinoState->yPos += (dinoState->jumpVelocity * SPEED_DROP_COEFFICIENT) / 10;
+	else
+		dinoState->yPos += (dinoState->jumpVelocity) / 10;
 
+	dinoState->jumpVelocity += GRAVITY;
+
+	//Min height
+	if (dinoState->yPos > MIN_JUMP_HEIGHT || dinoState->speedDrop)
+		endJump();
+
+	if (dinoState->yPos < 0) {
+		resetDino();
+	}
+
+}
+
+void endJump() {
+	if (dinoState->jumpVelocity < DROP_VELOCITY)
+		dinoState->jumpVelocity = DROP_VELOCITY;
+}
+
+void resetDino() {
+	dinoState->status = RUNNING;
+	dinoState->speedDrop = false;
+
+	dinoState->jumpVelocity = 0;
+	dinoState->yPos = 0;
 }
 
 void init() {
