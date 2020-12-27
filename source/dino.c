@@ -57,8 +57,7 @@ void input() {
   			dinoState->speedDrop = true;
   			dinoState->jumpVelocity = -1;
   		} else if (dinoState->status == RUNNING) {
-  			dinoState->status = DUCKING;
-  			setDinoDucking(dinoSet);
+  			dinoDuck();
   		}
   	} else if (key_released(KEY_DOWN)) {
   		if (dinoState->status == JUMPING) {
@@ -89,7 +88,10 @@ void updateJump() {
 		endJump();
 
 	if (dinoState->yPos < 0) {
+		bool drop = dinoState->speedDrop;
 		resetDino();
+		if (drop)
+			dinoDuck();
 	}
 
 }
@@ -105,6 +107,11 @@ void resetDino() {
 
 	dinoState->jumpVelocity = 0;
 	dinoState->yPos = 0;
+}
+
+void dinoDuck() {
+	dinoState->status = DUCKING;
+  setDinoDucking(dinoSet);
 }
 
 void init() {

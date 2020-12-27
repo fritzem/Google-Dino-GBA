@@ -20,6 +20,7 @@ void jump();
 void updateJump();
 void endJump();
 void resetDino();
+void dinoDuck();
 
 void init();
 void initMem();
