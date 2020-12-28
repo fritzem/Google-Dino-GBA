@@ -37,7 +37,10 @@ void update() {
 	if (gameState->playingIntro) {
 		gameState->curtainScroll -= 8;
 
-		gameState->playingIntro = !(gameState->curtainScroll <= 256);
+		if (gameState->curtainScroll <= 256) {
+			gameState->curtainScroll = 256;
+			gameState->playingIntro = false;
+		}
 		REG_BG1HOFS = gameState->curtainScroll;
 	}
 
