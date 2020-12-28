@@ -6,6 +6,7 @@
 #define SPEED_DROP_COEFFICIENT 3
 #define MIN_JUMP_HEIGHT 30
 #define GRAVITY -6
+#define STARTING_CURTAIN_SCROLL 468
 
 #define JUMP_HIT (key_hit(KEY_A) || key_hit(KEY_UP))
 #define JUMP_RELEASED (key_released(KEY_A) || key_released(KEY_UP))
@@ -22,6 +23,7 @@ void endJump();
 void resetDino();
 void dinoDuck();
 
+
 void init();
 void initMem();
 void initGraphics();
@@ -31,12 +33,16 @@ void initGame();
 
 typedef struct GAME_STATE {
 	int speed;
+	bool playingIntro;
+	int curtainScroll;
 } GAME_STATE, GAME_STATE;
 
 extern GAME_STATE *gameState;
 
 INLINE void initState(GAME_STATE * state) {
 	state->speed = 0;
+	state->playingIntro = false;
+	state->curtainScroll = STARTING_CURTAIN_SCROLL;
 }
 
 enum dinoStatus{CRASHED, DUCKING, JUMPING, RUNNING, WAITING};
@@ -48,6 +54,7 @@ typedef struct DINO_STATE {
 
 	enum dinoStatus status;
 	bool speedDrop;
+	bool jumped;
 } DINO_STATE, DINO_STATE;
 
 extern DINO_STATE *dinoState;
@@ -59,6 +66,7 @@ INLINE void initDino(DINO_STATE * dino) {
 
 	dino->status = WAITING;
 	dino->speedDrop = false;
+	dino->jumped = false;
 }
 
 #endif

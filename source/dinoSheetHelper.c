@@ -76,15 +76,15 @@ NUM_OBJ_SET *createNumSet(OBJ_ATTR *index)
 {
 	struct NUM_OBJ_SET *set = malloc(sizeof(NUM_OBJ_SET));
 	set->num0 =
-		obj_set_attr(index, ATTR0_SQUARE, ATTR1_SIZE_16, num0_SI | ATTR2_PALBANK(0));
+		obj_set_attr(index, ATTR0_SQUARE, ATTR1_SIZE_16, num0_SI | ATTR2_PALBANK(0) | ATTR2_PRIO(1));
 	set->num1 =
-		obj_set_attr(index + 1, ATTR0_SQUARE, ATTR1_SIZE_16, num0_SI | ATTR2_PALBANK(0));
+		obj_set_attr(index + 1, ATTR0_SQUARE, ATTR1_SIZE_16, num0_SI | ATTR2_PALBANK(0) | ATTR2_PRIO(1));
 	set->num2 =
-		obj_set_attr(index + 2, ATTR0_SQUARE, ATTR1_SIZE_16, num0_SI | ATTR2_PALBANK(0));
+		obj_set_attr(index + 2, ATTR0_SQUARE, ATTR1_SIZE_16, num0_SI | ATTR2_PALBANK(0) | ATTR2_PRIO(1));
 	set->num3 =
-		obj_set_attr(index + 3, ATTR0_SQUARE, ATTR1_SIZE_16, num0_SI | ATTR2_PALBANK(0));
+		obj_set_attr(index + 3, ATTR0_SQUARE, ATTR1_SIZE_16, num0_SI | ATTR2_PALBANK(0) | ATTR2_PRIO(1));
 	set->num4 =
-		obj_set_attr(index + 4, ATTR0_SQUARE, ATTR1_SIZE_16, num0_SI | ATTR2_PALBANK(0));
+		obj_set_attr(index + 4, ATTR0_SQUARE, ATTR1_SIZE_16, num0_SI | ATTR2_PALBANK(0) | ATTR2_PRIO(1));
 	return set;
 }
 
@@ -115,9 +115,9 @@ HI_OBJ_SET *createHiSet(OBJ_ATTR *obj0, OBJ_ATTR *obj1)
 {
 	struct HI_OBJ_SET *set = malloc(sizeof(HI_OBJ_SET));
 	set->hi0 =
-		obj_set_attr(obj0, ATTR0_SQUARE, ATTR1_SIZE_16, hiSI | ATTR2_PALBANK(0));
+		obj_set_attr(obj0, ATTR0_SQUARE, ATTR1_SIZE_16, hiSI | ATTR2_PALBANK(0) | ATTR2_PRIO(1));
 	set->hi1 =
-		obj_set_attr(obj1, ATTR0_TALL, ATTR1_SIZE_8, (hiSI + 2) | ATTR2_PALBANK(0));
+		obj_set_attr(obj1, ATTR0_TALL, ATTR1_SIZE_8, (hiSI + 2) | ATTR2_PALBANK(0) | ATTR2_PRIO(1));
 	return set;
 }
 
@@ -211,8 +211,8 @@ void initSets() {
 
 void assembleSets() {
 	setReplayPos(replaySet, 103, 65);
-	setBirdPos(birdSet0, 50, 50);
-  setBirdPos(birdSet1, 75, 75);
+	setBirdPos(birdSet0, 280, 50);
+  setBirdPos(birdSet1, 280, 75);
   toggleBirdFlap(birdSet1);
   setNumPos(hiScoreSet, 107, 10);
   setHiPos(hiSet, 74, 10);
@@ -223,11 +223,15 @@ void assembleSets() {
 //Terrain helpers
 
 void whiteOutBG() {
+	se_fill(&se_mem[29][0], blankTile_SI);
+	se_fill(&se_mem[30][0], transparent_SI);
 	se_fill(&se_mem[31][0], blankTile_SI);
 }
 
 //x1819
 void backgroundInit() {
+	REG_BG1HOFS = STARTING_CURTAIN_SCROLL;
+
 	for (int i = 0; i < 30; i++) {
 		se_plot(&se_mem[31][0], i, 19, 0x2C0 + i);
 	}

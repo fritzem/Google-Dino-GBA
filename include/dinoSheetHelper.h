@@ -74,6 +74,7 @@ INLINE int numToSI(int x) {return num0_SI + (x * 0x2);}
 //Terrain 
 
 #define blankTile_SI 0x359
+#define transparent_SI 0xA
 
 //Metasprite structs
 

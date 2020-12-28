@@ -34,6 +34,12 @@ void update() {
 	if (dinoState->status == JUMPING)
 		updateJump();
 
+	if (gameState->playingIntro) {
+		gameState->curtainScroll -= 8;
+
+		gameState->playingIntro = !(gameState->curtainScroll <= 256);
+		REG_BG1HOFS = gameState->curtainScroll;
+	}
 
 
 	dinoGraphicsUpdate(dinoSet);
@@ -72,7 +78,7 @@ void input() {
 void jump() {
 	dinoState->status = JUMPING;
 	dinoState->speedDrop = false;
-	dinoState->jumpVelocity = INITIAL_JUMP_VELOCITY; // - speed/10 ??
+	dinoState->jumpVelocity = INITIAL_JUMP_VELOCITY; // + speed/10 ??
 }
 
 void updateJump() {
@@ -92,6 +98,13 @@ void updateJump() {
 		resetDino();
 		if (drop)
 			dinoDuck();
+
+		//if first landing, pull back the curtain
+		if (!dinoState->jumped)
+		{
+			gameState->playingIntro = true;
+			dinoState->jumped = true;
+		}
 	}
 
 }
@@ -131,13 +144,16 @@ void initGraphics() {
 	whiteOutBG();
 	backgroundInit();
 
-  REG_BG0CNT = BG_CBB(0) | BG_SBB(31) | BG_4BPP | BG_REG_32x32;
+  //horizon layer
+  REG_BG0CNT = BG_PRIO(1) | BG_CBB(0) | BG_SBB(31) | BG_4BPP | BG_REG_32x32;
+  //curtain layer
+  REG_BG1CNT = BG_PRIO(0) | BG_CBB(0) | BG_SBB(29) | BG_4BPP | BG_REG_64x32;
 
 	oam_init(obj_buffer, 128);
 	initSets();
 	assembleSets();
 
-  REG_DISPCNT= DCNT_OBJ | DCNT_OBJ_2D | DCNT_BG0;
+  REG_DISPCNT= DCNT_OBJ | DCNT_OBJ_2D | DCNT_BG0 | DCNT_BG1;
 }
 
 void initGame() {
