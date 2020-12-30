@@ -191,6 +191,7 @@ void setHiPos(HI_OBJ_SET *set, int x, int y);
 DINO_OBJ_SET *createDinoSet(OBJ_ATTR *index);
 void setDinoPos(DINO_OBJ_SET *set, int x, int y);
 void dinoGraphicsUpdate(DINO_OBJ_SET *set);
+void setDinoAnim(DINO_OBJ_SET *set, int frame);
 void setDinoUpright(DINO_OBJ_SET *set);
 void setDinoDucking(DINO_OBJ_SET *set);
 void setDinoCrashed(DINO_OBJ_SET *set);

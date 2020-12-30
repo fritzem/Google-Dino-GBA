@@ -8,8 +8,12 @@
 #define GRAVITY -6
 #define STARTING_CURTAIN_SCROLL 468
 
+#define RUN_FRAME 5
+#define DUCK_FRAME 8
+
 #define JUMP_HIT (key_hit(KEY_A) || key_hit(KEY_UP))
 #define JUMP_RELEASED (key_released(KEY_A) || key_released(KEY_UP))
+#define DINO_ANIMATING ((dinoState->status == RUNNING) || dinoState->status == DUCKING)
 
 extern OBJ_ATTR obj_buffer[];
 extern OBJ_AFFINE *obj_aff_buffer;
@@ -17,10 +21,11 @@ extern OBJ_AFFINE *obj_aff_buffer;
 void update();
 
 void input();
-void jump();
+void dinoJump();
 void updateJump();
 void endJump();
 void resetDino();
+void dinoRun();
 void dinoDuck();
 
 
@@ -33,14 +38,17 @@ void initGame();
 
 typedef struct GAME_STATE {
 	int speed;
-	bool playingIntro;
 	int curtainScroll;
+
+	bool playing;
+	bool playingIntro;
 } GAME_STATE, GAME_STATE;
 
 extern GAME_STATE *gameState;
 
 INLINE void initState(GAME_STATE * state) {
 	state->speed = 0;
+	state->playing = false;
 	state->playingIntro = false;
 	state->curtainScroll = STARTING_CURTAIN_SCROLL;
 }
@@ -55,6 +63,11 @@ typedef struct DINO_STATE {
 	enum dinoStatus status;
 	bool speedDrop;
 	bool jumped;
+
+	int frame;
+	int frameCounter;
+	int frameTime;
+	const int * animSI;
 } DINO_STATE, DINO_STATE;
 
 extern DINO_STATE *dinoState;
@@ -67,6 +80,10 @@ INLINE void initDino(DINO_STATE * dino) {
 	dino->status = WAITING;
 	dino->speedDrop = false;
 	dino->jumped = false;
+
+	dino->frame = 0;
+	dino->frameCounter = 0;
+	dino->frameTime = 0;
 }
 
 #endif

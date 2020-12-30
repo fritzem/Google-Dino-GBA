@@ -177,6 +177,10 @@ void setDinoUpright(DINO_OBJ_SET *set) {
 	obj_set_attr(set->dinoWink, ATTR0_SQUARE | ATTR0_HIDE, ATTR1_SIZE_8, dinoWinkSI | ATTR2_PALBANK(0));
 }
 
+void setDinoAnim(DINO_OBJ_SET *set, int si) {
+	obj_set_attr(set->dinoLegs, ATTR0_WIDE, ATTR1_SIZE_32, si | ATTR2_PALBANK(0));
+}
+
 void setDinoDucking(DINO_OBJ_SET *set) {
 	obj_set_attr(set->dinoTorso, ATTR0_WIDE, ATTR1_SIZE_64, dinoCrouchSI | ATTR2_PALBANK(0));
 	obj_set_attr(set->dinoLegs, ATTR0_WIDE, ATTR1_SIZE_32, dinoCrouchFeet1_SI | ATTR2_PALBANK(0));
