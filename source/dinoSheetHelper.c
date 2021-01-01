@@ -236,8 +236,12 @@ void whiteOutBG() {
 void backgroundInit() {
 	REG_BG1HOFS = STARTING_CURTAIN_SCROLL;
 
-	for (int i = 0; i < 30; i++) {
-		se_plot(&se_mem[31][0], i, 19, 0x2C0 + i);
+	for (int i = 0; i < 31; i++) {
+		se_plot(&se_mem[31][0], i, GROUND_Y, 0x2C0 + i);
 	}
+}
+
+void updateHorizonTile(int index, bool bumpy) {
+	se_plot(&se_mem[31][0], index, GROUND_Y, 0x2C0 + 2);
 }
 

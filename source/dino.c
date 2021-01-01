@@ -78,7 +78,19 @@ void update() {
 }
 
 void updateHorizon() {
-	horizonState->scroll += gameState->speed / SPEED_POINT;
+	int scrolled = gameState->speed / SPEED_POINT;
+	horizonState->scroll += scrolled;
+	horizonState->scrolled += scrolled;
+	
+	if (horizonState->scrolled >= TILE_SIZE) {
+		updateHorizonTile(horizonState->nextScrollTile, false);
+
+		horizonState->scrolled %= TILE_SIZE;
+		horizonState->nextScrollTile += 1;
+		horizonState->nextScrollTile %= BG_TILE_LENGTH;
+	}
+
+
 	REG_BG0HOFS = horizonState->scroll;
 }
 
@@ -87,7 +99,7 @@ void updateDistanceMeter(int distance) {
 }
 
 int distanceConvert(int distance) {
-	return distance / 40;
+	return distance / 40; // (* 0.025)
 }
 
 void input() {

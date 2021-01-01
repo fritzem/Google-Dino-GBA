@@ -75,6 +75,11 @@ INLINE int numToSI(int x) {return num0_SI + (x * 0x2);}
 
 #define blankTile_SI 0x359
 #define transparent_SI 0xA
+#define GROUND_Y 19
+#define TERRAIN_STRIP_LENGTH 75
+
+#define TILE_SIZE 8
+#define BG_TILE_LENGTH 32
 
 //Metasprite structs
 
@@ -203,6 +208,7 @@ void assembleSets();
 //Background helpers
 void whiteOutBG();
 void backgroundInit();
+void updateHorizonTile(int index, bool bumpy);
 
 
 #endif

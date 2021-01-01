@@ -22,6 +22,7 @@
 #define RUN_FRAME 5
 #define DUCK_FRAME 8
 
+
 #define JUMP_HIT (key_hit(KEY_A) || key_hit(KEY_UP))
 #define JUMP_RELEASED (key_released(KEY_A) || key_released(KEY_UP))
 #define DINO_ANIMATING ((dinoState->status == RUNNING) || dinoState->status == DUCKING)
@@ -87,12 +88,16 @@ enum dinoStatus{CRASHED, DUCKING, JUMPING, RUNNING, WAITING};
 
 typedef struct HORIZON_STATE {
 	int scroll;
+	int nextScrollTile;
+	int scrolled;
 } HORIZON_STATE, HORIZON_STATE;
 
 extern HORIZON_STATE *horizonState;
 
 INLINE void initHorizon(HORIZON_STATE * horizon) {
 	horizon->scroll = 0;
+	horizon->nextScrollTile = 31;
+	horizon->scrolled = 0;
 }
 
 typedef struct DINO_STATE {
