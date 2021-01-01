@@ -9,6 +9,7 @@ OBJ_AFFINE *obj_aff_buffer= (OBJ_AFFINE*)obj_buffer;
 
 GAME_STATE *gameState;
 DINO_STATE *dinoState;
+HORIZON_STATE *horizonState;
 
 const int animRun[] = {dinoFeet1_SI, dinoFeet2_SI};
 const int animDuc[] = {dinoCrouchFeet0_SI, dinoCrouchFeet1_SI};
@@ -16,17 +17,13 @@ const int animDuc[] = {dinoCrouchFeet0_SI, dinoCrouchFeet1_SI};
 int main()
 {	
 	init();
-	int test = 0;
+
   while(1) {
   	vid_vsync();
   	
     input();
     update();
 
-    if (key_is_down(KEY_A)) {
-    	test++;
-    }
-    REG_BG0HOFS = test;
 
   	oam_copy(oam_mem, obj_buffer, 64);
   }
@@ -35,36 +32,58 @@ int main()
 
 void update() {
 	if (dinoState->status == JUMPING)
-		updateJump();
-
-	if (gameState->playingIntro) {
-		gameState->curtainScroll -= 8;
-
-		if (gameState->curtainScroll <= 256) {
-			gameState->curtainScroll = 256;
-			gameState->playingIntro = false;
-		}
-		REG_BG1HOFS = gameState->curtainScroll;
-	} else if (gameState->playing) {
-
-
-	}
-
+			updateJump();
 	if (gameState->playing) {
+
+		//If 3 second grace period expires, spawn obstacles
+		//Accounts for overflow if you somehow make it 400 or so days
+		gameState->runningFrames += 1;
+		gameState->spawnObstacles = (gameState->runningFrames > CLEAR_FRAMES) 
+				| gameState->spawnObstacles; 
+
+		if (gameState->playingIntro) {
+			gameState->curtainScroll -= 8;
+			if (gameState->curtainScroll <= 256) {
+				gameState->curtainScroll = 256;
+				gameState->playingIntro = false;
+			}
+			REG_BG1HOFS = gameState->curtainScroll;
+		} else {
+			updateHorizon();
+		}
+
+		bool collision = false;
+
+		if (!collision) {
+			addPoint(gameState->speed, &gameState->distanceRan, &gameState->distanceRanPoint);
+
+			if (gameState->speed < SPEED_MAX)
+				gameState->speed += ACCELERATION;
+		}
+
+
+
+		//updateGraphics()??
 		dinoState->frameCounter += 1;
-
-
-
 		if ((DINO_ANIMATING) && (dinoState->frameCounter >= dinoState->frameTime)) {
 			dinoState->frame = dinoState->frame == 1 ? 0 : 1;
 			dinoState->frameCounter = 0;
 		}
-
+		if (DINO_ANIMATING) setDinoAnim(dinoSet, dinoState->animSI[dinoState->frame]);
 	}
 
 
-	if (DINO_ANIMATING) setDinoAnim(dinoSet, dinoState->animSI[dinoState->frame]);
+	
 	dinoGraphicsUpdate(dinoSet);
+}
+
+void updateHorizon() {
+	horizonState->scroll += gameState->speed / SPEED_POINT;
+	REG_BG0HOFS = horizonState->scroll;
+}
+
+void updateDistanceMeter() {
+	
 }
 
 void input() {
@@ -204,6 +223,17 @@ void initGame() {
 	initState(gameState);
 	dinoState = malloc(sizeof(DINO_STATE));
 	initDino(dinoState);
+	horizonState = malloc(sizeof(HORIZON_STATE));
+	initHorizon(horizonState);
+}
+
+void addPoint(int add, int *base, int *point) {
+	*base += add / SPEED_POINT;
+	*point += add % SPEED_POINT;
+	if (*point / SPEED_POINT) {
+		*base += *point / SPEED_POINT;
+		*point = *point % SPEED_POINT;
+	}
 }
 
 //bitmap display

@@ -1,11 +1,22 @@
 #ifndef DINO_H
 #define DINO_H
 
+#define SPEED 2880
+//6000
+#define SPEED_MAX 6240
+//13000
+#define ACCELERATION 1 
+//0.001
+#define SPEED_POINT 1000
+
 #define INITIAL_JUMP_VELOCITY 100
 #define DROP_VELOCITY -50
 #define SPEED_DROP_COEFFICIENT 3
 #define MIN_JUMP_HEIGHT 30
 #define GRAVITY -6
+
+#define CLEAR_FRAMES 180
+
 #define STARTING_CURTAIN_SCROLL 468
 
 #define RUN_FRAME 5
@@ -19,6 +30,9 @@ extern OBJ_ATTR obj_buffer[];
 extern OBJ_AFFINE *obj_aff_buffer;
 
 void update();
+
+void updateHorizon();
+void updateDistanceMeter();
 
 void input();
 void dinoJump();
@@ -34,11 +48,19 @@ void initMem();
 void initGraphics();
 void initGame();
 
+void addPoint(int add, int *base, int *point);
+
 
 
 typedef struct GAME_STATE {
 	int speed;
 	int curtainScroll;
+
+	int distanceRan;
+	int distanceRanPoint;
+
+	int runningFrames;
+	bool spawnObstacles;
 
 	bool playing;
 	bool playingIntro;
@@ -47,13 +69,30 @@ typedef struct GAME_STATE {
 extern GAME_STATE *gameState;
 
 INLINE void initState(GAME_STATE * state) {
-	state->speed = 0;
+	state->speed = SPEED;
+	state->curtainScroll = STARTING_CURTAIN_SCROLL;
+	state->distanceRan = 0;
+	state->distanceRanPoint = 0;
+
+	state->runningFrames = 0;
+	state->spawnObstacles = false;
+
 	state->playing = false;
 	state->playingIntro = false;
-	state->curtainScroll = STARTING_CURTAIN_SCROLL;
+	
 }
 
 enum dinoStatus{CRASHED, DUCKING, JUMPING, RUNNING, WAITING};
+
+typedef struct HORIZON_STATE {
+	int scroll;
+} HORIZON_STATE, HORIZON_STATE;
+
+extern HORIZON_STATE *horizonState;
+
+INLINE void initHorizon(HORIZON_STATE * horizon) {
+	horizon->scroll = 0;
+}
 
 typedef struct DINO_STATE {
 	int xPos;
