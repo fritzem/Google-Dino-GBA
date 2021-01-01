@@ -52,7 +52,7 @@ void update() {
 			updateHorizon();
 		}
 
-		bool collision = false;
+		bool collision = false; //didDinoHitSomethingUhhh();
 
 		if (!collision) {
 			addPoint(gameState->speed, &gameState->distanceRan, &gameState->distanceRanPoint);
@@ -61,7 +61,7 @@ void update() {
 				gameState->speed += ACCELERATION;
 		}
 
-
+		updateDistanceMeter((gameState->distanceRan) + ((gameState->distanceRanPoint) ? 1 : 0));
 
 		//updateGraphics()??
 		dinoState->frameCounter += 1;
@@ -82,8 +82,12 @@ void updateHorizon() {
 	REG_BG0HOFS = horizonState->scroll;
 }
 
-void updateDistanceMeter() {
-	
+void updateDistanceMeter(int distance) {
+	setNumValue(scoreSet, distanceConvert(distance));
+}
+
+int distanceConvert(int distance) {
+	return distance / 40;
 }
 
 void input() {

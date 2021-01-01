@@ -32,7 +32,7 @@ extern OBJ_AFFINE *obj_aff_buffer;
 void update();
 
 void updateHorizon();
-void updateDistanceMeter();
+void updateDistanceMeter(int distance);
 
 void input();
 void dinoJump();
@@ -49,6 +49,7 @@ void initGraphics();
 void initGame();
 
 void addPoint(int add, int *base, int *point);
+int distanceConvert(int distance);
 
 
 
@@ -124,5 +125,9 @@ INLINE void initDino(DINO_STATE * dino) {
 	dino->frameCounter = 0;
 	dino->frameTime = 0;
 }
+
+typedef struct METER_STATE {
+
+} METER_STATE, METER_STATE;
 
 #endif
