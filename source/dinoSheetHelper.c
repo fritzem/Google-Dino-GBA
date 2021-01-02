@@ -237,11 +237,18 @@ void backgroundInit() {
 	REG_BG1HOFS = STARTING_CURTAIN_SCROLL;
 
 	for (int i = 0; i < 31; i++) {
-		se_plot(&se_mem[31][0], i, GROUND_Y, 0x2C0 + i);
+		se_plot(&se_mem[31][0], i, GROUND_Y, firstTerrain_SI + i);
 	}
 }
 
-void updateHorizonTile(int index, bool bumpy) {
-	se_plot(&se_mem[31][0], index, GROUND_Y, 0x2C0 + 2);
+void updateHorizonTile(int bg_index, int terrainIndex, bool bumpy) {
+	int top_SI = blankTile_SI;
+	if (bumpy && (terrainIndex == 16 || terrainIndex == 17 
+			|| (terrainIndex >= 56 && terrainIndex <= 61))) {
+		top_SI = firstTerrain_SI + terrainIndex + BUMPY_TOP_OFFSET;
+		terrainIndex += BUMPY_OFFSET;
+	}
+	se_plot(&se_mem[31][0], bg_index, GROUND_Y - 1, top_SI);
+	se_plot(&se_mem[31][0], bg_index, GROUND_Y, firstTerrain_SI + terrainIndex);
 }
 

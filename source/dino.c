@@ -83,7 +83,12 @@ void updateHorizon() {
 	horizonState->scrolled += scrolled;
 	
 	if (horizonState->scrolled >= TILE_SIZE) {
-		updateHorizonTile(horizonState->nextScrollTile, false);
+
+		horizonState->terrainScroll += 1;
+		if (horizonState->terrainScroll / TERRAIN_STRIP_LENGTH) horizonState->bumpy = randomBool();
+		horizonState->terrainScroll %= TERRAIN_STRIP_LENGTH;
+
+		updateHorizonTile(horizonState->nextScrollTile, horizonState->terrainScroll, horizonState->bumpy);
 
 		horizonState->scrolled %= TILE_SIZE;
 		horizonState->nextScrollTile += 1;
@@ -250,6 +255,10 @@ void addPoint(int add, int *base, int *point) {
 		*base += *point / SPEED_POINT;
 		*point = *point % SPEED_POINT;
 	}
+}
+
+bool randomBool() {
+	return true;
 }
 
 //bitmap display

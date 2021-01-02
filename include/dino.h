@@ -51,7 +51,7 @@ void initGame();
 
 void addPoint(int add, int *base, int *point);
 int distanceConvert(int distance);
-
+bool randomBool();
 
 
 typedef struct GAME_STATE {
@@ -90,6 +90,8 @@ typedef struct HORIZON_STATE {
 	int scroll;
 	int nextScrollTile;
 	int scrolled;
+	int terrainScroll;
+	bool bumpy;
 } HORIZON_STATE, HORIZON_STATE;
 
 extern HORIZON_STATE *horizonState;
@@ -98,6 +100,8 @@ INLINE void initHorizon(HORIZON_STATE * horizon) {
 	horizon->scroll = 0;
 	horizon->nextScrollTile = 31;
 	horizon->scrolled = 0;
+	horizon->terrainScroll = 31;
+	horizon->bumpy = false;
 }
 
 typedef struct DINO_STATE {

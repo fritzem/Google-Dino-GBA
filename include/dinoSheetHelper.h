@@ -75,8 +75,12 @@ INLINE int numToSI(int x) {return num0_SI + (x * 0x2);}
 
 #define blankTile_SI 0x359
 #define transparent_SI 0xA
+#define firstTerrain_SI 0x2C0
+
 #define GROUND_Y 19
 #define TERRAIN_STRIP_LENGTH 75
+#define BUMPY_OFFSET 96
+#define BUMPY_TOP_OFFSET 64
 
 #define TILE_SIZE 8
 #define BG_TILE_LENGTH 32
@@ -208,7 +212,7 @@ void assembleSets();
 //Background helpers
 void whiteOutBG();
 void backgroundInit();
-void updateHorizonTile(int index, bool bumpy);
+void updateHorizonTile(int bg_index, int terrainIndex, bool bumpy);
 
 
 #endif
