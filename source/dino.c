@@ -31,6 +31,7 @@ int main()
 }
 
 void update() {
+
 	if (dinoState->status == JUMPING)
 			updateJump();
 	if (gameState->playing) {
@@ -70,6 +71,8 @@ void update() {
 			dinoState->frameCounter = 0;
 		}
 		if (DINO_ANIMATING) setDinoAnim(dinoSet, dinoState->animSI[dinoState->frame]);
+	} else {
+		gameState->randoFrames += 1;
 	}
 
 
@@ -168,6 +171,7 @@ void updateJump() {
 			gameState->playingIntro = true;
 			gameState->playing = true;
 			dinoState->jumped = true;
+			sqran(gameState->randoFrames);
 		}
 	}
 
@@ -258,7 +262,7 @@ void addPoint(int add, int *base, int *point) {
 }
 
 bool randomBool() {
-	return true;
+	return ((qran_range(0, 1000) > 500) ? true : false);
 }
 
 //bitmap display

@@ -62,6 +62,7 @@ typedef struct GAME_STATE {
 	int distanceRanPoint;
 
 	int runningFrames;
+	int randoFrames;
 	bool spawnObstacles;
 
 	bool playing;
@@ -77,6 +78,7 @@ INLINE void initState(GAME_STATE * state) {
 	state->distanceRanPoint = 0;
 
 	state->runningFrames = 0;
+	state->randoFrames = 0;
 	state->spawnObstacles = false;
 
 	state->playing = false;
