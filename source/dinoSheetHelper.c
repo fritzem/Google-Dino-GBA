@@ -252,6 +252,7 @@ void backgroundInit() {
 void updateHorizonTile(int bg_index, int terrainIndex, bool bumpy) {
 	int top_SI = blankTile_SI;
 	if (bumpy && (terrainIndex == 16 || terrainIndex == 17 
+			|| terrainIndex == 20 || terrainIndex == 21
 			|| (terrainIndex >= 56 && terrainIndex <= 61))) {
 		top_SI = firstTerrain_SI + terrainIndex + BUMPY_TOP_OFFSET;
 		terrainIndex += BUMPY_OFFSET;
