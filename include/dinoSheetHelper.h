@@ -10,7 +10,8 @@
 #define replaySI 0x0
 #define replayTailSI 0x0
 
-#define cloudSI 0x4
+#define cloudLeftSI 0x4
+#define cloudRightSI 0x8
 
 #define smallCactusSingleSI 0xA
 #define smallCactusDoubleSI 0xA
@@ -85,6 +86,8 @@ INLINE int numToSI(int x) {return num0_SI + (x * 0x2);}
 #define TILE_SIZE 8
 #define BG_TILE_LENGTH 32
 
+#define CLOUD_WIDTH 48
+
 //Metasprite structs
 
 typedef struct REPLAY_OBJ_SET {
@@ -136,12 +139,7 @@ typedef struct CLOUD_OBJ_SET {
 	OBJ_ATTR* cloudR;
 } CLOUD_OBJ_SET, CLOUD_OBJ_SET;
 
-extern CLOUD_OBJ_SET *cloudSet0;
-extern CLOUD_OBJ_SET *cloudSet1;
-extern CLOUD_OBJ_SET *cloudSet2;
-extern CLOUD_OBJ_SET *cloudSet3;
-extern CLOUD_OBJ_SET *cloudSet4;
-extern CLOUD_OBJ_SET *cloudSet5;
+extern CLOUD_OBJ_SET * clouds;
 
 typedef struct MOON_OBJ_SET {
 	OBJ_ATTR* moonChunk0;
@@ -205,6 +203,8 @@ void setDinoUpright(DINO_OBJ_SET *set);
 void setDinoDucking(DINO_OBJ_SET *set);
 void setDinoCrashed(DINO_OBJ_SET *set);
 
+CLOUD_OBJ_SET *createCloudSets(OBJ_ATTR *index);
+void setCloudPos(CLOUD_OBJ_SET *set, int x, int y);
 
 void initSets();
 void assembleSets();

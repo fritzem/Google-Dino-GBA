@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include "dinoSheetHelper.h"
 #include "dino.h"
 #include "tonc.h"
@@ -9,12 +10,7 @@ NUM_OBJ_SET *hiScoreSet;
 HI_OBJ_SET *hiSet;
 NUM_OBJ_SET *scoreSet;
 DINO_OBJ_SET *dinoSet;
-CLOUD_OBJ_SET *cloudSet0;
-CLOUD_OBJ_SET *cloudSet1;
-CLOUD_OBJ_SET *cloudSet2;
-CLOUD_OBJ_SET *cloudSet3;
-CLOUD_OBJ_SET *cloudSet4;
-CLOUD_OBJ_SET *cloudSet5;
+CLOUD_OBJ_SET *clouds;
 MOON_OBJ_SET *moonSet;
 STAR_OBJ_SET *starSet0;
 STAR_OBJ_SET *starSet1;
@@ -191,6 +187,23 @@ void setDinoCrashed(DINO_OBJ_SET *set) {
 
 }
 
+//Give an index, twelve entries total are used
+CLOUD_OBJ_SET *createCloudSets(OBJ_ATTR *index) {
+	CLOUD_OBJ_SET* clouds = malloc(2 * MAX_CLOUDS * sizeof(CLOUD_OBJ_SET));
+	for (int i = 0; i < MAX_CLOUDS * 2; i += 2) {
+		(clouds + (i / 2))->cloudL =
+			obj_set_attr(index + i, ATTR0_WIDE, ATTR1_SIZE_32 | ATTR1_X(SCREEN_WIDTH), cloudLeftSI | ATTR2_PALBANK(0));
+		(clouds + (i / 2))->cloudR =
+			obj_set_attr(index + i + 1, ATTR0_SQUARE, ATTR1_SIZE_16 | ATTR1_X(SCREEN_WIDTH), cloudRightSI | ATTR2_PALBANK(0));
+	}
+	return clouds;
+}
+
+void setCloudPos(CLOUD_OBJ_SET *set, int x, int y) {
+	obj_set_pos(set->cloudL, x, y);
+	obj_set_pos(set->cloudR, x + 32, y);
+}
+
 void initSets() {
   replaySet = createReplaySet(&obj_buffer[0],&obj_buffer[1]);
 	birdSet0 = createBirdSet(&obj_buffer[2],&obj_buffer[3]);
@@ -199,12 +212,7 @@ void initSets() {
 	hiSet = createHiSet(&obj_buffer[11], &obj_buffer[12]);
 	scoreSet = createNumSet(&obj_buffer[13]);
 	dinoSet = createDinoSet(&obj_buffer[18]);
-	//cloudSet0
-	//cloudSet1
-	//cloudSet2
-	//cloudSet3
-	//cloudSet4
-	//cloudSet5
+	clouds = createCloudSets(&obj_buffer[22]);
 	//moonSet
 	//starSet0
 	//starSet1

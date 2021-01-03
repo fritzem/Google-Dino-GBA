@@ -85,6 +85,7 @@ void updateHorizon() {
 	horizonState->scroll += scrolled;
 	horizonState->scrolled += scrolled;
 	
+	//horizon terrain
 	if (horizonState->scrolled >= TILE_SIZE) {
 
 		horizonState->terrainScroll += 1;
@@ -98,12 +99,53 @@ void updateHorizon() {
 		horizonState->nextScrollTile %= BG_TILE_LENGTH;
 	}
 
+	//clouds
+	if (horizonState->cloudCount) {
+		int tempCursor = horizonState->cloudCursor;
+		int lastCursor = 0;
+		int preCount = horizonState->cloudCount;
+		for (int i = 0; i < preCount; i++) {
+			lastCursor = tempCursor;
+			updateCloud((horizonState->clouds) + tempCursor);
+			tempCursor = (tempCursor + 1) % MAX_CLOUDS;
+		}
+
+		if ((horizonState->cloudCount < MAX_CLOUDS && 
+				((SCREEN_WIDTH - ((horizonState->clouds + lastCursor)->xPos)) > 
+				(horizonState->clouds + lastCursor)->cloudGap)) && randomBool()) {
+			addCloud();
+		}
+	} else {
+		addCloud();
+	}
+
 
 	REG_BG0HOFS = horizonState->scroll;
 }
 
 void updateDistanceMeter(int distance) {
 	setNumValue(scoreSet, distanceConvert(distance));
+}
+
+void addCloud() {
+	int newCursor = (horizonState->cloudCursor + horizonState->cloudCount) % MAX_CLOUDS;
+	horizonState->cloudCount += 1;
+	
+
+	initCloud(((horizonState->clouds) + newCursor), newCursor);
+}
+
+void updateCloud(CLOUD * cloud) {
+	cloud->xPos -= 1;
+	setCloudPos((clouds + (cloud->cloudNum)), cloud->xPos, cloud->yPos);
+	if (!cloudVisible(cloud)) {
+		horizonState->cloudCursor = (horizonState->cloudCursor + 1) % MAX_CLOUDS;
+		horizonState->cloudCount -= 1;
+	}
+}
+
+bool cloudVisible(CLOUD * cloud) {
+	return ((cloud->xPos) > -CLOUD_WIDTH);
 }
 
 int distanceConvert(int distance) {
@@ -172,6 +214,7 @@ void updateJump() {
 			gameState->playing = true;
 			dinoState->jumped = true;
 			sqran(gameState->randoFrames);
+			addCloud();
 		}
 	}
 

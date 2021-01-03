@@ -1,6 +1,9 @@
 #ifndef DINO_H
 #define DINO_H
 
+#include <stdlib.h>
+#include "tonc.h"
+
 #define SPEED 2880
 //6000
 #define SPEED_MAX 6240
@@ -8,6 +11,12 @@
 #define ACCELERATION 1 
 //0.001
 #define SPEED_POINT 1000
+
+#define MAX_CLOUDS 6
+#define MIN_CLOUD_GAP 100
+#define MAX_CLOUD_GAP 400
+#define MIN_SKY_LEVEL 71
+#define MAX_SKY_LEVEL 30
 
 #define INITIAL_JUMP_VELOCITY 100
 #define DROP_VELOCITY -50
@@ -88,12 +97,34 @@ INLINE void initState(GAME_STATE * state) {
 
 enum dinoStatus{CRASHED, DUCKING, JUMPING, RUNNING, WAITING};
 
+typedef struct CLOUD {
+	int xPos;
+	int yPos;
+	int cloudGap;
+	int cloudNum;
+} CLOUD, CLOUD;
+
+INLINE void initCloud(CLOUD * cloud, int cloudNum) {
+	cloud->xPos = SCREEN_WIDTH;
+	cloud->yPos = qran_range(MIN_SKY_LEVEL, MAX_SKY_LEVEL);
+	cloud->cloudGap = qran_range(MIN_CLOUD_GAP, MAX_CLOUD_GAP);
+	cloud->cloudNum = cloudNum;
+}
+
+void addCloud();
+void updateCloud(CLOUD * cloud);
+bool cloudVisible(CLOUD * cloud);
+
 typedef struct HORIZON_STATE {
 	int scroll;
 	int nextScrollTile;
 	int scrolled;
 	int terrainScroll;
 	bool bumpy;
+
+	CLOUD * clouds;
+	int cloudCursor;
+	int cloudCount;
 } HORIZON_STATE, HORIZON_STATE;
 
 extern HORIZON_STATE *horizonState;
@@ -104,6 +135,11 @@ INLINE void initHorizon(HORIZON_STATE * horizon) {
 	horizon->scrolled = 0;
 	horizon->terrainScroll = 31;
 	horizon->bumpy = false;
+
+	horizon->cloudCursor = 0;
+	horizon->cloudCount = 0;
+
+	horizon->clouds = malloc(MAX_CLOUDS * sizeof(CLOUD));
 }
 
 typedef struct DINO_STATE {
