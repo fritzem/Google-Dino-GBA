@@ -213,6 +213,6 @@ void assembleSets();
 void whiteOutBG();
 void backgroundInit();
 void updateHorizonTile(int bg_index, int terrainIndex, bool bumpy);
-
+void invertPalettes();
 
 #endif

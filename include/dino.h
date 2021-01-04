@@ -41,6 +41,8 @@ extern OBJ_AFFINE *obj_aff_buffer;
 
 void update();
 
+void fadeInNight();
+void fadeOutNight();
 void updateHorizon();
 void updateDistanceMeter(int distance);
 

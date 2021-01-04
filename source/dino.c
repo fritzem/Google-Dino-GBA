@@ -22,6 +22,9 @@ int main()
   	vid_vsync();
   	
     input();
+
+    if (key_hit(KEY_L))
+    	invertPalettes();
     update();
 
 
@@ -119,8 +122,19 @@ void updateHorizon() {
 		addCloud();
 	}
 
+	//night
+
+
 
 	REG_BG0HOFS = horizonState->scroll;
+}
+
+void fadeInNight() {
+
+}
+
+void fadeOutNight() {
+
 }
 
 void updateDistanceMeter(int distance) {

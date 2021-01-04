@@ -261,3 +261,14 @@ void updateHorizonTile(int bg_index, int terrainIndex, bool bumpy) {
 	se_plot(&se_mem[31][0], bg_index, GROUND_Y, firstTerrain_SI + terrainIndex);
 }
 
+void invertPalettes() {
+	for (u16 palIndex = 1; palIndex < 8; palIndex++) {
+		int red = 31 - ((*(pal_obj_mem + palIndex) & RED_MASK) >> RED_SHIFT);
+		int green = 31 - ((*(pal_obj_mem + palIndex) & GREEN_MASK) >> GREEN_SHIFT);
+		int blue = 31 - ((*(pal_obj_mem + palIndex) & BLUE_MASK) >> BLUE_SHIFT);
+		*(pal_obj_mem + palIndex) = RGB15(red, green, blue);
+		*(pal_bg_mem + palIndex) = RGB15(red, green, blue);
+	}
+}
+
+
