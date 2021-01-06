@@ -18,6 +18,10 @@
 #define MIN_SKY_LEVEL 71
 #define MAX_SKY_LEVEL 30
 
+#define INVERT_DISTANCE 700
+#define INVERT_FRAMES 90
+#define INVERT_FADE_DURATION 720
+
 #define INITIAL_JUMP_VELOCITY 100
 #define DROP_VELOCITY -50
 #define SPEED_DROP_COEFFICIENT 3
@@ -41,8 +45,7 @@ extern OBJ_AFFINE *obj_aff_buffer;
 
 void update();
 
-void fadeInNight();
-void fadeOutNight();
+void updateNight();
 void updateHorizon();
 void updateDistanceMeter(int distance);
 
@@ -127,6 +130,10 @@ typedef struct HORIZON_STATE {
 	CLOUD * clouds;
 	int cloudCursor;
 	int cloudCount;
+
+	int invertTimer;
+	bool night;
+	bool inverting;
 } HORIZON_STATE, HORIZON_STATE;
 
 extern HORIZON_STATE *horizonState;
@@ -140,8 +147,11 @@ INLINE void initHorizon(HORIZON_STATE * horizon) {
 
 	horizon->cloudCursor = 0;
 	horizon->cloudCount = 0;
-
 	horizon->clouds = malloc(MAX_CLOUDS * sizeof(CLOUD));
+
+	horizon->night = false;
+	horizon->inverting = false;
+	horizon->invertTimer = 0;
 }
 
 typedef struct DINO_STATE {
@@ -176,7 +186,14 @@ INLINE void initDino(DINO_STATE * dino) {
 }
 
 typedef struct METER_STATE {
+	int distance;
+	int invertCounter;
 
 } METER_STATE, METER_STATE;
+
+INLINE void initMeter(METER_STATE * meter) {
+	meter->distance = 0;
+	meter->invertCounter = 0;
+}
 
 #endif

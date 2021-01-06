@@ -10,6 +10,7 @@ OBJ_AFFINE *obj_aff_buffer= (OBJ_AFFINE*)obj_buffer;
 GAME_STATE *gameState;
 DINO_STATE *dinoState;
 HORIZON_STATE *horizonState;
+METER_STATE *meterState;
 
 const int animRun[] = {dinoFeet1_SI, dinoFeet2_SI};
 const int animDuc[] = {dinoCrouchFeet0_SI, dinoCrouchFeet1_SI};
@@ -66,6 +67,7 @@ void update() {
 		}
 
 		updateDistanceMeter((gameState->distanceRan) + ((gameState->distanceRanPoint) ? 1 : 0));
+		updateNight();
 
 		//updateGraphics()??
 		dinoState->frameCounter += 1;
@@ -123,22 +125,33 @@ void updateHorizon() {
 	}
 
 	//night
-
+	if (horizonState->inverting) {
+		
+	}
 
 
 	REG_BG0HOFS = horizonState->scroll;
 }
 
-void fadeInNight() {
-
-}
-
-void fadeOutNight() {
-
+void updateNight() {
+	if (!(horizonState->night) && meterState->invertCounter >= INVERT_FRAMES) {
+		meterState->invertCounter -= INVERT_FRAMES;
+		horizonState->night = true;
+		horizonState->inverting = true;
+	} else if ((horizonState->night) && horizonState->invertTimer >= INVERT_FADE_DURATION) {
+		horizonState->invertTimer = 0;
+		horizonState->night = false;
+		horizonState->inverting = false;
+	} else {
+		horizonState->invertTimer += 1;
+	}
 }
 
 void updateDistanceMeter(int distance) {
-	setNumValue(scoreSet, distanceConvert(distance));
+	int trueDistance = distanceConvert(distance);
+	meterState->invertCounter += (trueDistance - meterState->distance);
+	meterState->distance = trueDistance;
+	setNumValue(scoreSet, trueDistance);
 }
 
 void addCloud() {
@@ -307,6 +320,8 @@ void initGame() {
 	initDino(dinoState);
 	horizonState = malloc(sizeof(HORIZON_STATE));
 	initHorizon(horizonState);
+	meterState = malloc(sizeof(METER_STATE));
+	initMeter(meterState);
 }
 
 void addPoint(int add, int *base, int *point) {
