@@ -24,8 +24,6 @@ int main()
   	
     input();
 
-    if (key_hit(KEY_L))
-    	invertPalettes();
     update();
 
 
@@ -126,7 +124,14 @@ void updateHorizon() {
 
 	//night
 	if (horizonState->inverting) {
-		
+		horizonState->invertFrame += 1;
+		bool invertOver = horizonState->invertFrame >= INVERT_FRAMES;
+		inversionUpdate(horizonState->night, invertOver);
+
+		if (invertOver) {
+			horizonState->inverting = false;
+			horizonState->invertFrame = 0;
+		}
 	}
 
 
@@ -134,15 +139,15 @@ void updateHorizon() {
 }
 
 void updateNight() {
-	if (!(horizonState->night) && meterState->invertCounter >= INVERT_FRAMES) {
-		meterState->invertCounter -= INVERT_FRAMES;
+	if (!(horizonState->night) && meterState->invertCounter >= INVERT_DISTANCE) {
+		meterState->invertCounter -= INVERT_DISTANCE;
 		horizonState->night = true;
 		horizonState->inverting = true;
 	} else if ((horizonState->night) && horizonState->invertTimer >= INVERT_FADE_DURATION) {
 		horizonState->invertTimer = 0;
 		horizonState->night = false;
-		horizonState->inverting = false;
-	} else {
+		horizonState->inverting = true;
+	} else if (horizonState->night) {
 		horizonState->invertTimer += 1;
 	}
 }

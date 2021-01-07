@@ -17,6 +17,7 @@ STAR_OBJ_SET *starSet1;
 OBSTACLE_OBJ_SET *obstacleSet0;
 OBSTACLE_OBJ_SET *obstacleSet1;
 GAMEOVER_OBJ_SET *gameoverSet;
+PALETTE_TRACKER *trackers;
 
 //Metasprite helper methods
 
@@ -219,6 +220,7 @@ void initSets() {
 	//obstacleSet0
 	//obstacleSet1
 	//gameoverSet
+	trackers = createTrackers();
 }
 
 void assembleSets() {
@@ -271,4 +273,67 @@ void invertPalettes() {
 	}
 }
 
+PALETTE_TRACKER *createTrackers() {
+	PALETTE_TRACKER* trackers = malloc(8 * sizeof(PALETTE_TRACKER));
+	for (u16 palIndex = 1; palIndex < 8; palIndex++) {
+		(trackers + palIndex)->maxRed = ((*(pal_obj_mem + palIndex) & RED_MASK) >> RED_SHIFT);
+		(trackers + palIndex)->minRed = 31 - ((*(pal_obj_mem + palIndex) & RED_MASK) >> RED_SHIFT);
+		(trackers + palIndex)->curRed = ((*(pal_obj_mem + palIndex) & RED_MASK) >> RED_SHIFT) * PALETTE_POINT;
+		(trackers + palIndex)->incRed = ((trackers + palIndex)->minRed - (trackers + palIndex)->maxRed) * PALETTE_POINT / INVERT_FRAMES;
 
+		(trackers + palIndex)->maxGreen = ((*(pal_obj_mem + palIndex) & GREEN_MASK) >> GREEN_SHIFT);
+		(trackers + palIndex)->minGreen = 31 - ((*(pal_obj_mem + palIndex) & GREEN_MASK) >> GREEN_SHIFT);
+		(trackers + palIndex)->curGreen = ((*(pal_obj_mem + palIndex) & GREEN_MASK) >> GREEN_SHIFT) * PALETTE_POINT;
+		(trackers + palIndex)->incGreen = ((trackers + palIndex)->minGreen - (trackers + palIndex)->maxGreen) * PALETTE_POINT / INVERT_FRAMES;
+
+		(trackers + palIndex)->maxBlue = ((*(pal_obj_mem + palIndex) & BLUE_MASK) >> BLUE_SHIFT);
+		(trackers + palIndex)->minBlue = 31 - ((*(pal_obj_mem + palIndex) & BLUE_MASK) >> BLUE_SHIFT);
+		(trackers + palIndex)->curBlue = ((*(pal_obj_mem + palIndex) & BLUE_MASK) >> BLUE_SHIFT) * PALETTE_POINT;
+		(trackers + palIndex)->incBlue = ((trackers + palIndex)->minBlue - (trackers + palIndex)->maxBlue) * PALETTE_POINT / INVERT_FRAMES;
+	}
+	return trackers;
+}
+
+void inversionUpdate(bool night, bool invertOver) {
+	if (invertOver) {
+		int red = 0;
+		int green = 0;
+		int blue = 0;
+		for (u16 palIndex = 1; palIndex < 8; palIndex++) {
+			if (night) {
+				red = (trackers + palIndex)->minRed;
+				green = (trackers + palIndex)->minGreen;
+				blue = (trackers + palIndex)->minBlue;
+			} else {
+				red = (trackers + palIndex)->maxRed;
+				green = (trackers + palIndex)->maxGreen;
+				blue = (trackers + palIndex)->maxBlue;
+			}
+			*(pal_obj_mem + palIndex) = RGB15(red, green, blue);
+			*(pal_bg_mem + palIndex) = RGB15(red, green, blue);
+		}
+	} else if (night) {
+		for (u16 palIndex = 1; palIndex < 8; palIndex++) {
+			(trackers + palIndex)->curRed += (trackers + palIndex)->incRed;
+			(trackers + palIndex)->curGreen += (trackers + palIndex)->incGreen;
+			(trackers + palIndex)->curBlue += (trackers + palIndex)->incBlue;
+			int red = (trackers + palIndex)->curRed / PALETTE_POINT;
+			int green = (trackers + palIndex)->curGreen / PALETTE_POINT;
+			int blue = (trackers + palIndex)->curBlue / PALETTE_POINT;
+			*(pal_obj_mem + palIndex) = RGB15(red, green, blue);
+			*(pal_bg_mem + palIndex) = RGB15(red, green, blue);
+		}
+	} else {
+		for (u16 palIndex = 1; palIndex < 8; palIndex++) {
+			(trackers + palIndex)->curRed -= (trackers + palIndex)->incRed;
+			(trackers + palIndex)->curGreen -= (trackers + palIndex)->incGreen;
+			(trackers + palIndex)->curBlue -= (trackers + palIndex)->incBlue;
+			int red = (trackers + palIndex)->curRed / PALETTE_POINT;
+			int green = (trackers + palIndex)->curGreen / PALETTE_POINT;
+			int blue = (trackers + palIndex)->curBlue / PALETTE_POINT;
+			*(pal_obj_mem + palIndex) = RGB15(red, green, blue);
+			*(pal_bg_mem + palIndex) = RGB15(red, green, blue);
+		}
+	}
+	
+}

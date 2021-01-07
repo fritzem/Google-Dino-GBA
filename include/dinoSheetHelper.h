@@ -88,6 +88,8 @@ INLINE int numToSI(int x) {return num0_SI + (x * 0x2);}
 
 #define CLOUD_WIDTH 48
 
+#define PALETTE_POINT 1000
+
 //Metasprite structs
 
 typedef struct REPLAY_OBJ_SET {
@@ -179,6 +181,25 @@ typedef struct GAMEOVER_OBJ_SET {
 
 extern GAMEOVER_OBJ_SET *gameoverSet;
 
+typedef struct PALETTE_TRACKER {
+	u8 minRed;
+	u8 maxRed;
+	int curRed;
+	int incRed;
+
+	u8 minGreen;
+	u8 maxGreen;
+	int curGreen;
+	int incGreen;
+
+	u8 minBlue;
+	u8 maxBlue;
+	int curBlue;
+	int incBlue;
+} PALETTE_TRACKER, PALETTE_TRACKER;
+
+extern PALETTE_TRACKER *paletteTrackers;
+
 //Metasprite struct manipulators
 REPLAY_OBJ_SET *createReplaySet(OBJ_ATTR *obj, OBJ_ATTR *obj2);
 void toggleReplayHide(REPLAY_OBJ_SET *set);
@@ -214,5 +235,7 @@ void whiteOutBG();
 void backgroundInit();
 void updateHorizonTile(int bg_index, int terrainIndex, bool bumpy);
 void invertPalettes();
+void inversionUpdate(bool night, bool invertOver);
+PALETTE_TRACKER *createTrackers();
 
 #endif

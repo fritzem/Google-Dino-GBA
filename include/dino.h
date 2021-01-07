@@ -132,6 +132,7 @@ typedef struct HORIZON_STATE {
 	int cloudCount;
 
 	int invertTimer;
+	int invertFrame;
 	bool night;
 	bool inverting;
 } HORIZON_STATE, HORIZON_STATE;
@@ -152,6 +153,7 @@ INLINE void initHorizon(HORIZON_STATE * horizon) {
 	horizon->night = false;
 	horizon->inverting = false;
 	horizon->invertTimer = 0;
+	horizon->invertFrame = 0;
 }
 
 typedef struct DINO_STATE {
