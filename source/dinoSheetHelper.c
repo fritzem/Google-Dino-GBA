@@ -226,13 +226,13 @@ void setStarPos(STARS_OBJ_SET *set, int x0, int y0, int x1, int y1) {
 MOON_OBJ_SET *createMoonSet(OBJ_ATTR *index) {
 	struct MOON_OBJ_SET *set = malloc(sizeof(MOON_OBJ_SET));
 	set->moonChunk0 =
-		obj_set_attr(index, ATTR0_SQUARE, ATTR1_SIZE_32, moon0_SI | ATTR2_PALBANK(0));
+		obj_set_attr(index, ATTR0_SQUARE | ATTR0_BLEND, ATTR1_SIZE_32, moon0_SI | ATTR2_PRIO(2) | ATTR2_PALBANK(0));
 	set->moonChunk1 =
-		obj_set_attr(index + 1, ATTR0_SQUARE, ATTR1_SIZE_32 | ATTR1_VFLIP, moon0_SI | ATTR2_PALBANK(0));
+		obj_set_attr(index + 1, ATTR0_SQUARE | ATTR0_BLEND, ATTR1_SIZE_32 | ATTR1_VFLIP, moon0_SI | ATTR2_PRIO(2) | ATTR2_PALBANK(0));
 	set->moonChunk2 = 
-		obj_set_attr(index + 2, ATTR0_WIDE | ATTR0_HIDE, ATTR1_SIZE_32, fullMoonTopSI | ATTR2_PALBANK(0));
+		obj_set_attr(index + 2, ATTR0_WIDE | ATTR0_BLEND | ATTR0_HIDE, ATTR1_SIZE_32, fullMoonTopSI | ATTR2_PRIO(2) | ATTR2_PALBANK(0));
 	set->moonChunk3 = 
-		obj_set_attr(index + 3, ATTR0_SQUARE | ATTR0_HIDE, ATTR1_SIZE_32, fullMoonSI | ATTR2_PALBANK(0));
+		obj_set_attr(index + 3, ATTR0_SQUARE | ATTR0_BLEND | ATTR0_HIDE, ATTR1_SIZE_32, fullMoonSI | ATTR2_PRIO(2) | ATTR2_PALBANK(0));
 	return set;
 }
 
@@ -312,7 +312,7 @@ void assembleSets() {
   	setHiPos(hiSet, 74, 10);
   	setNumPos(scoreSet, 174, 10);
   	setDinoPos(dinoSet, 0, 0);
-  	setMoonPos(moonSet, 100, 100);
+  	setMoonPos(moonSet, SCREEN_WIDTH - 50, MOON_Y);
 }
 
 //Terrain helpers

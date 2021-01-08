@@ -148,8 +148,9 @@ void updateHorizon() {
 			horizonState->fading = false;
 	}
 
-	if (horizonState->night) {
+	if (horizonState->night || horizonState->fading) {
 		horizonState->starMov += STAR_SPEED;
+		horizonState->moonMov += MOON_SPEED;
 
 		if (horizonState->starMov >= STAR_MOVE_THRESHOLD) {
 			horizonState->starMov -= STAR_MOVE_THRESHOLD;
@@ -166,6 +167,14 @@ void updateHorizon() {
 				horizonState->star0X = SCREEN_WIDTH;
 			if (horizonState->star1X < -SCREEN_WIDTH)
 				horizonState->star1X = SCREEN_WIDTH;
+		}
+
+		if (horizonState->moonMov >= MOON_MOVE_THRESHOLD) {
+			horizonState->moonX -= 1;
+			horizonState->moonMov = 0;
+			setMoonPos(moonSet, horizonState->moonX, MOON_Y);
+		} else if (horizonState->moonX < -MOON_WIDTH) {
+			horizonState->moonX = SCREEN_WIDTH;
 		}
 	}
 	
@@ -360,7 +369,7 @@ void initGraphics() {
 	backgroundInit();
 
   //horizon layer
-  REG_BG0CNT = BG_PRIO(2) | BG_CBB(0) | BG_SBB(31) | BG_4BPP | BG_REG_32x32;
+  REG_BG0CNT = BG_PRIO(3) | BG_CBB(0) | BG_SBB(31) | BG_4BPP | BG_REG_32x32;
   //curtain layer
   REG_BG1CNT = BG_PRIO(0) | BG_CBB(0) | BG_SBB(29) | BG_4BPP | BG_REG_64x32;
 

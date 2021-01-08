@@ -21,7 +21,10 @@
 #define STAR_SPEED 3
 #define STAR_MOVE_THRESHOLD 10
 #define FADE_SKY_FRAMES 29
-
+#define MOON_Y 30
+#define MOON_SPEED 25
+#define MOON_MOVE_THRESHOLD 100
+#define MOON_WIDTH 40
 
 #define INVERT_DISTANCE 700
 #define INVERT_FRAMES 90
@@ -152,6 +155,8 @@ typedef struct HORIZON_STATE {
 	int starMov;
 
 	int moonPhase;
+	int moonX;
+	int moonMov;
 } HORIZON_STATE, HORIZON_STATE;
 
 extern HORIZON_STATE *horizonState;
@@ -181,6 +186,8 @@ INLINE void initHorizon(HORIZON_STATE * horizon) {
 	horizon->starMov = 0;
 
 	horizon->moonPhase = -1;
+	horizon->moonX = SCREEN_WIDTH - 50;
+	horizon->moonMov = 0;
 }
 
 typedef struct DINO_STATE {
