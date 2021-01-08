@@ -40,9 +40,10 @@
 #define birdFlapUpSI 0x84
 #define birdFlapTrans (birdFlapDownSI ^ birdFlapUpSI)
 
-#define star1_SI 0x46
-#define star2_SI 0x48
-#define star3_SI 0x88
+#define star0_SI 0x46
+#define star1_SI 0x48
+#define star2_SI 0x88
+INLINE int starSI(int x) {return (x == 0) ? star0_SI : (x == 1) ? star1_SI : star2_SI;}
 
 #define fullMoonTopSI 0xE8
 #define moon1_SI 0x100
@@ -152,12 +153,12 @@ typedef struct MOON_OBJ_SET {
 
 extern MOON_OBJ_SET *moonSet;
 
-typedef struct STAR_OBJ_SET {
-	OBJ_ATTR* star;
-} STAR_OBJ_SET, STAR_OBJ_SET;
+typedef struct STARS_OBJ_SET {
+	OBJ_ATTR* star0;
+	OBJ_ATTR* star1;
+} STARS_OBJ_SET, STARS_OBJ_SET;
 
-extern STAR_OBJ_SET *starSet0;
-extern STAR_OBJ_SET *starSet1;
+extern STARS_OBJ_SET *starsSet;
 
 typedef struct OBSTACLE_OBJ_SET {
 	OBJ_ATTR* obstacleChunk0;
@@ -226,6 +227,10 @@ void setDinoCrashed(DINO_OBJ_SET *set);
 
 CLOUD_OBJ_SET *createCloudSets(OBJ_ATTR *index);
 void setCloudPos(CLOUD_OBJ_SET *set, int x, int y);
+
+STARS_OBJ_SET *createStarsSet(OBJ_ATTR *index);
+void setStarTypes(STARS_OBJ_SET *set, int star0, int star1);
+void setStarPos(STARS_OBJ_SET *set, int x0, int y0, int x1, int y1);
 
 void initSets();
 void assembleSets();

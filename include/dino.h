@@ -17,6 +17,11 @@
 #define MAX_CLOUD_GAP 400
 #define MIN_SKY_LEVEL 71
 #define MAX_SKY_LEVEL 30
+#define STAR_MAX_Y 70
+#define STAR_SPEED 3
+#define STAR_MOVE_THRESHOLD 10
+#define FADE_SKY_FRAMES 29
+
 
 #define INVERT_DISTANCE 700
 #define INVERT_FRAMES 90
@@ -47,6 +52,7 @@ void update();
 
 void updateNight();
 void updateHorizon();
+void placeStars();
 void updateDistanceMeter(int distance);
 
 void input();
@@ -133,8 +139,17 @@ typedef struct HORIZON_STATE {
 
 	int invertTimer;
 	int invertFrame;
+	int fadeFrame;
+	int opacity;
 	bool night;
 	bool inverting;
+	bool fading;
+
+	int star0X;
+	int star0Y;
+	int star1X;
+	int star1Y;
+	int starMov;
 } HORIZON_STATE, HORIZON_STATE;
 
 extern HORIZON_STATE *horizonState;
@@ -152,8 +167,16 @@ INLINE void initHorizon(HORIZON_STATE * horizon) {
 
 	horizon->night = false;
 	horizon->inverting = false;
+	horizon->fading = false;
 	horizon->invertTimer = 0;
 	horizon->invertFrame = 0;
+	horizon->opacity = 0;
+
+	horizon->star0X = 0;
+	horizon->star0Y = 0;
+	horizon->star1X = 0;
+	horizon->star1Y = 0;
+	horizon->starMov = 0;
 }
 
 typedef struct DINO_STATE {

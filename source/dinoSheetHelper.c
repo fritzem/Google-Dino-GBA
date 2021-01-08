@@ -12,8 +12,7 @@ NUM_OBJ_SET *scoreSet;
 DINO_OBJ_SET *dinoSet;
 CLOUD_OBJ_SET *clouds;
 MOON_OBJ_SET *moonSet;
-STAR_OBJ_SET *starSet0;
-STAR_OBJ_SET *starSet1;
+STARS_OBJ_SET *starsSet;
 OBSTACLE_OBJ_SET *obstacleSet0;
 OBSTACLE_OBJ_SET *obstacleSet1;
 GAMEOVER_OBJ_SET *gameoverSet;
@@ -205,8 +204,27 @@ void setCloudPos(CLOUD_OBJ_SET *set, int x, int y) {
 	obj_set_pos(set->cloudR, x + 32, y);
 }
 
+STARS_OBJ_SET *createStarsSet(OBJ_ATTR *index) {
+	struct STARS_OBJ_SET *set = malloc(sizeof(STARS_OBJ_SET));
+	set->star0 =
+		obj_set_attr(index, ATTR0_SQUARE | ATTR0_BLEND, ATTR1_SIZE_16, star0_SI | ATTR2_PRIO(2) | ATTR2_PALBANK(0));
+	set->star1 =
+		obj_set_attr(index + 1, ATTR0_SQUARE | ATTR0_BLEND, ATTR1_SIZE_16, star1_SI | ATTR2_PRIO(2) |ATTR2_PALBANK(0));
+	return set;
+}
+
+void setStarTypes(STARS_OBJ_SET *set, int star0, int star1) {
+	BFN_SET(set->star0->attr2, starSI(star0), ATTR2_ID);
+	BFN_SET(set->star1->attr2, starSI(star1), ATTR2_ID);
+}
+
+void setStarPos(STARS_OBJ_SET *set, int x0, int y0, int x1, int y1) {
+	obj_set_pos(set->star0, x0, y0);
+	obj_set_pos(set->star1, x1, y1);
+}
+
 void initSets() {
-  replaySet = createReplaySet(&obj_buffer[0],&obj_buffer[1]);
+	replaySet = createReplaySet(&obj_buffer[0],&obj_buffer[1]);
 	birdSet0 = createBirdSet(&obj_buffer[2],&obj_buffer[3]);
 	birdSet1 = createBirdSet(&obj_buffer[4],&obj_buffer[5]);
 	hiScoreSet = createNumSet(&obj_buffer[6]);
@@ -214,9 +232,9 @@ void initSets() {
 	scoreSet = createNumSet(&obj_buffer[13]);
 	dinoSet = createDinoSet(&obj_buffer[18]);
 	clouds = createCloudSets(&obj_buffer[22]);
+	starsSet = createStarsSet(&obj_buffer[34]);
 	//moonSet
-	//starSet0
-	//starSet1
+	
 	//obstacleSet0
 	//obstacleSet1
 	//gameoverSet
@@ -226,12 +244,12 @@ void initSets() {
 void assembleSets() {
 	setReplayPos(replaySet, 103, 65);
 	setBirdPos(birdSet0, 280, 50);
-  setBirdPos(birdSet1, 280, 75);
-  toggleBirdFlap(birdSet1);
-  setNumPos(hiScoreSet, 107, 10);
-  setHiPos(hiSet, 74, 10);
-  setNumPos(scoreSet, 174, 10);
-  setDinoPos(dinoSet, 0, 0);
+  	setBirdPos(birdSet1, 280, 75);
+  	toggleBirdFlap(birdSet1);
+  	setNumPos(hiScoreSet, 107, 10);
+  	setHiPos(hiSet, 74, 10);
+  	setNumPos(scoreSet, 174, 10);
+  	setDinoPos(dinoSet, 0, 0);
 }
 
 //Terrain helpers

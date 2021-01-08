@@ -134,6 +134,41 @@ void updateHorizon() {
 		}
 	}
 
+	if (horizonState->fading) {
+		int truOpac = horizonState->opacity / 2;
+		REG_BLDALPHA = BLDA_BUILD(truOpac, 16 - truOpac);
+ 		REG_BLDY= BLDY_BUILD(16 - truOpac);
+
+ 		if (horizonState->night)
+ 			horizonState->opacity += 1;
+ 		else
+ 			horizonState->opacity -= 1;
+
+ 		if (horizonState->opacity == 32 || horizonState->opacity == 0)
+			horizonState->fading = false;
+	}
+
+	if (horizonState->night) {
+		horizonState->starMov += STAR_SPEED;
+
+		if (horizonState->starMov >= STAR_MOVE_THRESHOLD) {
+			horizonState->starMov -= STAR_MOVE_THRESHOLD;
+			horizonState->star0X -= 1;
+			horizonState->star1X -= 1;
+			setStarPos(starsSet,
+				horizonState->star0X,
+				horizonState->star0Y,
+				horizonState->star1X,
+				horizonState->star1Y
+			);
+		} else {
+			if (horizonState->star0X < -SCREEN_WIDTH)
+				horizonState->star0X = SCREEN_WIDTH;
+			if (horizonState->star1X < -SCREEN_WIDTH)
+				horizonState->star1X = SCREEN_WIDTH;
+		}
+	}
+	
 
 	REG_BG0HOFS = horizonState->scroll;
 }
@@ -143,13 +178,30 @@ void updateNight() {
 		meterState->invertCounter -= INVERT_DISTANCE;
 		horizonState->night = true;
 		horizonState->inverting = true;
+		horizonState->fading = true;
+		placeStars();
 	} else if ((horizonState->night) && horizonState->invertTimer >= INVERT_FADE_DURATION) {
 		horizonState->invertTimer = 0;
 		horizonState->night = false;
 		horizonState->inverting = true;
+		horizonState->fading = true;
 	} else if (horizonState->night) {
 		horizonState->invertTimer += 1;
 	}
+}
+
+void placeStars() {
+	horizonState->star0X = qran_range(0, SCREEN_WIDTH / 2);
+	horizonState->star0Y = qran_range(0, STAR_MAX_Y);
+	horizonState->star1X = qran_range(SCREEN_WIDTH / 2, SCREEN_WIDTH);
+	horizonState->star1Y = qran_range(0, STAR_MAX_Y);
+
+	setStarPos(starsSet,
+		horizonState->star0X,
+		horizonState->star0Y,
+		horizonState->star1X,
+		horizonState->star1Y
+	);
 }
 
 void updateDistanceMeter(int distance) {
@@ -307,7 +359,7 @@ void initGraphics() {
 	backgroundInit();
 
   //horizon layer
-  REG_BG0CNT = BG_PRIO(1) | BG_CBB(0) | BG_SBB(31) | BG_4BPP | BG_REG_32x32;
+  REG_BG0CNT = BG_PRIO(2) | BG_CBB(0) | BG_SBB(31) | BG_4BPP | BG_REG_32x32;
   //curtain layer
   REG_BG1CNT = BG_PRIO(0) | BG_CBB(0) | BG_SBB(29) | BG_4BPP | BG_REG_64x32;
 
@@ -316,6 +368,10 @@ void initGraphics() {
 	assembleSets();
 
   REG_DISPCNT= DCNT_OBJ | DCNT_OBJ_2D | DCNT_BG0 | DCNT_BG1;
+  REG_BLDCNT = BLD_BUILD(BLD_OBJ, BLD_BG0, BLD_STD);
+  REG_BLDALPHA = BLDA_BUILD(0, 16);
+  REG_BLDY= BLDY_BUILD(16);
+
 }
 
 void initGame() {
