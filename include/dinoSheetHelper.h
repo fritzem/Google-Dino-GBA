@@ -46,9 +46,9 @@
 INLINE int starSI(int x) {return (x == 0) ? star0_SI : (x == 1) ? star1_SI : star2_SI;}
 
 #define fullMoonTopSI 0xE8
-#define moon1_SI 0x100
-#define moon2_SI 0x104
-#define moon3_SI 0x1068
+#define moon0_SI 0x100
+#define moon1_SI 0x104
+#define moon2_SI 0x108
 #define fullMoonSI 0x10C
 
 #define num0_SI 0x8A
@@ -231,6 +231,10 @@ void setCloudPos(CLOUD_OBJ_SET *set, int x, int y);
 STARS_OBJ_SET *createStarsSet(OBJ_ATTR *index);
 void setStarTypes(STARS_OBJ_SET *set, int star0, int star1);
 void setStarPos(STARS_OBJ_SET *set, int x0, int y0, int x1, int y1);
+
+MOON_OBJ_SET *createMoonSet(OBJ_ATTR *index);
+int incrementMoonPhase(MOON_OBJ_SET *set, int currentPhase);
+void setMoonPos(MOON_OBJ_SET *set, int x, int y);
 
 void initSets();
 void assembleSets();

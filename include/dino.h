@@ -150,6 +150,8 @@ typedef struct HORIZON_STATE {
 	int star1X;
 	int star1Y;
 	int starMov;
+
+	int moonPhase;
 } HORIZON_STATE, HORIZON_STATE;
 
 extern HORIZON_STATE *horizonState;
@@ -177,6 +179,8 @@ INLINE void initHorizon(HORIZON_STATE * horizon) {
 	horizon->star1X = 0;
 	horizon->star1Y = 0;
 	horizon->starMov = 0;
+
+	horizon->moonPhase = -1;
 }
 
 typedef struct DINO_STATE {

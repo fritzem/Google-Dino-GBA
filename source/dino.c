@@ -180,6 +180,7 @@ void updateNight() {
 		horizonState->inverting = true;
 		horizonState->fading = true;
 		placeStars();
+		horizonState->moonPhase = incrementMoonPhase(moonSet, horizonState->moonPhase);
 	} else if ((horizonState->night) && horizonState->invertTimer >= INVERT_FADE_DURATION) {
 		horizonState->invertTimer = 0;
 		horizonState->night = false;
