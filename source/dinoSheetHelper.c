@@ -238,9 +238,9 @@ void setStarPos(STARS_OBJ_SET *set, int x0, int y0, int x1, int y1) {
 MOON_OBJ_SET *createMoonSet(OBJ_ATTR *index) {
 	struct MOON_OBJ_SET *set = malloc(sizeof(MOON_OBJ_SET));
 	set->moonChunk0 =
-		obj_set_attr(index, ATTR0_SQUARE | ATTR0_BLEND, ATTR1_SIZE_32, moon0_SI | ATTR2_PRIO(2) | ATTR2_PALBANK(0));
+		obj_set_attr(index, ATTR0_SQUARE | ATTR0_BLEND, ATTR1_SIZE_32 | ATTR1_HFLIP, moon1_SI | ATTR2_PRIO(2) | ATTR2_PALBANK(0));
 	set->moonChunk1 =
-		obj_set_attr(index + 1, ATTR0_SQUARE | ATTR0_BLEND, ATTR1_SIZE_32 | ATTR1_VFLIP, moon0_SI | ATTR2_PRIO(2) | ATTR2_PALBANK(0));
+		obj_set_attr(index + 1, ATTR0_SQUARE | ATTR0_BLEND, ATTR1_SIZE_32 | ATTR1_HFLIP | ATTR1_VFLIP, moon1_SI | ATTR2_PRIO(2) | ATTR2_PALBANK(0));
 	set->moonChunk2 = 
 		obj_set_attr(index + 2, ATTR0_WIDE | ATTR0_BLEND | ATTR0_HIDE, ATTR1_SIZE_32, fullMoonTopSI | ATTR2_PRIO(2) | ATTR2_PALBANK(0));
 	set->moonChunk3 = 
@@ -259,6 +259,8 @@ int incrementMoonPhase(MOON_OBJ_SET *set, int currentPhase) {
 			BFN_SET(set->moonChunk1->attr2, moon2_SI, ATTR2_ID);
 			return 2;
 		case 2:
+			BFN_SET(set->moonChunk0->attr1, 0, ATTR1_FLIP);
+			BFN_SET(set->moonChunk1->attr1, 2, ATTR1_FLIP);
 			BFN_SET(set->moonChunk0->attr0, ATTR0_TALL, ATTR0_SHAPE);
 			BFN_SET(set->moonChunk1->attr0, ATTR0_TALL, ATTR0_SHAPE);
 			set->moonChunk2->attr0 ^= attr0Visibility;
@@ -267,8 +269,6 @@ int incrementMoonPhase(MOON_OBJ_SET *set, int currentPhase) {
 		case 3:
 			BFN_SET(set->moonChunk0->attr0, ATTR0_SQUARE, ATTR0_SHAPE);
 			BFN_SET(set->moonChunk1->attr0, ATTR0_SQUARE, ATTR0_SHAPE);
-			BFN_SET(set->moonChunk0->attr1, 1, ATTR1_FLIP);
-			BFN_SET(set->moonChunk1->attr1, 3, ATTR1_FLIP);
 			set->moonChunk2->attr0 ^= attr0Visibility;
 			set->moonChunk3->attr0 ^= attr0Visibility;
 			return 4;
@@ -281,11 +281,11 @@ int incrementMoonPhase(MOON_OBJ_SET *set, int currentPhase) {
 			BFN_SET(set->moonChunk1->attr2, moon0_SI, ATTR2_ID);
 			return 6;
 		case 6:
-			BFN_SET(set->moonChunk0->attr1, 0, ATTR1_FLIP);
-			BFN_SET(set->moonChunk1->attr1, 2, ATTR1_FLIP);
+			BFN_SET(set->moonChunk0->attr1, 1, ATTR1_FLIP);
+			BFN_SET(set->moonChunk1->attr1, 3, ATTR1_FLIP);
 			return 0;
 		default:
-			return 0;
+			return 1;
 	}
 	return 0;
 }
