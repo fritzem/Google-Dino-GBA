@@ -68,6 +68,7 @@ void dinoDuck();
 
 
 void init();
+void initSound();
 void initMem();
 void initGraphics();
 void initGame();

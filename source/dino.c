@@ -1,6 +1,9 @@
 #include <string.h>
+#include <maxmod.h>
 #include "tonc.h"
 #include "dino.h"
+#include "soundbank.h"
+#include "soundbank_bin.h"
 #include "dinoSheet.h"
 #include "dinoSheetHelper.h"
 
@@ -20,8 +23,10 @@ int main()
 	init();
 
   while(1) {
+	mmFrame();
   	vid_vsync();
-  	
+  	 
+  	 
     input();
 
     update();
@@ -281,6 +286,8 @@ void dinoJump() {
 	dinoState->status = JUMPING;
 	dinoState->speedDrop = false;
 	dinoState->jumpVelocity = INITIAL_JUMP_VELOCITY; // + speed/10 ??
+
+	mmEffect(SFX_BUTTON_PRESSED);
 }
 
 void updateJump() {
@@ -352,9 +359,18 @@ void dinoDuck() {
 }
 
 void init() {
+	initSound();
 	initMem();
 	initGraphics();
 	initGame();
+}
+
+void initSound() {
+	IRQ_INIT();
+
+	irq_add(II_VBLANK, mmVBlank);
+	irq_enable(II_VBLANK);
+	mmInitDefault((mm_addr)soundbank_bin, 8);
 }
 
 void initMem() {
