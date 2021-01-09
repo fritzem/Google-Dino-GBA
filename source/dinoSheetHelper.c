@@ -107,6 +107,18 @@ void setNumValue(NUM_OBJ_SET *set, int num)
 	BFN_SET(set->num0->attr2, numToSI(val), ATTR2_ID);
 }
 
+void hideNum(NUM_OBJ_SET *set) {
+	obj_hide(set->num0);
+	obj_hide(set->num1);
+	obj_hide(set->num2);
+	obj_hide(set->num3);
+	obj_hide(set->num4);
+}
+
+void showNum(NUM_OBJ_SET *set) {
+	obj_unhide_multi(set->num0, ATTR0_REG, 5);
+}
+
 HI_OBJ_SET *createHiSet(OBJ_ATTR *obj0, OBJ_ATTR *obj1)
 {
 	struct HI_OBJ_SET *set = malloc(sizeof(HI_OBJ_SET));

@@ -36,6 +36,10 @@
 #define MIN_JUMP_HEIGHT 30
 #define GRAVITY -6
 
+#define ACHIEVEMENT_DISTANCE 100
+#define FLASH_FRAMES 15
+#define FLASH_ITERATIONS 3
+
 #define CLEAR_FRAMES 180
 
 #define STARTING_CURTAIN_SCROLL 468
@@ -56,7 +60,7 @@ void update();
 void updateNight();
 void updateHorizon();
 void placeStars();
-void updateDistanceMeter(int distance);
+bool updateDistanceMeter(int distance);
 
 void input();
 void dinoJump();
@@ -225,12 +229,19 @@ INLINE void initDino(DINO_STATE * dino) {
 typedef struct METER_STATE {
 	int distance;
 	int invertCounter;
-
+	int achievementCounter;
+	int flashFrame;
+	int flashIteration;
+	bool achieving;
 } METER_STATE, METER_STATE;
 
 INLINE void initMeter(METER_STATE * meter) {
 	meter->distance = 0;
 	meter->invertCounter = 0;
+	meter->achievementCounter = 0;
+	meter->achieving = false;
+	meter->flashFrame = 0;
+	meter->flashIteration = 0;
 }
 
 #endif

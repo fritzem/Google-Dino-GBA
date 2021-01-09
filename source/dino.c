@@ -69,7 +69,9 @@ void update() {
 				gameState->speed += ACCELERATION;
 		}
 
-		updateDistanceMeter((gameState->distanceRan) + ((gameState->distanceRanPoint) ? 1 : 0));
+		if (updateDistanceMeter((gameState->distanceRan) + ((gameState->distanceRanPoint) ? 1 : 0)))
+			mmEffect(SFX_SCORE_REACHED);
+
 		updateNight();
 
 		//updateGraphics()??
@@ -219,11 +221,41 @@ void placeStars() {
 	);
 }
 
-void updateDistanceMeter(int distance) {
+bool updateDistanceMeter(int distance) {
 	int trueDistance = distanceConvert(distance);
-	meterState->invertCounter += (trueDistance - meterState->distance);
+	int deltaDistance = (trueDistance - meterState->distance);
+	meterState->invertCounter += deltaDistance;
+	meterState->achievementCounter += deltaDistance;
 	meterState->distance = trueDistance;
-	setNumValue(scoreSet, trueDistance);
+	if (meterState->achieving) {
+		if (meterState->flashIteration <= FLASH_ITERATIONS) {
+			meterState->flashFrame += 1;
+			if (meterState->flashFrame == 1) {
+				hideNum(scoreSet);
+			} else if (meterState->flashFrame == FLASH_FRAMES * 2) {
+				meterState->flashFrame = 0;
+				meterState->flashIteration += 1;
+				showNum(scoreSet);
+			} else if (meterState->flashFrame == FLASH_FRAMES) {
+				showNum(scoreSet);
+			}
+		} else {
+			meterState->flashIteration = 0;
+			meterState->flashFrame = 0;
+			meterState->achieving = false;
+		}
+	} else {
+		if (meterState->achievementCounter >= ACHIEVEMENT_DISTANCE) {
+			meterState->achievementCounter -= ACHIEVEMENT_DISTANCE;
+			meterState->achieving = true;
+			setNumValue(scoreSet, trueDistance);
+			return true;
+		} else {
+			setNumValue(scoreSet, trueDistance);
+		}
+	}
+	
+	return false;
 }
 
 void addCloud() {

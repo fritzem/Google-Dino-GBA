@@ -213,6 +213,8 @@ void toggleBirdFlap(BIRD_OBJ_SET *set);
 NUM_OBJ_SET *createNumSet(OBJ_ATTR *index);
 void setNumPos(NUM_OBJ_SET *set, int x, int y);
 void setNumValue(NUM_OBJ_SET *set, int num);
+void hideNum(NUM_OBJ_SET *set);
+void showNum(NUM_OBJ_SET *set);
 
 HI_OBJ_SET *createHiSet(OBJ_ATTR *obj0, OBJ_ATTR *obj1);
 void setHiPos(HI_OBJ_SET *set, int x, int y);
