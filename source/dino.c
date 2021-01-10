@@ -22,19 +22,17 @@ int main()
 {	
 	init();
 
-  while(1) {
-	mmFrame();
-  	vid_vsync();
+  	while(1) {
+		mmFrame();
+  		vid_vsync();
   	 
-  	 
-    input();
+    	input();
 
-    update();
+    	update();
 
-
-  	oam_copy(oam_mem, obj_buffer, 64);
-  }
-  return 0;
+  		oam_copy(oam_mem, obj_buffer, 64);
+  	}
+  	return 0;
 }
 
 void update() {
@@ -91,7 +89,8 @@ void update() {
 }
 
 void updateHorizon() {
-	int scrolled = gameState->speed / SPEED_POINT;
+	int scrolled = (gameState->speed + horizonState->extraScroll) / SPEED_POINT ;
+	horizonState->extraScroll = (gameState->speed + horizonState->extraScroll) % SPEED_POINT;
 	horizonState->scroll += scrolled;
 	horizonState->scrolled += scrolled;
 	
@@ -184,6 +183,10 @@ void updateHorizon() {
 			horizonState->moonX = SCREEN_WIDTH;
 		}
 	}
+
+	//obstacles
+	if (gameState->spawnObstacles) 
+		updateObstacles();
 	
 
 	REG_BG0HOFS = horizonState->scroll;
@@ -219,6 +222,74 @@ void placeStars() {
 		horizonState->star1X,
 		horizonState->star1Y
 	);
+}
+
+void updateObstacles() {
+
+
+
+	if (horizonState->obstacleCount > 0) {
+
+	} else {
+		addObstacle();
+	}
+}
+
+void updateObstacle(OBSTACLE * obs) {
+	int speed = gameState->speed + obs->speedOffset;
+}
+
+void addObstacle() {
+	switch (qran_range(1,(OBSTACLE_TYPES - (gameState->speed < DACTYL_MIN_SPEED))) - 1) {
+		case CACTUS_SMALL:
+			createCactusSmall(horizonState->obstacles + horizonState->obstacleCursor);
+			break;
+		case CACTUS_LARGE:
+			createCactusLarge(horizonState->obstacles + horizonState->obstacleCursor);
+			break;
+		case PTERODACTYL:
+			createPterodactyl(horizonState->obstacles + horizonState->obstacleCursor);
+			break;
+	}
+	horizonState->obstacleCount += 1;
+	horizonState->obstacleCursor += 1;
+	if (horizonState->obstacleCursor >= OBSTACLE_TYPES)
+		horizonState->obstacleCursor = 0;
+}
+
+void createCactusSmall(OBSTACLE * obs) {
+	obs->type = 0;
+	obs->x = SCREEN_WIDTH;
+	obs->y = CACTUS_SMALL_Y;
+	obs->width = CACTUS_SMALL_WIDTH;
+	obs->height = CACTUS_SMALL_HEIGHT;
+	obs->gap = CACTUS_GAP;
+	obs->speedOffset = 0;
+	obs->visible = true;
+}
+
+void createCactusLarge(OBSTACLE * obs) {
+	obs->type = 1;
+	obs->x = SCREEN_WIDTH;
+	obs->y = CACTUS_LARGE_Y;
+	obs->width = CACTUS_LARGE_WIDTH;
+	obs->height = CACTUS_LARGE_HEIGHT;
+	obs->gap = CACTUS_GAP;
+	obs->speedOffset = 0;
+	obs->visible = true;
+}
+
+const int dactylHeights[3] = {100,75,50};
+
+void createPterodactyl(OBSTACLE * obs) {
+	obs->type = 2;
+	obs->x = SCREEN_WIDTH;
+	obs->y = dactylHeights[qran_range(0,2)];
+	obs->width = DACTYL_WIDTH;
+	obs->height = DACTYL_WIDTH;
+	obs->gap = DACTYL_WIDTH;
+	obs->speedOffset = DACTYL_SPEED_OFFSET;
+	obs->visible = true;
 }
 
 bool updateDistanceMeter(int distance) {

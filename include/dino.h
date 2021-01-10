@@ -26,6 +26,25 @@
 #define MOON_MOVE_THRESHOLD 100
 #define MOON_WIDTH 40
 
+#define OBSTACLE_TYPES 3
+#define CACTUS_SMALL 0
+#define CACTUS_LARGE 1
+#define PTERODACTYL  2
+#define MAX_OBSTACLES 2
+#define CACTUS_SMALL_Y 105
+#define CACTUS_SMALL_WIDTH 17
+#define CACTUS_SMALL_HEIGHT 35
+#define CACTUS_LARGE_Y 90
+#define CACTUS_LARGE_WIDTH 25
+#define CACTUS_LARGE_HEIGHT 50
+#define CACTUS_GAP 120
+#define DACTYL_WIDTH 46
+#define DACTYL_HEIGHT 40
+#define DACTYL_GAP 150
+#define DACTYL_FRAMES 10
+#define DACTYL_MIN_SPEED 6000
+#define DACTYL_SPEED_OFFSET 800
+
 #define INVERT_DISTANCE 700
 #define INVERT_FRAMES 90
 #define INVERT_FADE_DURATION 720
@@ -61,6 +80,8 @@ void updateNight();
 void updateHorizon();
 void placeStars();
 bool updateDistanceMeter(int distance);
+void updateObstacles();
+void addObstacle();
 
 void input();
 void dinoJump();
@@ -134,12 +155,29 @@ void addCloud();
 void updateCloud(CLOUD * cloud);
 bool cloudVisible(CLOUD * cloud);
 
+typedef struct OBSTACLE {
+	int type;
+	int x;
+	int y;
+	int width;
+	int height;
+	int gap;
+	int speedOffset;
+	bool visible;
+} OBSTACLE, OBSTACLE;
+
+void createCactusSmall(OBSTACLE * obs);
+void createCactusLarge(OBSTACLE * obs);
+void createPterodactyl(OBSTACLE * obs);
+void updateObstacle(OBSTACLE * obs);
+
 typedef struct HORIZON_STATE {
 	int scroll;
 	int nextScrollTile;
 	int scrolled;
 	int terrainScroll;
 	bool bumpy;
+	int extraScroll;
 
 	CLOUD * clouds;
 	int cloudCursor;
@@ -162,6 +200,10 @@ typedef struct HORIZON_STATE {
 	int moonPhase;
 	int moonX;
 	int moonMov;
+
+	OBSTACLE * obstacles;
+	int obstacleCount;
+	int obstacleCursor;
 } HORIZON_STATE, HORIZON_STATE;
 
 extern HORIZON_STATE *horizonState;
@@ -172,6 +214,7 @@ INLINE void initHorizon(HORIZON_STATE * horizon) {
 	horizon->scrolled = 0;
 	horizon->terrainScroll = 31;
 	horizon->bumpy = false;
+	horizon->extraScroll = 0;
 
 	horizon->cloudCursor = 0;
 	horizon->cloudCount = 0;
@@ -193,6 +236,10 @@ INLINE void initHorizon(HORIZON_STATE * horizon) {
 	horizon->moonPhase = -1;
 	horizon->moonX = SCREEN_WIDTH - 50;
 	horizon->moonMov = 0;
+
+	horizon->obstacles = malloc(MAX_OBSTACLES * sizeof(OBSTACLE));
+	horizon->obstacleCount = 0;
+	horizon->obstacleCursor = 0;
 }
 
 typedef struct DINO_STATE {
