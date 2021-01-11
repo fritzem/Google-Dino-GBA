@@ -27,16 +27,19 @@
 #define MOON_WIDTH 40
 
 #define OBSTACLE_TYPES 3
+#define MAX_OBSTACLES 2
+#define MAX_OBSTACLE_SIZE 2
 #define CACTUS_SMALL 0
 #define CACTUS_LARGE 1
 #define PTERODACTYL  2
-#define MAX_OBSTACLES 2
-#define CACTUS_SMALL_Y 105
+#define CACTUS_SMALL_Y 113
 #define CACTUS_SMALL_WIDTH 17
 #define CACTUS_SMALL_HEIGHT 35
+#define CACTUS_SMALL_MULTI_SPEED 4
 #define CACTUS_LARGE_Y 90
 #define CACTUS_LARGE_WIDTH 25
 #define CACTUS_LARGE_HEIGHT 50
+#define CACTUS_LARGE_MULTI_SPEED 6
 #define CACTUS_GAP 120
 #define DACTYL_WIDTH 46
 #define DACTYL_HEIGHT 40
@@ -63,6 +66,7 @@
 
 #define STARTING_CURTAIN_SCROLL 468
 
+#define DINO_GROUND_Y 7
 #define RUN_FRAME 5
 #define DUCK_FRAME 8
 
@@ -159,11 +163,15 @@ typedef struct OBSTACLE {
 	int type;
 	int x;
 	int y;
+	int size;
 	int width;
 	int height;
-	int gap;
+	int minGap;
+	int maxGap;
 	int speedOffset;
 	bool visible;
+
+	int extraSpeed;
 } OBSTACLE, OBSTACLE;
 
 void createCactusSmall(OBSTACLE * obs);
@@ -261,7 +269,7 @@ extern DINO_STATE *dinoState;
 
 INLINE void initDino(DINO_STATE * dino) {
 	dino->xPos = 0;
-	dino->yPos = 0;
+	dino->yPos = DINO_GROUND_Y;
 	dino->jumpVelocity = 0;
 
 	dino->status = WAITING;

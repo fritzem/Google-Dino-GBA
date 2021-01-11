@@ -79,7 +79,7 @@ INLINE int numToSI(int x) {return num0_SI + (x * 0x2);}
 #define transparent_SI 0xA
 #define firstTerrain_SI 0x2C0
 
-#define GROUND_Y 19
+#define GROUND_Y 18
 #define TERRAIN_STRIP_LENGTH 75
 #define BUMPY_OFFSET 96
 #define BUMPY_TOP_OFFSET 64
@@ -90,6 +90,17 @@ INLINE int numToSI(int x) {return num0_SI + (x * 0x2);}
 #define CLOUD_WIDTH 48
 
 #define PALETTE_POINT 1000
+
+#define TYPEM 10
+#define CACTUS_SMALL_0 0
+#define CACTUS_SMALL_1 1
+#define CACTUS_SMALL_2 2
+#define CACTUS_LARGE_0 10
+#define CACTUS_LARGE_1 11
+#define CACTUS_LARGE_2 12
+#define PTERODACTYL_0 20
+#define PTERODACTYL_1 21
+#define PTERODACTYL_2 22
 
 //Metasprite structs
 
@@ -167,8 +178,7 @@ typedef struct OBSTACLE_OBJ_SET {
 	OBJ_ATTR* obstacleChunk3;
 } OBSTACLE_OBJ_SET, OBSTACLE_OBJ_SET;
 
-extern OBSTACLE_OBJ_SET *obstacleSet0;
-extern OBSTACLE_OBJ_SET *obstacleSet1;
+extern OBSTACLE_OBJ_SET *obstacleSets;
 
 typedef struct GAMEOVER_OBJ_SET {
 	OBJ_ATTR* g;
@@ -237,6 +247,11 @@ void setStarPos(STARS_OBJ_SET *set, int x0, int y0, int x1, int y1);
 MOON_OBJ_SET *createMoonSet(OBJ_ATTR *index);
 int incrementMoonPhase(MOON_OBJ_SET *set, int currentPhase);
 void setMoonPos(MOON_OBJ_SET *set, int x, int y);
+
+OBSTACLE_OBJ_SET *createObstacleSet(OBJ_ATTR *index);
+void wipeObstacleSet(OBSTACLE_OBJ_SET *set);
+void setObstacleSet(OBSTACLE_OBJ_SET *set, int type, int size);
+void setObstaclePos(OBSTACLE_OBJ_SET *set, int type, int size, int x);
 
 void initSets();
 void assembleSets();

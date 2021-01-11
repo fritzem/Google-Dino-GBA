@@ -13,8 +13,7 @@ DINO_OBJ_SET *dinoSet;
 CLOUD_OBJ_SET *clouds;
 MOON_OBJ_SET *moonSet;
 STARS_OBJ_SET *starsSet;
-OBSTACLE_OBJ_SET *obstacleSet0;
-OBSTACLE_OBJ_SET *obstacleSet1;
+OBSTACLE_OBJ_SET *obstacleSets;
 GAMEOVER_OBJ_SET *gameoverSet;
 PALETTE_TRACKER *trackers;
 
@@ -297,6 +296,90 @@ void setMoonPos(MOON_OBJ_SET *set, int x, int y) {
 	obj_set_pos(set->moonChunk3, x + 8, y + 8);
 }
 
+OBSTACLE_OBJ_SET *createObstacleSets(OBJ_ATTR *index) {
+	OBSTACLE_OBJ_SET *set = malloc(MAX_OBSTACLES * sizeof(OBSTACLE_OBJ_SET));
+	for (int i = 0; i < MAX_OBSTACLES; i++) {
+		(set + i)->obstacleChunk0 =
+			obj_set_attr(index + i * 4, ATTR0_HIDE, 0, 0);
+		(set + i)->obstacleChunk1 =
+			obj_set_attr(index + i * 4 + 1, ATTR0_HIDE, 0, 0);
+		(set + i)->obstacleChunk2 =
+			obj_set_attr(index + i * 4 + 2, ATTR0_HIDE, 0, 0);
+		(set + i)->obstacleChunk3 =
+			obj_set_attr(index + i * 4 + 3, ATTR0_HIDE, 0, 0);
+	}
+	return set;
+}
+
+void wipeObstacleSet(OBSTACLE_OBJ_SET *set) {
+	obj_set_attr(set->obstacleChunk0, ATTR0_HIDE, 0, 0);
+	obj_set_attr(set->obstacleChunk1, ATTR0_HIDE, 0, 0);
+	obj_set_attr(set->obstacleChunk2, ATTR0_HIDE, 0, 0);
+	obj_set_attr(set->obstacleChunk3, ATTR0_HIDE, 0, 0);
+}
+
+void setObstacleSet(OBSTACLE_OBJ_SET *set, int type, int size) {
+	wipeObstacleSet(set);
+	switch (type * TYPEM + size) {
+		case CACTUS_SMALL_0:
+			obj_set_attr(set->obstacleChunk0, ATTR0_SQUARE, ATTR1_SIZE_32, smallCactusSingleSI | ATTR2_PALBANK(0));
+			obj_set_attr(set->obstacleChunk1, ATTR0_SQUARE, ATTR1_SIZE_8, smallCactusStumpSI | ATTR2_PALBANK(0));
+			break;
+		case CACTUS_SMALL_1:
+			obj_set_attr(set->obstacleChunk0, ATTR0_WIDE, ATTR1_SIZE_64, smallCactusDoubleSI | ATTR2_PALBANK(0));
+			obj_set_attr(set->obstacleChunk1, ATTR0_SQUARE, ATTR1_SIZE_8, smallCactusStumpSI | ATTR2_PALBANK(0));
+			obj_set_attr(set->obstacleChunk2, ATTR0_SQUARE, ATTR1_SIZE_8, smallCactusStumpSI | ATTR2_PALBANK(0));
+			break;
+		case CACTUS_SMALL_2:
+			obj_set_attr(set->obstacleChunk0, ATTR0_WIDE, ATTR1_SIZE_64, smallCactusTripleSI | ATTR2_PALBANK(0));
+			obj_set_attr(set->obstacleChunk1, ATTR0_SQUARE, ATTR1_SIZE_8, smallCactusStumpSI | ATTR2_PALBANK(0));
+			obj_set_attr(set->obstacleChunk2, ATTR0_SQUARE, ATTR1_SIZE_8, smallCactusStumpSI | ATTR2_PALBANK(0));
+			obj_set_attr(set->obstacleChunk3, ATTR0_SQUARE, ATTR1_SIZE_8, smallCactusStumpSI | ATTR2_PALBANK(0));
+			break;
+		case CACTUS_LARGE_0:
+			obj_set_attr(set->obstacleChunk0, ATTR0_TALL, ATTR1_SIZE_64, bigCactusSingleSI | ATTR2_PALBANK(0));
+			break;
+		case CACTUS_LARGE_1:
+			obj_set_attr(set->obstacleChunk0, ATTR0_SQUARE, ATTR1_SIZE_64, bigCactusDoubleSI | ATTR2_PALBANK(0));
+			break;
+		case CACTUS_LARGE_2:
+			obj_set_attr(set->obstacleChunk0, ATTR0_SQUARE, ATTR1_SIZE_64, bigCactusTripleSI | ATTR2_PALBANK(0));
+			obj_set_attr(set->obstacleChunk1, ATTR0_TALL, ATTR1_SIZE_64, bigCactusTripleRunoffSI | ATTR2_PALBANK(0));
+			break;
+		case PTERODACTYL_0:
+			obj_set_attr(set->obstacleChunk0, ATTR0_SQUARE, ATTR1_SIZE_16, birdBeakSI | ATTR2_PALBANK(0));
+			obj_set_attr(set->obstacleChunk1, ATTR0_SQUARE, ATTR1_SIZE_32, birdFlapUpSI | ATTR2_PALBANK(0));
+			break;
+	}
+}
+
+void setObstaclePos(OBSTACLE_OBJ_SET *set, int type, int size, int x) {
+	switch (type * TYPEM + size) {
+		case CACTUS_SMALL_0:
+			obj_set_pos(set->obstacleChunk0, x - 15, CACTUS_SMALL_Y);
+			obj_set_pos(set->obstacleChunk1, x + 5, CACTUS_SMALL_Y + 32);
+			break;
+		case CACTUS_SMALL_1:
+			obj_set_pos(set->obstacleChunk0, x - 15, CACTUS_SMALL_Y);
+			obj_set_pos(set->obstacleChunk1, x + 5, CACTUS_SMALL_Y + 32);
+			obj_set_pos(set->obstacleChunk2, x + 22, CACTUS_SMALL_Y + 32);
+			break;
+		case CACTUS_SMALL_2:
+			obj_set_pos(set->obstacleChunk0, x - 8, CACTUS_SMALL_Y);
+			obj_set_pos(set->obstacleChunk1, x + 5, CACTUS_SMALL_Y + 32);
+			obj_set_pos(set->obstacleChunk2, x + 22, CACTUS_SMALL_Y + 32);
+			obj_set_pos(set->obstacleChunk3, x + 37, CACTUS_SMALL_Y + 32);
+		case CACTUS_LARGE_0:
+			break;
+		case CACTUS_LARGE_1:
+			break;
+		case CACTUS_LARGE_2:
+			break;
+		case PTERODACTYL_0:
+			break;
+	}
+}
+
 void initSets() {
 	replaySet = createReplaySet(&obj_buffer[0],&obj_buffer[1]);
 	birdSet0 = createBirdSet(&obj_buffer[2],&obj_buffer[3]);
@@ -308,9 +391,8 @@ void initSets() {
 	clouds = createCloudSets(&obj_buffer[22]);
 	starsSet = createStarsSet(&obj_buffer[34]);
 	moonSet = createMoonSet(&obj_buffer[36]);
-	
-	//obstacleSet0
-	//obstacleSet1
+	obstacleSets = createObstacleSets(&obj_buffer[40]);
+
 	//gameoverSet
 	trackers = createTrackers();
 }
@@ -323,8 +405,11 @@ void assembleSets() {
   	setNumPos(hiScoreSet, 107, 10);
   	setHiPos(hiSet, 74, 10);
   	setNumPos(scoreSet, 174, 10);
-  	setDinoPos(dinoSet, 0, 0);
+  	//setDinoPos(dinoSet, 0, 0);
   	setMoonPos(moonSet, SCREEN_WIDTH - 50, MOON_Y);
+
+  	//setObstacleSet(obstacleSets, 0, 0);
+  	//setObstaclePos(obstacleSets, 0, 0, 50); //34
 }
 
 //Terrain helpers
