@@ -170,7 +170,8 @@ typedef struct OBSTACLE {
 	int maxGap;
 	int speedOffset;
 	bool visible;
-
+	bool flap;
+	
 	int extraSpeed;
 } OBSTACLE, OBSTACLE;
 

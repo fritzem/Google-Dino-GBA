@@ -45,7 +45,7 @@ void update() {
 		//Accounts for overflow if you somehow make it 400 or so days
 		gameState->runningFrames += 1;
 		gameState->spawnObstacles = (gameState->runningFrames > CLEAR_FRAMES) 
-				| gameState->spawnObstacles; 
+				|| gameState->spawnObstacles; 
 
 		if (gameState->playingIntro) {
 			gameState->curtainScroll -= 8;
@@ -229,7 +229,9 @@ void updateObstacles() {
 
 
 	if (horizonState->obstacleCount > 0) {
-		updateObstacle(horizonState->obstacles);
+		OBSTACLE * obs = horizonState->obstacles;
+		updateObstacle(obs);
+		setObstaclePos(obstacleSets, obs->type, obs->size, obs->x, obs->y);
 	} else {
 		addObstacle();
 	}
@@ -245,7 +247,7 @@ void updateObstacle(OBSTACLE * obs) {
 }
 
 void addObstacle() {
-	OBSTACLE * obs = obstacleSets + horizonState->obstacleCursor;
+	OBSTACLE *obs = (OBSTACLE*)(horizonState->obstacles + (horizonState->obstacleCursor));
 	switch (qran_range(1,(OBSTACLE_TYPES - (gameState->speed < DACTYL_MIN_SPEED))) - 1) {
 		case CACTUS_SMALL:
 			createCactusSmall(obs);
@@ -308,6 +310,7 @@ void createPterodactyl(OBSTACLE * obs) {
 	obs->minGap = DACTYL_WIDTH;
 	obs->speedOffset = DACTYL_SPEED_OFFSET;
 	obs->visible = true;
+	obs->flap = false;
 
 	obs->extraSpeed = 0;
 }
