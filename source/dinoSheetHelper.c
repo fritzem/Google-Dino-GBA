@@ -353,7 +353,8 @@ void setObstacleSet(OBSTACLE_OBJ_SET *set, int type, int size) {
 	}
 }
 
-void setObstaclePos(OBSTACLE_OBJ_SET *set, int type, int size, int x) {
+//Use size parameter for flap if dactyl
+void setObstaclePos(OBSTACLE_OBJ_SET *set, int type, int size, int x, int y) {
 	switch (type * TYPEM + size) {
 		case CACTUS_SMALL_0:
 			obj_set_pos(set->obstacleChunk0, x - 15, CACTUS_SMALL_Y);
@@ -368,16 +369,29 @@ void setObstaclePos(OBSTACLE_OBJ_SET *set, int type, int size, int x) {
 			obj_set_pos(set->obstacleChunk0, x - 8, CACTUS_SMALL_Y);
 			obj_set_pos(set->obstacleChunk1, x + 5, CACTUS_SMALL_Y + 32);
 			obj_set_pos(set->obstacleChunk2, x + 22, CACTUS_SMALL_Y + 32);
-			obj_set_pos(set->obstacleChunk3, x + 37, CACTUS_SMALL_Y + 32);
+			obj_set_pos(set->obstacleChunk3, x + 39, CACTUS_SMALL_Y + 32);
 		case CACTUS_LARGE_0:
-			break;
 		case CACTUS_LARGE_1:
+			obj_set_pos(set->obstacleChunk0, x, CACTUS_LARGE_Y);
 			break;
 		case CACTUS_LARGE_2:
+			obj_set_pos(set->obstacleChunk0, x, CACTUS_LARGE_Y);
+			obj_set_pos(set->obstacleChunk1, x + 64, CACTUS_LARGE_Y);
 			break;
 		case PTERODACTYL_0:
+		case PTERODACTYL_1:
+			obj_set_pos(set->obstacleChunk0, x, y);
+			obj_set_pos(set->obstacleChunk1, x + 16, y + (size ? 4 : (-4)));
 			break;
 	}
+}
+
+bool toggleDactylFlap(OBSTACLE_OBJ_SET *set, bool flap)
+{
+	set->obstacleChunk1->attr2 ^= birdFlapTrans;
+	set->obstacleChunk1->attr0 = ((set->obstacleChunk1->attr0) & 0xFF00) | 
+		(u8)(((set->obstacleChunk1->attr0) & 0xFF) + (((-(flap) | 1) * 8)));
+	return flap ^ 0x1;
 }
 
 void initSets() {
@@ -405,11 +419,7 @@ void assembleSets() {
   	setNumPos(hiScoreSet, 107, 10);
   	setHiPos(hiSet, 74, 10);
   	setNumPos(scoreSet, 174, 10);
-  	//setDinoPos(dinoSet, 0, 0);
   	setMoonPos(moonSet, SCREEN_WIDTH - 50, MOON_Y);
-
-  	//setObstacleSet(obstacleSets, 0, 0);
-  	//setObstaclePos(obstacleSets, 0, 0, 50); //34
 }
 
 //Terrain helpers

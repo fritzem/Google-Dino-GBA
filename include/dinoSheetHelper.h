@@ -15,7 +15,7 @@
 
 #define smallCactusSingleSI 0xA
 #define smallCactusDoubleSI 0xA
-#define smallCactusTripleSI 0x12
+#define smallCactusTripleSI 0x11
 #define smallCactusStumpSI 0xC8
 
 #define bigCactusSingleSI 0x180
@@ -251,7 +251,8 @@ void setMoonPos(MOON_OBJ_SET *set, int x, int y);
 OBSTACLE_OBJ_SET *createObstacleSet(OBJ_ATTR *index);
 void wipeObstacleSet(OBSTACLE_OBJ_SET *set);
 void setObstacleSet(OBSTACLE_OBJ_SET *set, int type, int size);
-void setObstaclePos(OBSTACLE_OBJ_SET *set, int type, int size, int x);
+void setObstaclePos(OBSTACLE_OBJ_SET *set, int type, int size, int x, int y);
+bool toggleDactylFlap(OBSTACLE_OBJ_SET *set, bool flap);
 
 void initSets();
 void assembleSets();
