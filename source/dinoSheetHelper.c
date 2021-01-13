@@ -370,6 +370,7 @@ void setObstaclePos(OBSTACLE_OBJ_SET *set, int type, int size, int x, int y) {
 			obj_set_pos(set->obstacleChunk1, x + 5, CACTUS_SMALL_Y + 32);
 			obj_set_pos(set->obstacleChunk2, x + 22, CACTUS_SMALL_Y + 32);
 			obj_set_pos(set->obstacleChunk3, x + 39, CACTUS_SMALL_Y + 32);
+			break;
 		case CACTUS_LARGE_0:
 		case CACTUS_LARGE_1:
 			obj_set_pos(set->obstacleChunk0, x, CACTUS_LARGE_Y);

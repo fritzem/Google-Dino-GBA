@@ -92,15 +92,15 @@ INLINE int numToSI(int x) {return num0_SI + (x * 0x2);}
 #define PALETTE_POINT 1000
 
 #define TYPEM 10
-#define CACTUS_SMALL_0 0
-#define CACTUS_SMALL_1 1
-#define CACTUS_SMALL_2 2
-#define CACTUS_LARGE_0 10
-#define CACTUS_LARGE_1 11
-#define CACTUS_LARGE_2 12
-#define PTERODACTYL_0 20
-#define PTERODACTYL_1 21
-#define PTERODACTYL_2 22
+#define CACTUS_SMALL_0 1
+#define CACTUS_SMALL_1 2
+#define CACTUS_SMALL_2 3
+#define CACTUS_LARGE_0 11
+#define CACTUS_LARGE_1 12
+#define CACTUS_LARGE_2 13
+#define PTERODACTYL_0 21
+#define PTERODACTYL_1 22
+#define PTERODACTYL_2 23
 
 //Metasprite structs
 

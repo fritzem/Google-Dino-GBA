@@ -89,7 +89,8 @@ void update() {
 }
 
 void updateHorizon() {
-	int scrolled = (gameState->speed + horizonState->extraScroll) / SPEED_POINT ;
+	int scrollSpeed = (gameState->speed + horizonState->extraScroll);
+	int scrolled =  scrollSpeed / SPEED_POINT;
 	horizonState->extraScroll = (gameState->speed + horizonState->extraScroll) % SPEED_POINT;
 	horizonState->scroll += scrolled;
 	horizonState->scrolled += scrolled;
@@ -186,7 +187,7 @@ void updateHorizon() {
 
 	//obstacles
 	if (gameState->spawnObstacles) 
-		updateObstacles();
+		updateObstacles(scrollSpeed);
 	
 
 	REG_BG0HOFS = horizonState->scroll;
@@ -224,25 +225,29 @@ void placeStars() {
 	);
 }
 
-void updateObstacles() {
+void updateObstacles(int scrollSpeed) {
 
 
 
 	if (horizonState->obstacleCount > 0) {
 		OBSTACLE * obs = horizonState->obstacles;
-		updateObstacle(obs);
+		updateObstacle(obs, scrollSpeed);
 		setObstaclePos(obstacleSets, obs->type, obs->size, obs->x, obs->y);
 	} else {
 		addObstacle();
 	}
 }
 
-void updateObstacle(OBSTACLE * obs) {
-	int speed = (gameState->speed + obs->extraSpeed + obs->speedOffset) / SPEED_POINT;
-	obs->extraSpeed = (gameState->speed + obs->extraSpeed + obs->speedOffset) % SPEED_POINT;
+void updateObstacle(OBSTACLE * obs, int scrollSpeed) {
+	int speedOffset = (obs->speedOffset + obs->extraSpeed) / SPEED_POINT;
+	obs->extraSpeed = (obs->speedOffset + obs->extraSpeed) % SPEED_POINT;
 
-	obs->x -= speed;
-	obs->visible = (obs->x < -(obs->width));
+	obs->x -= scrollSpeed / SPEED_POINT + speedOffset;
+	bool visible = (obs->x > -(obs->width));
+	if (!visible)
+	{
+		horizonState->obstacleCount -= 1;
+	}
 
 }
 
@@ -262,9 +267,11 @@ void addObstacle() {
 			setObstacleSet(obstacleSets + horizonState->obstacleCursor, PTERODACTYL, obs->size);
 			break;
 	}
+	setObstaclePos(obstacleSets + (horizonState->obstacleCursor), obs->type, obs->size, obs->x, obs->y);
 	horizonState->obstacleCount += 1;
+	horizonState->lastObstacle = horizonState->obstacleCursor;
 	horizonState->obstacleCursor += 1;
-	if (horizonState->obstacleCursor >= OBSTACLE_TYPES)
+	if (horizonState->obstacleCursor >= MAX_OBSTACLES)
 		horizonState->obstacleCursor = 0;
 }
 
@@ -273,10 +280,11 @@ void createCactusSmall(OBSTACLE * obs) {
 	obs->x = SCREEN_WIDTH;
 	obs->y = CACTUS_SMALL_Y;
 	obs->size = (gameState->speed / SPEED_POINT >= CACTUS_SMALL_MULTI_SPEED) ?
-		qran_range(0, MAX_OBSTACLE_SIZE) : 0;
-	obs->width = CACTUS_SMALL_WIDTH;
+		qran_range(1, MAX_OBSTACLE_SIZE + 1) : 1;
+	obs->width = CACTUS_SMALL_WIDTH * obs->size;
 	obs->height = CACTUS_SMALL_HEIGHT;
-	obs->minGap = CACTUS_GAP;
+	obs->gap = qran_range((obs->width * gameState->speed + CACTUS_GAP) / 10 * 6 / SPEED_POINT,
+								CACTUS_GAP + CACTUS_GAP / 2);
 	obs->speedOffset = 0;
 	obs->visible = true;
 
@@ -288,10 +296,10 @@ void createCactusLarge(OBSTACLE * obs) {
 	obs->x = SCREEN_WIDTH;
 	obs->y = CACTUS_LARGE_Y;
 	obs->size = (gameState->speed / SPEED_POINT >= CACTUS_LARGE_MULTI_SPEED) ?
-		qran_range(0, MAX_OBSTACLE_SIZE) : 0;
-	obs->width = CACTUS_LARGE_WIDTH;
+		qran_range(1, MAX_OBSTACLE_SIZE + 1) : 1;
+	obs->width = CACTUS_LARGE_WIDTH * obs->size;
 	obs->height = CACTUS_LARGE_HEIGHT;
-	obs->minGap = CACTUS_GAP;
+	obs->gap = CACTUS_GAP;
 	obs->speedOffset = 0;
 	obs->visible = true;
 
@@ -304,10 +312,10 @@ void createPterodactyl(OBSTACLE * obs) {
 	obs->type = 2;
 	obs->x = SCREEN_WIDTH;
 	obs->y = dactylHeights[qran_range(0,2)];
-	obs->size = 0;
+	obs->size = 1;
 	obs->width = DACTYL_WIDTH;
-	obs->height = DACTYL_WIDTH;
-	obs->minGap = DACTYL_WIDTH;
+	obs->height = DACTYL_HEIGHT;
+	obs->gap = DACTYL_GAP;
 	obs->speedOffset = DACTYL_SPEED_OFFSET;
 	obs->visible = true;
 	obs->flap = false;

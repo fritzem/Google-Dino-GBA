@@ -28,7 +28,7 @@
 
 #define OBSTACLE_TYPES 3
 #define MAX_OBSTACLES 2
-#define MAX_OBSTACLE_SIZE 2
+#define MAX_OBSTACLE_SIZE 3
 #define CACTUS_SMALL 0
 #define CACTUS_LARGE 1
 #define PTERODACTYL  2
@@ -40,10 +40,10 @@
 #define CACTUS_LARGE_WIDTH 25
 #define CACTUS_LARGE_HEIGHT 50
 #define CACTUS_LARGE_MULTI_SPEED 6
-#define CACTUS_GAP 120
+#define CACTUS_GAP 120 * 1000
 #define DACTYL_WIDTH 46
 #define DACTYL_HEIGHT 40
-#define DACTYL_GAP 150
+#define DACTYL_GAP 150 * 1000
 #define DACTYL_FRAMES 10
 #define DACTYL_MIN_SPEED 6000
 #define DACTYL_SPEED_OFFSET 800
@@ -84,7 +84,7 @@ void updateNight();
 void updateHorizon();
 void placeStars();
 bool updateDistanceMeter(int distance);
-void updateObstacles();
+void updateObstacles(int scrollSpeed);
 void addObstacle();
 
 void input();
@@ -166,19 +166,18 @@ typedef struct OBSTACLE {
 	int size;
 	int width;
 	int height;
-	int minGap;
-	int maxGap;
+	int gap;
 	int speedOffset;
 	bool visible;
 	bool flap;
-	
+
 	int extraSpeed;
 } OBSTACLE, OBSTACLE;
 
 void createCactusSmall(OBSTACLE * obs);
 void createCactusLarge(OBSTACLE * obs);
 void createPterodactyl(OBSTACLE * obs);
-void updateObstacle(OBSTACLE * obs);
+void updateObstacle(OBSTACLE * obs, int scrollSpeed);
 
 typedef struct HORIZON_STATE {
 	int scroll;
@@ -213,6 +212,7 @@ typedef struct HORIZON_STATE {
 	OBSTACLE * obstacles;
 	int obstacleCount;
 	int obstacleCursor;
+	int lastObstacle;
 } HORIZON_STATE, HORIZON_STATE;
 
 extern HORIZON_STATE *horizonState;
@@ -249,6 +249,7 @@ INLINE void initHorizon(HORIZON_STATE * horizon) {
 	horizon->obstacles = malloc(MAX_OBSTACLES * sizeof(OBSTACLE));
 	horizon->obstacleCount = 0;
 	horizon->obstacleCursor = 0;
+	horizon->lastObstacle = 0;
 }
 
 typedef struct DINO_STATE {
