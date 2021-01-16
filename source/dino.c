@@ -253,7 +253,7 @@ void updateObstacle(OBSTACLE * obs, int scrollSpeed) {
 
 void addObstacle() {
 	OBSTACLE *obs = (OBSTACLE*)(horizonState->obstacles + (horizonState->obstacleCursor));
-	switch (qran_range(1,(OBSTACLE_TYPES - (gameState->speed < DACTYL_MIN_SPEED))) - 1) {
+	switch (qran_range(0,(OBSTACLE_TYPES - (gameState->speed < DACTYL_MIN_SPEED)))) {
 		case CACTUS_SMALL:
 			createCactusSmall(obs);
 			setObstacleSet(obstacleSets + horizonState->obstacleCursor, CACTUS_SMALL, obs->size);
