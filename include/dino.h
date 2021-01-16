@@ -169,15 +169,15 @@ typedef struct OBSTACLE {
 	int gap;
 	int speedOffset;
 	bool visible;
-	bool flap;
 
+	int frames;
 	int extraSpeed;
 } OBSTACLE, OBSTACLE;
 
 void createCactusSmall(OBSTACLE * obs);
 void createCactusLarge(OBSTACLE * obs);
 void createPterodactyl(OBSTACLE * obs);
-void updateObstacle(OBSTACLE * obs, int scrollSpeed);
+void updateObstacle(OBSTACLE * obs, int scrollSpeed, int index);
 
 typedef struct HORIZON_STATE {
 	int scroll;
