@@ -396,27 +396,29 @@ bool toggleDactylFlap(OBSTACLE_OBJ_SET *set, bool flap)
 }
 
 void initSets() {
-	replaySet = createReplaySet(&obj_buffer[0],&obj_buffer[1]);
-	birdSet0 = createBirdSet(&obj_buffer[2],&obj_buffer[3]);
-	birdSet1 = createBirdSet(&obj_buffer[4],&obj_buffer[5]);
-	hiScoreSet = createNumSet(&obj_buffer[6]);
-	hiSet = createHiSet(&obj_buffer[11], &obj_buffer[12]);
-	scoreSet = createNumSet(&obj_buffer[13]);
-	dinoSet = createDinoSet(&obj_buffer[18]);
-	clouds = createCloudSets(&obj_buffer[22]);
-	starsSet = createStarsSet(&obj_buffer[34]);
-	moonSet = createMoonSet(&obj_buffer[36]);
-	obstacleSets = createObstacleSets(&obj_buffer[40]);
+	scoreSet = createNumSet(&obj_buffer[0]);
+	hiScoreSet = createNumSet(&obj_buffer[5]);
+	hiSet = createHiSet(&obj_buffer[10], &obj_buffer[11]);
+	replaySet = createReplaySet(&obj_buffer[12],&obj_buffer[13]);
+	//gameoverSet 8
 
-	//gameoverSet
+	dinoSet = createDinoSet(&obj_buffer[22]);
+	obstacleSets = createObstacleSets(&obj_buffer[26]);
+
+	clouds = createCloudSets(&obj_buffer[34]);
+	moonSet = createMoonSet(&obj_buffer[46]);
+	starsSet = createStarsSet(&obj_buffer[50]);
+	
+	
+
+	
+	
+
 	trackers = createTrackers();
 }
 
 void assembleSets() {
 	setReplayPos(replaySet, 103, 65);
-	setBirdPos(birdSet0, 280, 50);
-  	setBirdPos(birdSet1, 280, 75);
-  	toggleBirdFlap(birdSet1);
   	setNumPos(hiScoreSet, 107, 10);
   	setHiPos(hiSet, 74, 10);
   	setNumPos(scoreSet, 174, 10);
