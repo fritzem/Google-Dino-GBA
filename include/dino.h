@@ -52,11 +52,17 @@
 #define INVERT_FRAMES 90
 #define INVERT_FADE_DURATION 720
 
+#define DINO_GROUND_Y 7
 #define INITIAL_JUMP_VELOCITY 100
 #define DROP_VELOCITY -50
 #define SPEED_DROP_COEFFICIENT 3
-#define MIN_JUMP_HEIGHT 30
+#define MAX_JUMP_HEIGHT 30
+#define MIN_JUMP_HEIGHT 30 - DINO_GROUND_Y
 #define GRAVITY -6
+#define DINO_WIDTH 44
+#define DINO_HEIGHT 47
+#define DINO_WIDTH_DUCK 59
+#define DINO_HEIGHT_DUCK 25
 
 #define ACHIEVEMENT_DISTANCE 100
 #define FLASH_FRAMES 15
@@ -66,7 +72,6 @@
 
 #define STARTING_CURTAIN_SCROLL 468
 
-#define DINO_GROUND_Y 7
 #define RUN_FRAME 5
 #define DUCK_FRAME 8
 
@@ -86,6 +91,8 @@ void placeStars();
 bool updateDistanceMeter(int distance);
 void updateObstacles(int scrollSpeed);
 void addObstacle();
+
+bool collisionCheck();
 
 void input();
 void dinoJump();
@@ -260,6 +267,7 @@ typedef struct DINO_STATE {
 	enum dinoStatus status;
 	bool speedDrop;
 	bool jumped;
+	bool reachedMin;
 
 	int frame;
 	int frameCounter;
@@ -277,6 +285,7 @@ INLINE void initDino(DINO_STATE * dino) {
 	dino->status = WAITING;
 	dino->speedDrop = false;
 	dino->jumped = false;
+	dino->reachedMin = false;
 
 	dino->frame = 0;
 	dino->frameCounter = 0;

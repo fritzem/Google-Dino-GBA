@@ -58,13 +58,16 @@ void update() {
 			updateHorizon();
 		}
 
-		bool collision = false; //didDinoHitSomethingUhhh();
+		bool collision = gameState->spawnObstacles &&
+			collisionCheck();
 
 		if (!collision) {
 			addPoint(gameState->speed, &gameState->distanceRan, &gameState->distanceRanPoint);
 
 			if (gameState->speed < SPEED_MAX)
 				gameState->speed += ACCELERATION;
+		} else {
+			dinoState->status = CRASHED;
 		}
 
 		if (updateDistanceMeter((gameState->distanceRan) + ((gameState->distanceRanPoint) ? 1 : 0)))
@@ -437,7 +440,8 @@ void dinoJump() {
 
 	dinoState->status = JUMPING;
 	dinoState->speedDrop = false;
-	dinoState->jumpVelocity = INITIAL_JUMP_VELOCITY; // + speed/10 ??
+	dinoState->jumpVelocity = INITIAL_JUMP_VELOCITY + gameState->speed / SPEED_POINT / 10;
+	dinoState->reachedMin = false;
 
 	mmEffect(SFX_BUTTON_PRESSED);
 }
@@ -450,8 +454,9 @@ void updateJump() {
 
 	dinoState->jumpVelocity += GRAVITY;
 
-	//Min height
 	if (dinoState->yPos > MIN_JUMP_HEIGHT || dinoState->speedDrop)
+		dinoState->reachedMin = true;
+	if (dinoState->yPos > MAX_JUMP_HEIGHT || dinoState->speedDrop)
 		endJump();
 
 	if (dinoState->yPos < DINO_GROUND_Y) {
@@ -474,7 +479,7 @@ void updateJump() {
 }
 
 void endJump() {
-	if (dinoState->jumpVelocity < DROP_VELOCITY)
+	if (dinoState->reachedMin && dinoState->jumpVelocity < DROP_VELOCITY)
 		dinoState->jumpVelocity = DROP_VELOCITY;
 }
 
@@ -508,6 +513,36 @@ void dinoDuck() {
 
 	dinoState->status = DUCKING;
   setDinoDucking(dinoSet);
+}
+
+bool collisionCheck() {
+	int tW = ((dinoState->status == DUCKING) ? DINO_WIDTH_DUCK : DINO_WIDTH) - 2;
+	int tH = ((dinoState->status == DUCKING) ? DINO_HEIGHT_DUCK : DINO_HEIGHT) - 2;
+	int tX = dinoState->xPos + 1;
+	int tY = (SCREEN_HEIGHT - dinoState->yPos) - tH - 1;
+
+	int oW;
+	int oH;
+	int oX;
+	int oY;
+
+	for (int i = 0; i < MAX_OBSTACLES; i++) {
+		OBSTACLE *obs = (horizonState->obstacles + i);
+		if (obs->visible) {
+			oW = obs->width - 2;
+			oH = obs->height - 2;
+			oX = obs->x + 1;
+			oY = obs->y + 1;
+
+			if (tX < oX + oW &&
+				 tX + tW > oX &&
+				 tY < oY + oH &&
+				 tY + tH > oY)
+				return true;
+		}
+	}
+	
+	return false; 
 }
 
 void init() {
