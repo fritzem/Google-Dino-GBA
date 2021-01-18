@@ -19,12 +19,36 @@ const int animRun[] = {dinoFeet1_SI, dinoFeet2_SI};
 const int animDuc[] = {dinoCrouchFeet0_SI, dinoCrouchFeet1_SI};
 
 const COLLISION_BOX dinoBoxes[] = {
-		{22, 0, 17, 16},
-		{1, 18, 30, 9},
-		{10, 35, 14, 8},
-		{1, 24, 29, 5},
-		{5, 30, 21, 4},
-		{9, 34, 15, 4}
+	{22, 0, 17, 16},
+	{1, 18, 30, 9},
+	{10, 35, 14, 8},
+	{1, 24, 29, 5},
+	{5, 30, 21, 4},
+	{9, 34, 15, 4}
+};
+
+const COLLISION_BOX duckBoxes[] = {
+	{1, 18, 55, 25}	
+};
+
+const COLLISION_BOX cactSmallBoxes[] = {
+	{0, 7, 5, 27},
+	{4, 0, 6, 34},
+	{10, 4, 7, 14}
+};
+
+const COLLISION_BOX cactLargeBoxes[] = {
+	{0, 12, 7, 38},
+	{8, 0, 7, 49},
+	{13, 10, 10, 38}
+};
+
+const COLLISION_BOX pterodactylBoxes[] = {
+	{15, 15, 16, 5},
+	{18, 21, 24, 6},
+	{2, 14, 4, 3},
+	{6, 10, 4, 7},
+	{10, 8, 6, 9}
 };
 
 int main()
@@ -317,6 +341,11 @@ void createCactusSmall(OBSTACLE * obs) {
 	obs->visible = true;
 
 	obs->extraSpeed = 0;
+
+	obs->numBoxes = CACT_COLLISION_BOXES;
+	obs->spriteY = obs->y + CACTUS_SMALL_Y_SPRITE_OFFSET;
+	cloneBox(obs->colBox, cactSmallBoxes, obs->numBoxes);
+	adjustBox(obs->colBox, obs->size, obs->width);
 }
 
 void createCactusLarge(OBSTACLE * obs) {
@@ -333,6 +362,11 @@ void createCactusLarge(OBSTACLE * obs) {
 	obs->visible = true;
 
 	obs->extraSpeed = 0;
+
+	obs->numBoxes = CACT_COLLISION_BOXES;
+	obs->spriteY = CACTUS_LARGE_Y;
+	cloneBox(obs->colBox, cactLargeBoxes, obs->numBoxes);
+	adjustBox(obs->colBox, obs->size, obs->width);
 }
 
 const int dactylHeights[3] = {100,75,50};
@@ -351,6 +385,18 @@ void createPterodactyl(OBSTACLE * obs) {
 
 	obs->frames = 0;
 	obs->extraSpeed = 0;
+
+	obs->spriteY = obs->y;
+
+	obs->numBoxes = DACTYL_COLLISION_BOXES;
+	cloneBox(obs->colBox, pterodactylBoxes, obs->numBoxes);
+}
+
+void adjustBox(COLLISION_BOX * box, int size, int width) {
+	if (size > 1) {
+		(box + 1)->w = width - box->w - (box + 2)->w;
+		(box + 2)->x = width - (box + 2)->w;
+	}
 }
 
 bool updateDistanceMeter(int distance) {
@@ -524,13 +570,15 @@ void dinoDuck() {
   setDinoDucking(dinoSet);
 }
 
+
+
 bool collisionCheck() {
 	int tW = ((dinoState->status == DUCKING) ? DINO_WIDTH_DUCK : DINO_WIDTH) - 2;
 	int tH = ((dinoState->status == DUCKING) ? DINO_HEIGHT_DUCK : DINO_HEIGHT) - 2;
 	int tX = dinoState->xPos + 1;
-	int tY = (SCREEN_HEIGHT - dinoState->yPos) - tH - 1;
+	int tY = SCREEN_HEIGHT - dinoState->yPos - tH - 1;
 
-	COLLISION_BOX dBox = {tX, tY, tW, tX};
+	COLLISION_BOX dBox = {tX, tY, tW, tH};
 	COLLISION_BOX oBox = {0,0,0,0};
 
 	for (int i = 0; i < MAX_OBSTACLES; i++) {
@@ -539,14 +587,41 @@ bool collisionCheck() {
 			oBox.w = obs->width - 2;
 			oBox.h = obs->height - 2;
 			oBox.x = obs->x + 1;
-			oBox.y = obs->y + 1;
+			oBox.y = obs->spriteY + 1;
 
 			if (boxCheck(&dBox, &oBox))
-				return true;
+			{
+				for (int i = 0; i < DINO_COLLISION_BOXES; i++) {
+					for (int k = 0; k < obs->numBoxes; k++) {
+						if (boxCheckOffset(dinoBoxes + i, (obs->colBox + k),
+												tX, tY, oBox.x, oBox.y)) {
+							return true;
+						}
+					}
+				}
+
+			}
 		}
 	}
 	
 	return false; 
+}
+
+void cloneBox(COLLISION_BOX * clone, const COLLISION_BOX * base, int boxes) {
+	for (int i = 0; i < boxes; i++) {
+		(clone + i)->x = (base + i)->x;
+		(clone + i)->y = (base + i)->y;
+		(clone + i)->w = (base + i)->w;
+		(clone + i)->h = (base + i)->h;
+	}
+}
+
+bool boxCheckOffset(const COLLISION_BOX * a, COLLISION_BOX * b,
+							int x1, int y1, int x2, int y2) {
+	return 	(a->x + x1 < b->x + x2 + b->w &&
+				 a->x + x1 + a->w > b->x + x2 &&
+				 a->y + y1 < b->y + y2 + b->h &&
+				 a->y + y1 + a->h > b->y + y2);
 }
 
 bool boxCheck(COLLISION_BOX * a, COLLISION_BOX * b) {

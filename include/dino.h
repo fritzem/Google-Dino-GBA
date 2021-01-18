@@ -33,6 +33,7 @@
 #define CACTUS_LARGE 1
 #define PTERODACTYL  2
 #define CACTUS_SMALL_Y 113
+#define CACTUS_SMALL_Y_SPRITE_OFFSET 5
 #define CACTUS_SMALL_WIDTH 17
 #define CACTUS_SMALL_HEIGHT 35
 #define CACTUS_SMALL_MULTI_SPEED 4
@@ -76,7 +77,10 @@
 #define DUCK_FRAME 8
 
 #define DINO_COLLISION_BOXES 6
-
+#define DUCK_COLLISION_BOXES 1
+#define CACT_COLLISION_BOXES 3
+#define DACTYL_COLLISION_BOXES 5
+#define MAX_HITBOXES 6
 
 #define JUMP_HIT (key_hit(KEY_A) || key_hit(KEY_UP))
 #define JUMP_RELEASED (key_released(KEY_A) || key_released(KEY_UP))
@@ -120,8 +124,12 @@ typedef struct COLLISION_BOX {
 	int h;
 } COLLISION_BOX, COLLISION_BOX;
 
+void adjustBox(COLLISION_BOX * box, int size, int width);
+void cloneBox(COLLISION_BOX * clone, const COLLISION_BOX * base, int boxes);
 bool collisionCheck();
 bool boxCheck(COLLISION_BOX * a, COLLISION_BOX * b);
+bool boxCheckOffset(const COLLISION_BOX * a, COLLISION_BOX * b,
+							int x1, int y1, int x2, int y2);
 
 typedef struct GAME_STATE {
 	int speed;
@@ -188,6 +196,10 @@ typedef struct OBSTACLE {
 
 	int frames;
 	int extraSpeed;
+
+	int numBoxes;
+	COLLISION_BOX * colBox;
+	int spriteY;
 } OBSTACLE, OBSTACLE;
 
 void createCactusSmall(OBSTACLE * obs);
@@ -263,6 +275,10 @@ INLINE void initHorizon(HORIZON_STATE * horizon) {
 	horizon->moonMov = 0;
 
 	horizon->obstacles = malloc(MAX_OBSTACLES * sizeof(OBSTACLE));
+	for (int i = 0; i < MAX_OBSTACLES; i++) {
+		(horizon->obstacles + i)->colBox = malloc(MAX_HITBOXES * sizeof(COLLISION_BOX));
+	}
+
 	horizon->obstacleCount = 0;
 	horizon->obstacleCursor = 0;
 	horizon->lastObstacle = 0;

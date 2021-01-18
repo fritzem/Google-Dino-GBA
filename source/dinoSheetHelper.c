@@ -381,8 +381,8 @@ void setObstaclePos(OBSTACLE_OBJ_SET *set, int type, int size, int x, int y) {
 			break;
 		case PTERODACTYL_0:
 		case PTERODACTYL_1:
-			obj_set_pos(set->obstacleChunk0, x, y);
-			obj_set_pos(set->obstacleChunk1, x + 16, y + (size ? 4 : (-4)));
+			obj_set_pos(set->obstacleChunk0, x, y + 6);
+			obj_set_pos(set->obstacleChunk1, x + 16, y + (size ? 4 : (-4)) + 6);
 			break;
 	}
 }
