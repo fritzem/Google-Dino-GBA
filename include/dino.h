@@ -106,6 +106,7 @@ void resetDino();
 void dinoRun();
 void dinoDuck();
 
+void gameOver();
 
 void init();
 void initSound();

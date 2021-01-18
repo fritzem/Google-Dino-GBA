@@ -100,7 +100,7 @@ void update() {
 			if (gameState->speed < SPEED_MAX)
 				gameState->speed += ACCELERATION;
 		} else {
-			dinoState->status = CRASHED;
+			gameOver();
 		}
 
 		if (updateDistanceMeter((gameState->distanceRan) + ((gameState->distanceRanPoint) ? 1 : 0)))
@@ -591,15 +591,23 @@ bool collisionCheck() {
 
 			if (boxCheck(&dBox, &oBox))
 			{
-				for (int i = 0; i < DINO_COLLISION_BOXES; i++) {
+				if (dinoState->status == DUCKING) {
 					for (int k = 0; k < obs->numBoxes; k++) {
-						if (boxCheckOffset(dinoBoxes + i, (obs->colBox + k),
+							if (boxCheckOffset(duckBoxes, (obs->colBox + k),
 												tX, tY, oBox.x, oBox.y)) {
-							return true;
+								return true;
+							}
+						}
+				} else {
+					for (int i = 0; i < DINO_COLLISION_BOXES; i++) {
+						for (int k = 0; k < obs->numBoxes; k++) {
+							if (boxCheckOffset(dinoBoxes + i, (obs->colBox + k),
+												tX, tY, oBox.x, oBox.y)) {
+								return true;
+							}
 						}
 					}
 				}
-
 			}
 		}
 	}
@@ -629,6 +637,15 @@ bool boxCheck(COLLISION_BOX * a, COLLISION_BOX * b) {
 				 a->x + a->w > b->x &&
 				 a->y < b->y + b->h &&
 				 a->y + a->h > b->y);
+}
+
+void gameOver() {
+	mmEffect(SFX_HIT);
+
+	dinoState->status = CRASHED;
+	setDinoCrashed(dinoSet);
+
+	gameState->playing = false;
 }
 
 void init() {

@@ -161,6 +161,7 @@ void dinoGraphicsUpdate(DINO_OBJ_SET *set) {
 	int crouchY = SCREEN_HEIGHT - 32 - dinoState->yPos;
 	switch (dinoState->status) {
 		case CRASHED:
+			obj_set_pos(set->dinoTorso, dinoState->xPos - 22, y);
 			break;
 		case DUCKING:
 			obj_set_pos(set->dinoTorso, dinoState->xPos, crouchY);
@@ -195,7 +196,9 @@ void setDinoDucking(DINO_OBJ_SET *set) {
 }
 
 void setDinoCrashed(DINO_OBJ_SET *set) {
-
+	obj_set_attr(set->dinoTorso, ATTR0_SQUARE, ATTR1_SIZE_64, deadDinoSI | ATTR2_PALBANK(0));
+	obj_hide(set->dinoLegs);
+	obj_hide(set->dinoTail);
 }
 
 //Give an index, twelve entries total are used
@@ -381,8 +384,8 @@ void setObstaclePos(OBSTACLE_OBJ_SET *set, int type, int size, int x, int y) {
 			break;
 		case PTERODACTYL_0:
 		case PTERODACTYL_1:
-			obj_set_pos(set->obstacleChunk0, x, y + 6);
-			obj_set_pos(set->obstacleChunk1, x + 16, y + (size ? 4 : (-4)) + 6);
+			obj_set_pos(set->obstacleChunk0, x, y);
+			obj_set_pos(set->obstacleChunk1, x + 16, y + (size ? 4 : (-4)));
 			break;
 	}
 }
