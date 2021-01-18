@@ -56,7 +56,7 @@
 #define INITIAL_JUMP_VELOCITY 100
 #define DROP_VELOCITY -50
 #define SPEED_DROP_COEFFICIENT 3
-#define MAX_JUMP_HEIGHT 30
+#define MAX_JUMP_HEIGHT 37
 #define MIN_JUMP_HEIGHT 30 - DINO_GROUND_Y
 #define GRAVITY -6
 #define DINO_WIDTH 44
@@ -75,6 +75,8 @@
 #define RUN_FRAME 5
 #define DUCK_FRAME 8
 
+#define DINO_COLLISION_BOXES 6
+
 
 #define JUMP_HIT (key_hit(KEY_A) || key_hit(KEY_UP))
 #define JUMP_RELEASED (key_released(KEY_A) || key_released(KEY_UP))
@@ -91,8 +93,6 @@ void placeStars();
 bool updateDistanceMeter(int distance);
 void updateObstacles(int scrollSpeed);
 void addObstacle();
-
-bool collisionCheck();
 
 void input();
 void dinoJump();
@@ -113,6 +113,15 @@ void addPoint(int add, int *base, int *point);
 int distanceConvert(int distance);
 bool randomBool();
 
+typedef struct COLLISION_BOX {
+	int x;
+	int y;
+	int w;
+	int h;
+} COLLISION_BOX, COLLISION_BOX;
+
+bool collisionCheck();
+bool boxCheck(COLLISION_BOX * a, COLLISION_BOX * b);
 
 typedef struct GAME_STATE {
 	int speed;

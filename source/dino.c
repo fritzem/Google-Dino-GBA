@@ -18,6 +18,15 @@ METER_STATE *meterState;
 const int animRun[] = {dinoFeet1_SI, dinoFeet2_SI};
 const int animDuc[] = {dinoCrouchFeet0_SI, dinoCrouchFeet1_SI};
 
+const COLLISION_BOX dinoBoxes[] = {
+		{22, 0, 17, 16},
+		{1, 18, 30, 9},
+		{10, 35, 14, 8},
+		{1, 24, 29, 5},
+		{5, 30, 21, 4},
+		{9, 34, 15, 4}
+};
+
 int main()
 {	
 	init();
@@ -521,28 +530,30 @@ bool collisionCheck() {
 	int tX = dinoState->xPos + 1;
 	int tY = (SCREEN_HEIGHT - dinoState->yPos) - tH - 1;
 
-	int oW;
-	int oH;
-	int oX;
-	int oY;
+	COLLISION_BOX dBox = {tX, tY, tW, tX};
+	COLLISION_BOX oBox = {0,0,0,0};
 
 	for (int i = 0; i < MAX_OBSTACLES; i++) {
 		OBSTACLE *obs = (horizonState->obstacles + i);
 		if (obs->visible) {
-			oW = obs->width - 2;
-			oH = obs->height - 2;
-			oX = obs->x + 1;
-			oY = obs->y + 1;
+			oBox.w = obs->width - 2;
+			oBox.h = obs->height - 2;
+			oBox.x = obs->x + 1;
+			oBox.y = obs->y + 1;
 
-			if (tX < oX + oW &&
-				 tX + tW > oX &&
-				 tY < oY + oH &&
-				 tY + tH > oY)
+			if (boxCheck(&dBox, &oBox))
 				return true;
 		}
 	}
 	
 	return false; 
+}
+
+bool boxCheck(COLLISION_BOX * a, COLLISION_BOX * b) {
+	return 	(a->x < b->x + b->w &&
+				 a->x + a->w > b->x &&
+				 a->y < b->y + b->h &&
+				 a->y + a->h > b->y);
 }
 
 void init() {
