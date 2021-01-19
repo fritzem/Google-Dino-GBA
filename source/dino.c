@@ -74,6 +74,8 @@ void update() {
 
 	if (dinoState->status == JUMPING)
 			updateJump();
+	if (dinoState->status == WAITING)
+			updateBlink();
 	if (gameState->playing) {
 
 		//If 3 second grace period expires, spawn obstacles
@@ -494,7 +496,10 @@ void input() {
 
 void dinoJump() {
 	if (!(gameState->playing))
+	{
 		hideTitle(titleSet);
+		dinoUnBlink(dinoSet);
+	}
 	setDinoAnim(dinoSet, dinoFeet0_SI);
 
 	dinoState->status = JUMPING;
@@ -540,6 +545,34 @@ void updateJump() {
 void endJump() {
 	if (dinoState->reachedMin && dinoState->jumpVelocity < DROP_VELOCITY)
 		dinoState->jumpVelocity = DROP_VELOCITY;
+}
+
+void updateBlink() {
+	if (!(dinoState->blinking)) {
+		if (dinoState->blinkFrame == 0) {
+			if (dinoState->blinks >= MAX_BLINKS)
+				return;
+			dinoState->blinkTime = getBlinkTime();
+		}
+		dinoState->blinkFrame += 1;
+		if (dinoState->blinkFrame >= dinoState->blinkTime) {
+			dinoState->blinking = true;
+			dinoBlink(dinoSet);
+			dinoState->blinkFrame = 0;
+		}
+	} else {
+		dinoState->blinkFrame += 1;
+		if (dinoState->blinkFrame >= BLINK_TIME) {
+			dinoState->blinking = false;
+			dinoState->blinkFrame = 0;
+			dinoUnBlink(dinoSet);
+			dinoState->blinks += 1;
+		}
+	}
+}
+
+int getBlinkTime() {
+	return qran_range(0, MAX_BLINK_DELAY);
 }
 
 void dinoRun() {
@@ -711,6 +744,7 @@ void initGame() {
 	meterState = malloc(sizeof(METER_STATE));
 	initMeter(meterState);
 	setNumValue(hiScoreSet, *hiScore);
+	sqran(*hiScore);
 }
 
 void resetGame() {

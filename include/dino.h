@@ -64,6 +64,9 @@
 #define DINO_HEIGHT 47
 #define DINO_WIDTH_DUCK 59
 #define DINO_HEIGHT_DUCK 25
+#define MAX_BLINKS 3
+#define MAX_BLINK_DELAY 420
+#define BLINK_TIME 30
 
 #define ACHIEVEMENT_DISTANCE 100
 #define FLASH_FRAMES 15
@@ -108,6 +111,8 @@ void input();
 void dinoJump();
 void updateJump();
 void endJump();
+void updateBlink();
+int getBlinkTime();
 void dinoRun();
 void dinoDuck();
 
@@ -342,6 +347,12 @@ typedef struct DINO_STATE {
 	int frame;
 	int frameCounter;
 	int frameTime;
+
+	int blinkTime;
+	int blinks;
+	int blinkFrame;
+	bool blinking;
+
 	const int * animSI;
 } DINO_STATE, DINO_STATE;
 
@@ -360,6 +371,11 @@ INLINE void initDino(DINO_STATE * dino) {
 	dino->frame = 0;
 	dino->frameCounter = 0;
 	dino->frameTime = 0;
+
+	dino->blinkTime = 0;
+	dino->blinks = 0;
+	dino->blinkFrame = 0;
+	dino->blinking = false;
 }
 
 void resetDino(DINO_STATE * dino);

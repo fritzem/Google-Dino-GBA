@@ -202,6 +202,14 @@ void setDinoCrashed(DINO_OBJ_SET *set) {
 	obj_hide(set->dinoTail);
 }
 
+void dinoBlink(DINO_OBJ_SET *set) {
+	obj_unhide(set->dinoWink, ATTR0_REG);
+}
+
+void dinoUnBlink(DINO_OBJ_SET *set) {
+	obj_hide(set->dinoWink);
+}
+
 //Give an index, twelve entries total are used
 CLOUD_OBJ_SET *createCloudSets(OBJ_ATTR *index) {
 	CLOUD_OBJ_SET* clouds = malloc(2 * MAX_CLOUDS * sizeof(CLOUD_OBJ_SET));

@@ -257,6 +257,8 @@ void setDinoAnim(DINO_OBJ_SET *set, int frame);
 void setDinoUpright(DINO_OBJ_SET *set);
 void setDinoDucking(DINO_OBJ_SET *set);
 void setDinoCrashed(DINO_OBJ_SET *set);
+void dinoBlink(DINO_OBJ_SET *set);
+void dinoUnBlink(DINO_OBJ_SET *set);
 
 CLOUD_OBJ_SET *createCloudSets(OBJ_ATTR *index);
 void setCloudPos(CLOUD_OBJ_SET *set, int x, int y);
