@@ -96,7 +96,7 @@
 extern OBJ_ATTR obj_buffer[];
 extern OBJ_AFFINE *obj_aff_buffer;
 
-extern int * hiScore;
+extern u8 * hiScore;
 
 void update();
 
@@ -128,6 +128,8 @@ void resetGame();
 void addPoint(int add, int *base, int *point);
 int distanceConvert(int distance);
 bool randomBool();
+int readHiscore();
+void setHiscore(int score);
 
 typedef struct COLLISION_BOX {
 	int x;

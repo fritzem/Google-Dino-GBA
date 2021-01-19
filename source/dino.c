@@ -18,7 +18,7 @@ METER_STATE *meterState;
 const int animRun[] = {dinoFeet1_SI, dinoFeet2_SI};
 const int animDuc[] = {dinoCrouchFeet0_SI, dinoCrouchFeet1_SI};
 
-int * hiScore = (int *) HISCORE_SRAM;
+u8 * hiScore = (u8 *) HISCORE_SRAM;
 
 const COLLISION_BOX dinoBoxes[] = {
 	{22, 0, 17, 16},
@@ -681,10 +681,11 @@ void gameOver() {
 
 	gameState->gameoverFrames = 0;
 
-	if (meterState->distance > *hiScore) {
-		*hiScore = meterState->distance;
-		setNumValue(hiScoreSet, *hiScore);
+	if (meterState->distance > readHiscore()) {
+		setHiscore(meterState->distance);
+		setNumValue(hiScoreSet, meterState->distance);
 	}
+	setNumValue(scoreSet, meterState->distance);
 }
 
 void init() {
@@ -743,8 +744,8 @@ void initGame() {
 
 	meterState = malloc(sizeof(METER_STATE));
 	initMeter(meterState);
-	setNumValue(hiScoreSet, *hiScore);
-	sqran(*hiScore);
+	setNumValue(hiScoreSet, readHiscore());
+	sqran(readHiscore());
 }
 
 void resetGame() {
@@ -792,4 +793,22 @@ void addPoint(int add, int *base, int *point) {
 
 bool randomBool() {
 	return ((qran_range(0, 1000) > 500) ? true : false);
+}
+
+const u8 mask = 0xFF;
+
+int readHiscore() {
+	int score = 0;
+	score += *hiScore;
+	score += *(hiScore + 1) << 8;
+	score += *(hiScore + 2) << 16;
+	score += *(hiScore + 3) << 24;
+	return score;
+}
+
+void setHiscore(int score) {
+	*hiScore = score & mask;
+	*(hiScore + 1) = (score >> 8) & mask;
+	*(hiScore + 2) = (score >> 16) & mask;
+	*(hiScore + 3) = (score >> 24) & mask;
 }
