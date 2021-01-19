@@ -71,6 +71,16 @@ INLINE int numToSI(int x) {return num0_SI + (x * 0x2);}
 #define charV_SI 0xD6
 #define charR_SI 0xD8
 
+#define charY 40
+#define charXg 20
+#define charXa charXg + 24
+#define charXm charXa + 24
+#define charXe charXm + 24
+#define charXo charXe + 44
+#define charXv charXo + 24
+#define charXe2 charXv + 24
+#define charXr charXe2 + 24
+
 #define hiSI 0xDA
 
 //Terrain 
@@ -187,6 +197,7 @@ typedef struct GAMEOVER_OBJ_SET {
 	OBJ_ATTR* e;
 	OBJ_ATTR* o;
 	OBJ_ATTR* v;
+	OBJ_ATTR* e2;
 	OBJ_ATTR* r;
 } GAMEOVER_OBJ_SET, GAMEOVER_OBJ_SET;
 
@@ -253,6 +264,10 @@ void wipeObstacleSet(OBSTACLE_OBJ_SET *set);
 void setObstacleSet(OBSTACLE_OBJ_SET *set, int type, int size);
 void setObstaclePos(OBSTACLE_OBJ_SET *set, int type, int size, int x, int y);
 bool toggleDactylFlap(OBSTACLE_OBJ_SET *set, bool flap);
+
+GAMEOVER_OBJ_SET *createGameoverSet(OBJ_ATTR *index);
+void showGameover(GAMEOVER_OBJ_SET * set);
+void hideGameover(GAMEOVER_OBJ_SET * set);
 
 void initSets();
 void assembleSets();

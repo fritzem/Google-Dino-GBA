@@ -108,7 +108,6 @@ void update() {
 
 		updateNight();
 
-		//updateGraphics()??
 		dinoState->frameCounter += 1;
 		if ((DINO_ANIMATING) && (dinoState->frameCounter >= dinoState->frameTime)) {
 			dinoState->frame = dinoState->frame == 1 ? 0 : 1;
@@ -117,6 +116,7 @@ void update() {
 		if (DINO_ANIMATING) setDinoAnim(dinoSet, dinoState->animSI[dinoState->frame]);
 	} else {
 		gameState->randoFrames += 1;
+		gameState->gameoverFrames += 1;
 	}
 
 
@@ -469,8 +469,8 @@ void input() {
   	} else if (JUMP_RELEASED) {
   		if (dinoState->status == JUMPING)
   			endJump();
-  		else if (dinoState->status == CRASHED)
-  			//resetGame();
+  		else if (dinoState->status == CRASHED && gameState->gameoverFrames >= RESET_FRAMES)
+  			resetGame();
   		return; 
   	}
 
@@ -484,7 +484,7 @@ void input() {
   	} else if (key_released(KEY_DOWN)) {
   		if (dinoState->status == JUMPING) {
   			dinoState->speedDrop = false;
-  		} else if (dinoState->status == DUCKING){
+  		} else if (dinoState->status == DUCKING) {
   			dinoRun();
   		}
   	}
@@ -536,14 +536,6 @@ void updateJump() {
 void endJump() {
 	if (dinoState->reachedMin && dinoState->jumpVelocity < DROP_VELOCITY)
 		dinoState->jumpVelocity = DROP_VELOCITY;
-}
-
-void resetDino() {
-	dinoState->status = RUNNING;
-	dinoState->speedDrop = false;
-
-	dinoState->jumpVelocity = 0;
-	dinoState->yPos = DINO_GROUND_Y;
 }
 
 void dinoRun() {
@@ -646,6 +638,11 @@ void gameOver() {
 	setDinoCrashed(dinoSet);
 
 	gameState->playing = false;
+
+	toggleReplayHide(replaySet);
+	showGameover(gameoverSet);
+
+	gameState->gameoverFrames = 0;
 }
 
 void init() {
@@ -704,6 +701,40 @@ void initGame() {
 
 	meterState = malloc(sizeof(METER_STATE));
 	initMeter(meterState);
+}
+
+void resetGame() {
+	toggleReplayHide(replaySet);
+	hideGameover(gameoverSet);
+
+	resetState(gameState);
+	resetDino(dinoState);
+	resetHorizon(horizonState);
+	resetObstacles(horizonState->obstacles);
+	initMeter(meterState);
+
+	setDinoUpright(dinoSet);
+	dinoGraphicsUpdate(dinoSet);
+
+	wipeObstacleSet(obstacleSets);
+	wipeObstacleSet(obstacleSets + 1);
+	showNum(scoreSet);
+}
+
+void resetDino(DINO_STATE * dino) {
+	dino->xPos = 0;
+	dino->yPos = DINO_GROUND_Y;
+	dino->jumpVelocity = 0;
+
+	dino->status = RUNNING;
+	dino->speedDrop = false;
+	dino->jumped = true;
+	dino->reachedMin = false;
+
+	dino->frame = 0;
+	dino->frameCounter = 0;
+	dino->frameTime = RUN_FRAME;
+	dinoState->animSI = animRun;
 }
 
 void addPoint(int add, int *base, int *point) {

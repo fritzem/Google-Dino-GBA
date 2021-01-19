@@ -49,7 +49,7 @@
 #define DACTYL_MIN_SPEED 6000
 #define DACTYL_SPEED_OFFSET 800
 
-#define INVERT_DISTANCE 700
+#define INVERT_DISTANCE 100
 #define INVERT_FRAMES 90
 #define INVERT_FADE_DURATION 720
 
@@ -82,6 +82,8 @@
 #define DACTYL_COLLISION_BOXES 5
 #define MAX_HITBOXES 6
 
+#define RESET_FRAMES 45
+
 #define JUMP_HIT (key_hit(KEY_A) || key_hit(KEY_UP))
 #define JUMP_RELEASED (key_released(KEY_A) || key_released(KEY_UP))
 #define DINO_ANIMATING ((dinoState->status == RUNNING) || dinoState->status == DUCKING)
@@ -102,7 +104,6 @@ void input();
 void dinoJump();
 void updateJump();
 void endJump();
-void resetDino();
 void dinoRun();
 void dinoDuck();
 
@@ -113,6 +114,7 @@ void initSound();
 void initMem();
 void initGraphics();
 void initGame();
+void resetGame();
 
 void addPoint(int add, int *base, int *point);
 int distanceConvert(int distance);
@@ -145,6 +147,8 @@ typedef struct GAME_STATE {
 
 	bool playing;
 	bool playingIntro;
+
+	int gameoverFrames;
 } GAME_STATE, GAME_STATE;
 
 extern GAME_STATE *gameState;
@@ -162,6 +166,18 @@ INLINE void initState(GAME_STATE * state) {
 	state->playing = false;
 	state->playingIntro = false;
 	
+	state->gameoverFrames = 0;
+}
+
+INLINE void resetState(GAME_STATE * state) {
+	state->speed = SPEED;
+	state->distanceRan = 0;
+	state->distanceRanPoint = 0;
+
+	state->runningFrames = 0;
+	state->spawnObstacles = false;
+
+	state->playing = true;
 }
 
 enum dinoStatus{CRASHED, DUCKING, JUMPING, RUNNING, WAITING};
@@ -202,6 +218,11 @@ typedef struct OBSTACLE {
 	COLLISION_BOX * colBox;
 	int spriteY;
 } OBSTACLE, OBSTACLE;
+
+INLINE void resetObstacles(OBSTACLE * obs) {
+	obs->visible = 0;
+	(obs + 1)->visible = 0;
+}
 
 void createCactusSmall(OBSTACLE * obs);
 void createCactusLarge(OBSTACLE * obs);
@@ -285,6 +306,25 @@ INLINE void initHorizon(HORIZON_STATE * horizon) {
 	horizon->lastObstacle = 0;
 }
 
+INLINE void resetHorizon(HORIZON_STATE * horizon) {
+	horizon->scroll = 0;
+	horizon->nextScrollTile = 31;
+	horizon->scrolled = 0;
+	horizon->terrainScroll = 31;
+	horizon->bumpy = false;
+	horizon->extraScroll = 0;
+
+	if (horizon->night) {
+		horizon->night = false;
+		horizon->inverting = true;
+		horizon->fading = true;
+	}
+
+	horizon->obstacleCount = 0;
+	horizon->obstacleCursor = 0;
+	horizon->lastObstacle = 0;
+}
+
 typedef struct DINO_STATE {
 	int xPos;
 	int yPos;
@@ -317,6 +357,8 @@ INLINE void initDino(DINO_STATE * dino) {
 	dino->frameCounter = 0;
 	dino->frameTime = 0;
 }
+
+void resetDino(DINO_STATE * dino);
 
 typedef struct METER_STATE {
 	int distance;

@@ -398,13 +398,51 @@ bool toggleDactylFlap(OBSTACLE_OBJ_SET *set, bool flap)
 	return flap ^ 0x1;
 }
 
+GAMEOVER_OBJ_SET *createGameoverSet(OBJ_ATTR *index) {
+	GAMEOVER_OBJ_SET * set = malloc(sizeof(GAMEOVER_OBJ_SET));
+
+	set->g = obj_set_attr(index, ATTR0_Y(charY) | ATTR0_SQUARE | ATTR0_HIDE,
+								ATTR1_X(charXg) | ATTR1_SIZE_16, 
+								charG_SI | ATTR2_PALBANK(0));
+	set->a = obj_set_attr(index + 1, ATTR0_Y(charY) | ATTR0_SQUARE | ATTR0_HIDE,
+								ATTR1_X(charXa) | ATTR1_SIZE_16, 
+								charA_SI | ATTR2_PALBANK(0));
+	set->m = obj_set_attr(index + 2, ATTR0_Y(charY) | ATTR0_SQUARE | ATTR0_HIDE,
+								ATTR1_X(charXm) | ATTR1_SIZE_16, 
+								charM_SI | ATTR2_PALBANK(0));
+	set->e = obj_set_attr(index + 3, ATTR0_Y(charY) | ATTR0_SQUARE | ATTR0_HIDE,
+								ATTR1_X(charXe) | ATTR1_SIZE_16, 
+								charE_SI | ATTR2_PALBANK(0));
+	set->o = obj_set_attr(index + 4, ATTR0_Y(charY) | ATTR0_SQUARE | ATTR0_HIDE,
+								ATTR1_X(charXo) | ATTR1_SIZE_16, 
+								charO_SI | ATTR2_PALBANK(0));
+	set->v = obj_set_attr(index + 5, ATTR0_Y(charY) | ATTR0_SQUARE | ATTR0_HIDE,
+								ATTR1_X(charXv) | ATTR1_SIZE_16, 
+								charV_SI | ATTR2_PALBANK(0));
+	set->e2 = obj_set_attr(index + 6, ATTR0_Y(charY) | ATTR0_SQUARE | ATTR0_HIDE,
+								ATTR1_X(charXe2) | ATTR1_SIZE_16, 
+								charE_SI | ATTR2_PALBANK(0));
+	set->r = obj_set_attr(index + 7, ATTR0_Y(charY) | ATTR0_SQUARE | ATTR0_HIDE,
+								ATTR1_X(charXr) | ATTR1_SIZE_16, 
+								charR_SI | ATTR2_PALBANK(0));
+	return set;
+}
+
+void showGameover(GAMEOVER_OBJ_SET * set) {
+	obj_unhide_multi(set->g, ATTR0_REG, 8);
+}
+
+void hideGameover(GAMEOVER_OBJ_SET * set) {
+	obj_hide_multi(set->g, 8);
+}
+
 void initSets() {
 	scoreSet = createNumSet(&obj_buffer[0]);
 	hiScoreSet = createNumSet(&obj_buffer[5]);
 	hiSet = createHiSet(&obj_buffer[10], &obj_buffer[11]);
 	replaySet = createReplaySet(&obj_buffer[12],&obj_buffer[13]);
-	//gameoverSet 8
-
+	gameoverSet = createGameoverSet(&obj_buffer[14]);
+	
 	dinoSet = createDinoSet(&obj_buffer[22]);
 	obstacleSets = createObstacleSets(&obj_buffer[26]);
 
@@ -421,7 +459,7 @@ void initSets() {
 }
 
 void assembleSets() {
-	setReplayPos(replaySet, 103, 65);
+	setReplayPos(replaySet, 102, 70);
   	setNumPos(hiScoreSet, 107, 10);
   	setHiPos(hiSet, 74, 10);
   	setNumPos(scoreSet, 174, 10);
