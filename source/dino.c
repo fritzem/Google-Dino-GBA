@@ -493,6 +493,8 @@ void input() {
 }
 
 void dinoJump() {
+	if (!(gameState->playing))
+		hideTitle(titleSet);
 	setDinoAnim(dinoSet, dinoFeet0_SI);
 
 	dinoState->status = JUMPING;

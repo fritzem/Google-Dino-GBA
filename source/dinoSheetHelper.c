@@ -15,6 +15,7 @@ MOON_OBJ_SET *moonSet;
 STARS_OBJ_SET *starsSet;
 OBSTACLE_OBJ_SET *obstacleSets;
 GAMEOVER_OBJ_SET *gameoverSet;
+TITLE_OBJ_SET *titleSet;
 PALETTE_TRACKER *trackers;
 
 //Metasprite helper methods
@@ -436,6 +437,20 @@ void hideGameover(GAMEOVER_OBJ_SET * set) {
 	obj_hide_multi(set->g, 8);
 }
 
+TITLE_OBJ_SET *createTitleSet(OBJ_ATTR *index) {
+	TITLE_OBJ_SET * set = malloc(sizeof(TITLE_OBJ_SET));
+
+	set->left = obj_set_attr(index, ATTR0_Y(40) | ATTR0_WIDE,
+									ATTR1_SIZE_64,  titleLeftSI | ATTR2_PALBANK(1));
+	set->right = obj_set_attr(index + 1, ATTR0_Y(40) | ATTR0_WIDE,
+									64 | ATTR1_SIZE_64, titleRightSI | ATTR2_PALBANK(1));
+	return set;
+}
+
+void hideTitle(TITLE_OBJ_SET * set) {
+	obj_hide_multi(set->left, 2);
+}
+
 void initSets() {
 	scoreSet = createNumSet(&obj_buffer[0]);
 	hiScoreSet = createNumSet(&obj_buffer[5]);
@@ -450,7 +465,7 @@ void initSets() {
 	moonSet = createMoonSet(&obj_buffer[46]);
 	starsSet = createStarsSet(&obj_buffer[50]);
 	
-	
+	titleSet = createTitleSet(&obj_buffer[52]);
 
 	
 	

@@ -83,6 +83,9 @@ INLINE int numToSI(int x) {return num0_SI + (x * 0x2);}
 
 #define hiSI 0xDA
 
+#define titleLeftSI 0x380
+#define titleRightSI 0x388
+
 //Terrain 
 
 #define blankTile_SI 0x359
@@ -201,6 +204,13 @@ typedef struct GAMEOVER_OBJ_SET {
 	OBJ_ATTR* r;
 } GAMEOVER_OBJ_SET, GAMEOVER_OBJ_SET;
 
+typedef struct TITLE_OBJ_SET {
+	OBJ_ATTR* left;
+	OBJ_ATTR* right;
+} TITLE_OBJ_SET, TITLE_OBJ_SET;
+
+extern TITLE_OBJ_SET *titleSet;
+
 extern GAMEOVER_OBJ_SET *gameoverSet;
 
 typedef struct PALETTE_TRACKER {
@@ -268,6 +278,9 @@ bool toggleDactylFlap(OBSTACLE_OBJ_SET *set, bool flap);
 GAMEOVER_OBJ_SET *createGameoverSet(OBJ_ATTR *index);
 void showGameover(GAMEOVER_OBJ_SET * set);
 void hideGameover(GAMEOVER_OBJ_SET * set);
+
+TITLE_OBJ_SET *createTitleSet(OBJ_ATTR *index);
+void hideTitle(TITLE_OBJ_SET * set);
 
 void initSets();
 void assembleSets();
