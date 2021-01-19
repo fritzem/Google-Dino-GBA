@@ -18,6 +18,8 @@ METER_STATE *meterState;
 const int animRun[] = {dinoFeet1_SI, dinoFeet2_SI};
 const int animDuc[] = {dinoCrouchFeet0_SI, dinoCrouchFeet1_SI};
 
+int * hiScore = (int *) HISCORE_SRAM;
+
 const COLLISION_BOX dinoBoxes[] = {
 	{22, 0, 17, 16},
 	{1, 18, 30, 9},
@@ -643,6 +645,11 @@ void gameOver() {
 	showGameover(gameoverSet);
 
 	gameState->gameoverFrames = 0;
+
+	if (meterState->distance > *hiScore) {
+		*hiScore = meterState->distance;
+		setNumValue(hiScoreSet, *hiScore);
+	}
 }
 
 void init() {
@@ -701,6 +708,7 @@ void initGame() {
 
 	meterState = malloc(sizeof(METER_STATE));
 	initMeter(meterState);
+	setNumValue(hiScoreSet, *hiScore);
 }
 
 void resetGame() {

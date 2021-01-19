@@ -3,3 +3,4 @@ build/
 *.gba
 *.elf
 *.nlz
+*.sa1

@@ -84,12 +84,16 @@
 
 #define RESET_FRAMES 45
 
+#define HISCORE_SRAM 0x0E000000
+
 #define JUMP_HIT (key_hit(KEY_A) || key_hit(KEY_UP))
 #define JUMP_RELEASED (key_released(KEY_A) || key_released(KEY_UP))
 #define DINO_ANIMATING ((dinoState->status == RUNNING) || dinoState->status == DUCKING)
 
 extern OBJ_ATTR obj_buffer[];
 extern OBJ_AFFINE *obj_aff_buffer;
+
+extern int * hiScore;
 
 void update();
 
