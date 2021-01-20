@@ -686,6 +686,7 @@ void gameOver() {
 		setNumValue(hiScoreSet, meterState->distance);
 	}
 	setNumValue(scoreSet, meterState->distance);
+	showNum(scoreSet);
 }
 
 void init() {
