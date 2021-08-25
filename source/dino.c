@@ -61,8 +61,8 @@ int main()
 
   	while(1) {
 		mmFrame();
-  		vid_vsync();
-  	 
+  		//vid_vsync();
+  	 	VBlankIntrWait();
     	input();
 
     	update();
