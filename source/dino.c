@@ -750,6 +750,8 @@ void initGame() {
 
 	meterState = malloc(sizeof(METER_STATE));
 	initMeter(meterState);
+	if (readHiscore() == -1)
+		setHiscore(0);
 	setNumValue(hiScoreSet, readHiscore());
 	sqran(readHiscore());
 }
