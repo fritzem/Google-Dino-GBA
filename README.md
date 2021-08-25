@@ -14,7 +14,7 @@ Up on the D-pad and the A button make Dino jump, down on the D-pad crouches or s
 # Building
 You can build a rom of your own with the included makefile. Requires [devkitPro](https://devkitpro.org/wiki/Getting_Started) and the TONC library.
 
-#Notes
+# Notes
 Referenced the original [chromium source](https://source.chromium.org/chromium/chromium/src/+/master:components/neterror/resources/offline.js;l=7?q=t-rex%20package:%5Echromium$&ss=chromium) heavily.
 Game has been balanced to run as the actual game plays in a 240p sized window. The max speed was scaled down the same way the starting speed is scaled down in the original game.
 All game art is property of Google :)
