@@ -4,13 +4,15 @@
 #include <stdlib.h>
 #include "tonc.h"
 
-#define SPEED 2880
+#define SPEED 2946
 //6000
-#define SPEED_MAX 6240
+#define SPEED_MAX 6383
 //13000
 #define ACCELERATION 1 
 //0.001
-#define SPEED_POINT 1000
+#define SPEED_POINT 0x400
+#define SPEED_POINT_DIV 10
+#define SPEED_REM   0x3FF
 
 #define MAX_CLOUDS 6
 #define MIN_CLOUD_GAP 100

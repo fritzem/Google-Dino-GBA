@@ -61,7 +61,6 @@ int main()
 
   	while(1) {
 		mmFrame();
-  		//vid_vsync();
   	 	VBlankIntrWait();
     	input();
 
@@ -132,23 +131,27 @@ void update() {
 
 void updateHorizon() {
 	int scrollSpeed = (gameState->speed + horizonState->extraScroll);
-	int scrolled =  scrollSpeed / SPEED_POINT;
-	horizonState->extraScroll = (gameState->speed + horizonState->extraScroll) % SPEED_POINT;
+	int scrolled =  scrollSpeed >> SPEED_POINT_DIV;
+	horizonState->extraScroll = (gameState->speed + horizonState->extraScroll) & SPEED_REM;
 	horizonState->scroll += scrolled;
 	horizonState->scrolled += scrolled;
 	
 	//horizon terrain
 	if (horizonState->scrolled >= TILE_SIZE) {
 
-		horizonState->terrainScroll += 1;
-		if (horizonState->terrainScroll / TERRAIN_STRIP_LENGTH) horizonState->bumpy = randomBool();
-		horizonState->terrainScroll %= TERRAIN_STRIP_LENGTH;
+		horizonState->terrainScroll += (horizonState->scrolled >> 3);
+		if (horizonState->terrainScroll >= TERRAIN_STRIP_LENGTH) {
+			horizonState->bumpy = randomBool();
+			horizonState->terrainScroll %= TERRAIN_STRIP_LENGTH;
+		}
 
-		updateHorizonTile(horizonState->nextScrollTile, horizonState->terrainScroll, horizonState->bumpy);
-
-		horizonState->scrolled %= TILE_SIZE;
-		horizonState->nextScrollTile += 1;
-		horizonState->nextScrollTile %= BG_TILE_LENGTH;
+		for (int i = 0; i < (horizonState->scrolled >> 3); i++) {
+			updateHorizonTile(horizonState->nextScrollTile, horizonState->terrainScroll, horizonState->bumpy);
+			horizonState->nextScrollTile++;
+			horizonState->nextScrollTile &= 0x1F;
+		}
+		
+		horizonState->scrolled &= 0x7;
 	}
 
 	//clouds
@@ -289,10 +292,10 @@ void updateObstacles(int scrollSpeed) {
 }
 
 void updateObstacle(OBSTACLE * obs, int scrollSpeed, int index) {
-	int speedOffset = (obs->speedOffset + obs->extraSpeed) / SPEED_POINT;
-	obs->extraSpeed = (obs->speedOffset + obs->extraSpeed) % SPEED_POINT;
+	int speedOffset = (obs->speedOffset + obs->extraSpeed) >> SPEED_POINT_DIV;
+	obs->extraSpeed = (obs->speedOffset + obs->extraSpeed) & SPEED_REM;
 
-	obs->x -= scrollSpeed / SPEED_POINT + speedOffset;
+	obs->x -= (scrollSpeed >> SPEED_POINT_DIV) + speedOffset;
 	obs->visible = (obs->x > -(obs->width));
 	if (!(obs->visible)) {
 		horizonState->obstacleCount -= 1;
@@ -337,12 +340,12 @@ void createCactusSmall(OBSTACLE * obs) {
 	obs->type = CACTUS_SMALL;
 	obs->x = SCREEN_WIDTH;
 	obs->y = CACTUS_SMALL_Y;
-	obs->size = (gameState->speed / SPEED_POINT >= CACTUS_SMALL_MULTI_SPEED) ?
+	obs->size = (gameState->speed >> SPEED_POINT_DIV >= CACTUS_SMALL_MULTI_SPEED) ?
 		qran_range(1, MAX_OBSTACLE_SIZE + 1) : 1;
 	obs->width = CACTUS_SMALL_WIDTH * obs->size;
 	obs->height = CACTUS_SMALL_HEIGHT;
-	obs->gap = qran_range(((gameState->speed) * (obs->width) + (CACTUS_GAP / 10 * 6)) / SPEED_POINT,
-								(CACTUS_GAP + CACTUS_GAP / 2) / SPEED_POINT + 1);
+	obs->gap = qran_range(((gameState->speed) * (obs->width) + (CACTUS_GAP / 10 * 6)) >> SPEED_POINT_DIV,
+								((CACTUS_GAP + CACTUS_GAP / 2) >> SPEED_POINT_DIV) + 1);
 	obs->speedOffset = 0;
 	obs->visible = true;
 
@@ -358,12 +361,12 @@ void createCactusLarge(OBSTACLE * obs) {
 	obs->type = CACTUS_LARGE;
 	obs->x = SCREEN_WIDTH;
 	obs->y = CACTUS_LARGE_Y;
-	obs->size = (gameState->speed / SPEED_POINT >= CACTUS_LARGE_MULTI_SPEED) ?
+	obs->size = (gameState->speed >> SPEED_POINT_DIV >= CACTUS_LARGE_MULTI_SPEED) ?
 		qran_range(1, MAX_OBSTACLE_SIZE + 1) : 1;
 	obs->width = CACTUS_LARGE_WIDTH * obs->size;
 	obs->height = CACTUS_LARGE_HEIGHT;
-	obs->gap = qran_range((obs->width * gameState->speed + (CACTUS_GAP / 10 * 6)) / SPEED_POINT,
-								(CACTUS_GAP + CACTUS_GAP / 2) / SPEED_POINT + 1);
+	obs->gap = qran_range((obs->width * gameState->speed + (CACTUS_GAP / 10 * 6)) >> SPEED_POINT_DIV,
+								((CACTUS_GAP + CACTUS_GAP / 2) >> SPEED_POINT_DIV) + 1);
 	obs->speedOffset = 0;
 	obs->visible = true;
 
@@ -384,8 +387,8 @@ void createPterodactyl(OBSTACLE * obs) {
 	obs->size = 0;
 	obs->width = DACTYL_WIDTH;
 	obs->height = DACTYL_HEIGHT;
-	obs->gap = qran_range((obs->width * gameState->speed + (DACTYL_GAP / 10 * 6)) / SPEED_POINT,
-								(DACTYL_GAP + DACTYL_GAP / 2) / SPEED_POINT + 1);
+	obs->gap = qran_range((obs->width * gameState->speed + (DACTYL_GAP / 10 * 6)) >> SPEED_POINT_DIV,
+								((DACTYL_GAP + DACTYL_GAP / 2) >> SPEED_POINT_DIV) + 1);
 	obs->speedOffset = (qran_range(0,2)) ? DACTYL_SPEED_OFFSET : -DACTYL_SPEED_OFFSET;
 	obs->visible = true;
 
@@ -786,11 +789,11 @@ void resetDino(DINO_STATE * dino) {
 }
 
 void addPoint(int add, int *base, int *point) {
-	*base += add / SPEED_POINT;
-	*point += add % SPEED_POINT;
-	if (*point / SPEED_POINT) {
-		*base += *point / SPEED_POINT;
-		*point = *point % SPEED_POINT;
+	*base += (add >> SPEED_POINT_DIV);
+	*point += (add & SPEED_REM);
+	if (*point >> SPEED_POINT_DIV) {
+		*base += (*point >> SPEED_POINT_DIV);
+		*point = *point & SPEED_REM;
 	}
 }
 
