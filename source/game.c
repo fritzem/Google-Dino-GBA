@@ -7,7 +7,7 @@
 #include <dino_soundbank.h>
 #include "obstacle.h"
 #include "save.h"
-#include "dinoSheet.h"
+#include <dino_sheet.h>
 #include <palette_bank.h>
 
 //Ethan Fritz 2021, 2025

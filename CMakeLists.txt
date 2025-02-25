@@ -3,7 +3,6 @@ project(DINO_GBA LANGUAGES ASM C)
 
 set(GAME_SOURCES
         source/dino.c
-        source/dinoSheet.c
         source/dinoSheetHelper.c
         source/save.c
         source/hitbox.c
@@ -39,6 +38,10 @@ if(CMAKE_SYSTEM_NAME STREQUAL AdvancedGameBoy)
             graphics/default.bmp
     )
 
+    add_grit_library(dino_sheet NO_PALETTE NO_MAP GRAPHICS_BIT_DEPTH 4
+            graphics/dinoSheet.bmp
+    )
+
     target_compile_options(dino-gba PRIVATE
             -mthumb
             -mthumb-interwork
@@ -64,7 +67,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL AdvancedGameBoy)
     endif()
 
     target_link_libraries(dino-gba PRIVATE librom tonclib agbabi maxmod
-            dino_soundbank palette_bank)
+            dino_soundbank dino_sheet palette_bank)
 
     # ROM header info
     set_target_properties(dino-gba PROPERTIES
