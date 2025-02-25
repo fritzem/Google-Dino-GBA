@@ -1,7 +1,9 @@
+.idea
 vbalink.ini
-build/
+cmake-build
 *.gba
 *.elf
 *.nlz
 *.sa1
 *.sav
+.DS_Store

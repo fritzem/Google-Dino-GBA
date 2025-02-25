@@ -1,13 +1,16 @@
 #include <string.h>
 #include <maxmod.h>
+#include <dino_soundbank.h>
 #include "tonc.h"
 #include "dino.h"
-#include "soundbank.h"
-#include "soundbank_bin.h"
 #include "dinoSheet.h"
 #include "dinoSheetHelper.h"
 
 //Ethan Fritz 2021
+
+extern const byte dino_soundbank_bin;
+
+
 
 OBJ_ATTR obj_buffer[128];
 OBJ_AFFINE *obj_aff_buffer= (OBJ_AFFINE*)obj_buffer;
@@ -706,7 +709,7 @@ void initSound() {
 
 	irq_add(II_VBLANK, mmVBlank);
 	irq_enable(II_VBLANK);
-	mmInitDefault((mm_addr)soundbank_bin, 8);
+	mmInitDefault((mm_addr)&dino_soundbank_bin, 8);
 }
 
 void initMem() {

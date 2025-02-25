@@ -1,0 +1,49 @@
+{
+  "version": 3,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 21,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "agb-base",
+      "hidden": true,
+      "generator": "Unix Makefiles",
+      "toolchainFile": "gba-toolchain/cmake/gba.toolchain.cmake",
+      "binaryDir": "cmake-build/${presetName}",
+      "installDir": "bin/${presetName}"
+    },
+    {
+      "name": "verbose-base",
+      "hidden": true,
+      "cacheVariables": {
+        "MGBA_LOGS": "true"
+      }
+    },
+    {
+      "name": "agb-debug",
+      "displayName": "AGB Debug",
+      "description": "Build for GBA with no optimizations",
+      "inherits": ["agb-base", "verbose-base"],
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "debug"
+      }
+    },
+    {
+      "name": "agb-release",
+      "displayName": "AGB Release",
+      "description": "Build for GBA with -O3 optimizations",
+      "inherits": "agb-base",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "release"
+      }
+    },
+    {
+      "name": "agb-release-verbose",
+      "displayName": "AGB Release (Verbose)",
+      "description": "Optimized build with mGBA logging enabled",
+      "inherits": ["agb-release", "verbose-base"]
+    }
+  ]
+}

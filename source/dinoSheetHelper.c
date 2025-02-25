@@ -493,8 +493,8 @@ void assembleSets() {
 
 void whiteOutBG() {
 	se_fill(&se_mem[29][0], blankTile_SI);
-	se_fill(&se_mem[30][0], transparent_SI);
-	se_fill(&se_mem[31][0], blankTile_SI);
+    se_fill(&se_mem[30][0], transparent_SI);
+    se_fill(&se_mem[31][0], blankTile_SI);
 }
 
 //x1819
@@ -514,8 +514,8 @@ void updateHorizonTile(int bg_index, int terrainIndex, bool bumpy) {
 		top_SI = firstTerrain_SI + terrainIndex + BUMPY_TOP_OFFSET;
 		terrainIndex += BUMPY_OFFSET;
 	}
-	se_plot(&se_mem[31][0], bg_index, GROUND_Y - 1, top_SI);
-	se_plot(&se_mem[31][0], bg_index, GROUND_Y, firstTerrain_SI + terrainIndex);
+    se_plot(&se_mem[31][0], bg_index, GROUND_Y - 1, top_SI);
+    se_plot(&se_mem[31][0], bg_index, GROUND_Y, firstTerrain_SI + terrainIndex);
 }
 
 void invertPalettes() {
