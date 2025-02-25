@@ -2,14 +2,20 @@ cmake_minimum_required(VERSION 3.21)
 project(DINO_GBA LANGUAGES ASM C)
 
 set(GAME_SOURCES
-    source/dino.c
-    source/dinoSheet.c
-    source/dinoSheetHelper.c
+        source/dino.c
+        source/dinoSheet.c
+        source/dinoSheetHelper.c
+        source/save.c
+        source/hitbox.c
+        source/obstacle.c
+        source/game.c
+        source/horizon.c
+        source/meter.c
 )
 add_executable(dino-gba ${GAME_SOURCES})
 
 set(GAME_INCLUDES
-    include
+        include
 )
 target_include_directories(dino-gba PRIVATE ${GAME_INCLUDES})
 
@@ -21,9 +27,9 @@ if(CMAKE_SYSTEM_NAME STREQUAL AdvancedGameBoy)
     find_package(maxmod REQUIRED) # GBA music and sound solution
 
     add_maxmod_library(dino_soundbank
-        audio/button-pressed.wav
-        audio/hit.wav
-        audio/score-reached.wav
+            audio/button-pressed.wav
+            audio/hit.wav
+            audio/score-reached.wav
     )
 
     target_compile_options(dino-gba PRIVATE

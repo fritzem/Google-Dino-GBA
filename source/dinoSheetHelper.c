@@ -2,6 +2,8 @@
 #include "dinoSheetHelper.h"
 #include "dino.h"
 #include "tonc.h"
+#include "horizon.h"
+#include "game.h"
 
 REPLAY_OBJ_SET *replaySet;
 BIRD_OBJ_SET *birdSet0;
