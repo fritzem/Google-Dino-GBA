@@ -8,6 +8,7 @@
 #include "obstacle.h"
 #include "save.h"
 #include "dinoSheet.h"
+#include <palette_bank.h>
 
 //Ethan Fritz 2021, 2025
 
@@ -209,9 +210,10 @@ void initSound() {
 
 void initMem() {
     memcpy(&tile_mem[4][0], dinoSheetTiles, dinoSheetTilesLen);
-    memcpy(pal_obj_mem, dinoSheetPal, dinoSheetPalLen);
-    memcpy(pal_bg_mem, dinoSheetPal, dinoSheetPalLen);
     memcpy(&tile_mem[0][0], dinoSheetTiles, dinoSheetTilesLen);
+
+    memcpy(pal_obj_mem, defaultPal, defaultPalLen);
+    memcpy(pal_bg_mem, defaultPal, defaultPalLen);
 }
 
 void initGraphics() {

@@ -25,11 +25,18 @@ if(CMAKE_SYSTEM_NAME STREQUAL AdvancedGameBoy)
     find_package(tonclib REQUIRED) # Tonc C development library
     find_package(agbabi REQUIRED) # GBA optimized functions library
     find_package(maxmod REQUIRED) # GBA music and sound solution
+    find_package(grit REQUIRED) # GBA bitmap converter
 
     add_maxmod_library(dino_soundbank
             audio/button-pressed.wav
             audio/hit.wav
             audio/score-reached.wav
+    )
+
+    add_grit_library(palette_bank PALETTE
+            PALETTE_COUNT 32
+            NO_GRAPHICS NO_MAP
+            graphics/default.bmp
     )
 
     target_compile_options(dino-gba PRIVATE
@@ -56,7 +63,8 @@ if(CMAKE_SYSTEM_NAME STREQUAL AdvancedGameBoy)
         target_compile_definitions(dino-gba PRIVATE VERBOSE=1)
     endif()
 
-    target_link_libraries(dino-gba PRIVATE librom tonclib agbabi maxmod dino_soundbank)
+    target_link_libraries(dino-gba PRIVATE librom tonclib agbabi maxmod
+            dino_soundbank palette_bank)
 
     # ROM header info
     set_target_properties(dino-gba PROPERTIES
