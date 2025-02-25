@@ -5,6 +5,7 @@
 #include "tonc.h"
 #include "hitbox.h"
 #include "obstacle.h"
+#include "state.h"
 
 #define SPEED 2946
 //6000
@@ -31,12 +32,7 @@
 #define MAX_BLINK_DELAY 420
 #define BLINK_TIME 30
 
-#define ACHIEVEMENT_DISTANCE 100
-#define FLASH_FRAMES 15
-#define FLASH_ITERATIONS 3
-
 #define CLEAR_FRAMES 180
-
 #define STARTING_CURTAIN_SCROLL 468
 
 #define RUN_FRAME 5
@@ -48,16 +44,19 @@
 #define DACTYL_COLLISION_BOXES 5
 #define MAX_HITBOXES 6
 
-#define RESET_FRAMES 45
+
 
 #define JUMP_HIT (key_hit(KEY_A) || key_hit(KEY_UP))
 #define JUMP_RELEASED (key_released(KEY_A) || key_released(KEY_UP))
 #define DINO_ANIMATING ((dinoState->status == RUNNING) || dinoState->status == DUCKING)
 
-bool collisionCheck();
-void input();
+typedef enum {CRASHED, DUCKING, JUMPING, RUNNING, WAITING} DINO_STATUS;
+
+void inputDino(GAME_STATE * gameState);
 void updateDino();
-void dinoJump();
+
+bool collisionCheck();
+
 void updateJump();
 void endJump();
 void updateBlink();
@@ -65,20 +64,16 @@ int getBlinkTime();
 void dinoRun();
 void dinoDuck();
 
-void gameOver();
-
-
-
 void addPoint(int add, int *base, int *point);
 
-enum dinoStatus{CRASHED, DUCKING, JUMPING, RUNNING, WAITING};
+
 
 typedef struct DINO_STATE {
 	int xPos;
 	int yPos;
 	int jumpVelocity;
 
-	enum dinoStatus status;
+	DINO_STATUS status;
 	bool speedDrop;
 	bool jumped;
 	bool reachedMin;
@@ -94,8 +89,6 @@ typedef struct DINO_STATE {
 
 	const int * animSI;
 } DINO_STATE, DINO_STATE;
-
-extern DINO_STATE *dinoState;
 
 INLINE void initDino(DINO_STATE * dino) {
 	dino->xPos = 0;

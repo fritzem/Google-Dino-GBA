@@ -5,6 +5,7 @@
 #include "tonc.h"
 #include "obstacle.h"
 #include "dino.h"
+#include "state.h"
 
 #define OBSTACLE_TYPES 3
 #define MAX_OBSTACLES 2
@@ -42,8 +43,8 @@ INLINE void initCloud(CLOUD * cloud, int cloudNum) {
     cloud->cloudNum = cloudNum;
 }
 
-void updateObstacles(int scrollSpeed);
-void addObstacle();
+void updateObstacles(int scrollSpeed, int gameSpeed);
+void addObstacle(int speed);
 
 void addCloud();
 void updateCloud(CLOUD * cloud);
@@ -144,7 +145,7 @@ INLINE void resetHorizon(HORIZON_STATE * horizon) {
 }
 
 void updateNight();
-void updateHorizon();
+void updateHorizon(GAME_STATE * gameState);
 void placeStars();
 
 #endif //DINO_GBA_HORIZON_H

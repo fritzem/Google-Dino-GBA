@@ -2,27 +2,7 @@
 #include "game.h"
 #include "dinoSheetHelper.h"
 
-void updateObstacles(int scrollSpeed) {
-    for (int i = 0; i < MAX_OBSTACLES; i++) {
-        OBSTACLE * obs = (horizonState->obstacles + i);
-        if (obs->visible) {
-            updateObstacle(obs, scrollSpeed, i);
-            setObstaclePos(obstacleSets + i, obs->type, obs->size, obs->x, obs->y);
-        }
-    }
-
-    if (horizonState->obstacleCount > 0) {
-        OBSTACLE *lastObs = (horizonState->obstacles + (horizonState->lastObstacle));
-        if ((horizonState->obstacleCount < MAX_OBSTACLES) &&
-            (((lastObs->gap) + (lastObs->x) + (lastObs->width)) < SCREEN_WIDTH)) {
-            addObstacle();
-        }
-    } else {
-        addObstacle();
-    }
-}
-
-void updateHorizon() {
+void updateHorizon(GAME_STATE * gameState) {
     int scrollSpeed = (gameState->speed + horizonState->extraScroll);
     int scrolled =  scrollSpeed >> SPEED_POINT_DIV;
     horizonState->extraScroll = (gameState->speed + horizonState->extraScroll) & SPEED_REM;
@@ -125,25 +105,45 @@ void updateHorizon() {
 
     //obstacles
     if (gameState->spawnObstacles)
-        updateObstacles(scrollSpeed);
+        updateObstacles(scrollSpeed, gameState->speed);
 
 
     REG_BG0HOFS = horizonState->scroll;
 }
 
-void addObstacle() {
+void updateObstacles(int scrollSpeed, int gameSpeed) {
+    for (int i = 0; i < MAX_OBSTACLES; i++) {
+        OBSTACLE * obs = (horizonState->obstacles + i);
+        if (obs->visible) {
+            updateObstacle(obs, scrollSpeed, i);
+            setObstaclePos(obstacleSets + i, obs->type, obs->size, obs->x, obs->y);
+        }
+    }
+
+    if (horizonState->obstacleCount > 0) {
+        OBSTACLE *lastObs = (horizonState->obstacles + (horizonState->lastObstacle));
+        if ((horizonState->obstacleCount < MAX_OBSTACLES) &&
+            (((lastObs->gap) + (lastObs->x) + (lastObs->width)) < SCREEN_WIDTH)) {
+            addObstacle(gameSpeed);
+        }
+    } else {
+        addObstacle(gameSpeed);
+    }
+}
+
+void addObstacle(int speed) {
     OBSTACLE *obs = (OBSTACLE*)(horizonState->obstacles + (horizonState->obstacleCursor));
-    switch (qran_range(0,(OBSTACLE_TYPES - (gameState->speed < DACTYL_MIN_SPEED)))) {
+    switch (qran_range(0,(OBSTACLE_TYPES - (speed < DACTYL_MIN_SPEED)))) {
         case CACTUS_SMALL:
-            createCactusSmall(obs);
+            createCactusSmall(obs, speed);
             setObstacleSet(obstacleSets + horizonState->obstacleCursor, CACTUS_SMALL, obs->size);
             break;
         case CACTUS_LARGE:
-            createCactusLarge(obs);
+            createCactusLarge(obs, speed);
             setObstacleSet(obstacleSets + horizonState->obstacleCursor, CACTUS_LARGE, obs->size);
             break;
         case PTERODACTYL:
-            createPterodactyl(obs);
+            createPterodactyl(obs, speed);
             setObstacleSet(obstacleSets + horizonState->obstacleCursor, PTERODACTYL, obs->size);
             break;
     }

@@ -24,6 +24,8 @@ const COLLISION_BOX duckBoxes[] = {
 	{1, 18, 55, 25}	
 };
 
+void dinoJump(GAME_STATE * gameState);
+
 void updateDino() {
     if (dinoState->status == JUMPING)
         updateJump();
@@ -31,17 +33,17 @@ void updateDino() {
         updateBlink();
 }
 
-void input() {
-	key_poll();
+void inputDino(GAME_STATE * gameState) {
+    if (dinoState->status == CRASHED) {
+        return;
+    }
+
   	if (JUMP_HIT && (dinoState->status == WAITING || dinoState->status == RUNNING)) {
-  			dinoJump();
-  			return;
+        dinoJump(gameState);
+        return;
   	} else if (JUMP_RELEASED) {
   		if (dinoState->status == JUMPING)
   			endJump();
-  		else if (dinoState->status == CRASHED && gameState->gameoverFrames >= RESET_FRAMES)
-  			resetGame();
-  		return; 
   	}
 
   	if (key_hit(KEY_DOWN)) {
@@ -60,12 +62,7 @@ void input() {
   	}
 }
 
-void dinoJump() {
-	if (!(gameState->playing))
-	{
-		hideTitle(titleSet);
-		dinoUnBlink(dinoSet);
-	}
+void dinoJump(GAME_STATE * gameState) {
 	setDinoAnim(dinoSet, dinoFeet0_SI);
 
 	dinoState->status = JUMPING;
@@ -98,11 +95,7 @@ void updateJump() {
 		//if first landing, pull back the curtain
 		if (!dinoState->jumped)
 		{
-			gameState->playingIntro = true;
-			gameState->playing = true;
 			dinoState->jumped = true;
-			sqran(gameState->randoFrames);
-			addCloud();
 		}
 	}
 
@@ -163,27 +156,6 @@ void dinoDuck() {
 
 	dinoState->status = DUCKING;
   setDinoDucking(dinoSet);
-}
-
-void gameOver() {
-	mmEffect(SFX_HIT);
-
-	dinoState->status = CRASHED;
-	setDinoCrashed(dinoSet);
-
-	gameState->playing = false;
-
-	toggleReplayHide(replaySet);
-	showGameover(gameoverSet);
-
-	gameState->gameoverFrames = 0;
-
-	if (meterState->distance > readHiscore()) {
-		setHiscore(meterState->distance);
-		setNumValue(hiScoreSet, meterState->distance);
-	}
-	setNumValue(scoreSet, meterState->distance);
-	showNum(scoreSet);
 }
 
 void resetDino(DINO_STATE * dino) {

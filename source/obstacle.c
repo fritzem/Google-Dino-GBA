@@ -44,15 +44,15 @@ const COLLISION_BOX pterodactylBoxes[] = {
         {10, 8, 6, 9}
 };
 
-void createCactusSmall(OBSTACLE * obs) {
+void createCactusSmall(OBSTACLE * obs, int speed) {
     obs->type = CACTUS_SMALL;
     obs->x = SCREEN_WIDTH;
     obs->y = CACTUS_SMALL_Y;
-    obs->size = (gameState->speed >> SPEED_POINT_DIV >= CACTUS_SMALL_MULTI_SPEED) ?
+    obs->size = (speed >> SPEED_POINT_DIV >= CACTUS_SMALL_MULTI_SPEED) ?
                 qran_range(1, MAX_OBSTACLE_SIZE + 1) : 1;
     obs->width = CACTUS_SMALL_WIDTH * obs->size;
     obs->height = CACTUS_SMALL_HEIGHT;
-    obs->gap = qran_range(((gameState->speed) * (obs->width) + (CACTUS_GAP / 10 * 6)) >> SPEED_POINT_DIV,
+    obs->gap = qran_range(((speed) * (obs->width) + (CACTUS_GAP / 10 * 6)) >> SPEED_POINT_DIV,
                           ((CACTUS_GAP + CACTUS_GAP / 2) >> SPEED_POINT_DIV) + 1);
     obs->speedOffset = 0;
     obs->visible = true;
@@ -65,15 +65,15 @@ void createCactusSmall(OBSTACLE * obs) {
     adjustBox(obs->colBox, obs->size, obs->width);
 }
 
-void createCactusLarge(OBSTACLE * obs) {
+void createCactusLarge(OBSTACLE * obs, int speed) {
     obs->type = CACTUS_LARGE;
     obs->x = SCREEN_WIDTH;
     obs->y = CACTUS_LARGE_Y;
-    obs->size = (gameState->speed >> SPEED_POINT_DIV >= CACTUS_LARGE_MULTI_SPEED) ?
+    obs->size = (speed >> SPEED_POINT_DIV >= CACTUS_LARGE_MULTI_SPEED) ?
                 qran_range(1, MAX_OBSTACLE_SIZE + 1) : 1;
     obs->width = CACTUS_LARGE_WIDTH * obs->size;
     obs->height = CACTUS_LARGE_HEIGHT;
-    obs->gap = qran_range((obs->width * gameState->speed + (CACTUS_GAP / 10 * 6)) >> SPEED_POINT_DIV,
+    obs->gap = qran_range((obs->width * speed + (CACTUS_GAP / 10 * 6)) >> SPEED_POINT_DIV,
                           ((CACTUS_GAP + CACTUS_GAP / 2) >> SPEED_POINT_DIV) + 1);
     obs->speedOffset = 0;
     obs->visible = true;
@@ -88,14 +88,14 @@ void createCactusLarge(OBSTACLE * obs) {
 
 const int dactylHeights[3] = {100,75,50};
 
-void createPterodactyl(OBSTACLE * obs) {
+void createPterodactyl(OBSTACLE * obs, int speed) {
     obs->type = PTERODACTYL;
     obs->x = SCREEN_WIDTH;
     obs->y = dactylHeights[qran_range(0,3)];
     obs->size = 0;
     obs->width = DACTYL_WIDTH;
     obs->height = DACTYL_HEIGHT;
-    obs->gap = qran_range((obs->width * gameState->speed + (DACTYL_GAP / 10 * 6)) >> SPEED_POINT_DIV,
+    obs->gap = qran_range((obs->width * speed + (DACTYL_GAP / 10 * 6)) >> SPEED_POINT_DIV,
                           ((DACTYL_GAP + DACTYL_GAP / 2) >> SPEED_POINT_DIV) + 1);
     obs->speedOffset = (qran_range(0,2)) ? DACTYL_SPEED_OFFSET : -DACTYL_SPEED_OFFSET;
     obs->visible = true;

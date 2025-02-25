@@ -3,6 +3,10 @@
 
 #include "tonc.h"
 
+#define ACHIEVEMENT_DISTANCE 100
+#define FLASH_FRAMES 15
+#define FLASH_ITERATIONS 3
+
 typedef struct METER_STATE {
     int distance;
     int invertCounter;

@@ -12,11 +12,13 @@
 #define CACTUS_SMALL_WIDTH 17
 #define CACTUS_SMALL_HEIGHT 35
 #define CACTUS_SMALL_MULTI_SPEED 4
+
 #define CACTUS_LARGE_Y 103
 #define CACTUS_LARGE_WIDTH 25
 #define CACTUS_LARGE_HEIGHT 50
 #define CACTUS_LARGE_MULTI_SPEED 6
 #define CACTUS_GAP 120 * SPEED_POINT
+
 #define DACTYL_WIDTH 46
 #define DACTYL_HEIGHT 40
 #define DACTYL_GAP 150 * SPEED_POINT
@@ -48,9 +50,9 @@ INLINE void resetObstacles(OBSTACLE * obs) {
     (obs + 1)->visible = 0;
 }
 
-void createCactusSmall(OBSTACLE * obs);
-void createCactusLarge(OBSTACLE * obs);
-void createPterodactyl(OBSTACLE * obs);
+void createCactusSmall(OBSTACLE * obs, int speed);
+void createCactusLarge(OBSTACLE * obs, int speed);
+void createPterodactyl(OBSTACLE * obs, int speed);
 void updateObstacle(OBSTACLE * obs, int scrollSpeed, int index);
 
 #endif //DINO_GBA_OBSTACLE_H

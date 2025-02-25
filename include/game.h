@@ -5,23 +5,10 @@
 #include "dino.h"
 #include "horizon.h"
 #include "meter.h"
+#include "state.h"
 
-typedef struct GAME_STATE {
-    int speed;
-    int curtainScroll;
-
-    int distanceRan;
-    int distanceRanPoint;
-
-    int runningFrames;
-    int randoFrames;
-    bool spawnObstacles;
-
-    bool playing;
-    bool playingIntro;
-
-    int gameoverFrames;
-} GAME_STATE, GAME_STATE;
+// Delay until game over screen accepts input
+#define RESET_FRAMES 45
 
 INLINE void initState(GAME_STATE * state) {
     state->speed = SPEED;
@@ -52,7 +39,6 @@ INLINE void resetState(GAME_STATE * state) {
 
 void resetGame();
 
-extern GAME_STATE * gameState;
 extern DINO_STATE * dinoState;
 extern HORIZON_STATE * horizonState;
 extern METER_STATE * meterState;
