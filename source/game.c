@@ -12,6 +12,8 @@
 //Ethan Fritz 2021, 2025
 
 extern const byte dino_soundbank_bin;
+const char saveType[] __attribute__((aligned(4))) = "SRAM_Vnnn";
+
 OBJ_ATTR obj_buffer[128];
 
 typedef struct {
@@ -39,6 +41,9 @@ int main() {
     init();
 
     STATE * state = initGame();
+
+    // Ensure it's not optimized away
+    char y = saveType[0]; y = y;
 
     while(1) {
         mmFrame();
