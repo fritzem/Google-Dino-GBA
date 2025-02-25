@@ -3,7 +3,6 @@
 #include <dino_soundbank.h>
 #include "tonc.h"
 #include "dinoSheetHelper.h"
-#include "save.h"
 #include "hitbox.h"
 #include "game.h"
 #include "obstacle.h"
@@ -24,26 +23,33 @@ const COLLISION_BOX duckBoxes[] = {
 	{1, 18, 55, 25}	
 };
 
-void dinoJump(GAME_STATE * gameState);
+void dinoJump(DINO_STATE * dinoState, GAME_STATE * gameState);
+void updateJump(DINO_STATE * dinoState);
+void endJump(DINO_STATE * dinoState);
+void updateBlink(DINO_STATE * dinoState);
+void dinoRun(DINO_STATE * dinoState);
+void dinoDuck(DINO_STATE * dinoState);
 
-void updateDino() {
+int getBlinkTime();
+
+void updateDino(DINO_STATE * dinoState) {
     if (dinoState->status == JUMPING)
-        updateJump();
+        updateJump(dinoState);
     if (dinoState->status == WAITING)
-        updateBlink();
+        updateBlink(dinoState);
 }
 
-void inputDino(GAME_STATE * gameState) {
+void inputDino(DINO_STATE * dinoState, GAME_STATE * gameState) {
     if (dinoState->status == CRASHED) {
         return;
     }
 
   	if (JUMP_HIT && (dinoState->status == WAITING || dinoState->status == RUNNING)) {
-        dinoJump(gameState);
+        dinoJump(dinoState, gameState);
         return;
   	} else if (JUMP_RELEASED) {
   		if (dinoState->status == JUMPING)
-  			endJump();
+  			endJump(dinoState);
   	}
 
   	if (key_hit(KEY_DOWN)) {
@@ -51,18 +57,18 @@ void inputDino(GAME_STATE * gameState) {
   			dinoState->speedDrop = true;
   			dinoState->jumpVelocity = -1;
   		} else if (dinoState->status == RUNNING) {
-  			dinoDuck();
+  			dinoDuck(dinoState);
   		}
   	} else if (key_released(KEY_DOWN)) {
   		if (dinoState->status == JUMPING) {
   			dinoState->speedDrop = false;
   		} else if (dinoState->status == DUCKING) {
-  			dinoRun();
+  			dinoRun(dinoState);
   		}
   	}
 }
 
-void dinoJump(GAME_STATE * gameState) {
+void dinoJump(DINO_STATE * dinoState, GAME_STATE * gameState) {
 	setDinoAnim(dinoSet, dinoFeet0_SI);
 
 	dinoState->status = JUMPING;
@@ -73,7 +79,7 @@ void dinoJump(GAME_STATE * gameState) {
 	mmEffect(SFX_BUTTON_PRESSED);
 }
 
-void updateJump() {
+void updateJump(DINO_STATE * dinoState) {
 	if (dinoState->speedDrop)
 		dinoState->yPos += (dinoState->jumpVelocity * SPEED_DROP_COEFFICIENT) / 10;
 	else
@@ -84,29 +90,26 @@ void updateJump() {
 	if (dinoState->yPos > MIN_JUMP_HEIGHT || dinoState->speedDrop)
 		dinoState->reachedMin = true;
 	if (dinoState->yPos > MAX_JUMP_HEIGHT || dinoState->speedDrop)
-		endJump();
+		endJump(dinoState);
 
 	if (dinoState->yPos < DINO_GROUND_Y) {
 		bool drop = dinoState->speedDrop;
-		dinoRun();
+		dinoRun(dinoState);
 		if (drop)
-			dinoDuck();
+			dinoDuck(dinoState);
 
 		//if first landing, pull back the curtain
-		if (!dinoState->jumped)
-		{
-			dinoState->jumped = true;
-		}
+        dinoState->jumped |= !dinoState->jumped;
 	}
 
 }
 
-void endJump() {
+void endJump(DINO_STATE * dinoState) {
 	if (dinoState->reachedMin && dinoState->jumpVelocity < DROP_VELOCITY)
 		dinoState->jumpVelocity = DROP_VELOCITY;
 }
 
-void updateBlink() {
+void updateBlink(DINO_STATE * dinoState) {
 	if (!(dinoState->blinking)) {
 		if (dinoState->blinkFrame == 0) {
 			if (dinoState->blinks >= MAX_BLINKS)
@@ -134,7 +137,7 @@ int getBlinkTime() {
 	return qran_range(0, MAX_BLINK_DELAY);
 }
 
-void dinoRun() {
+void dinoRun(DINO_STATE * dinoState) {
 	dinoState->frame = 0;
 	dinoState->frameCounter = 0;
 	dinoState->frameTime = RUN_FRAME;
@@ -148,7 +151,7 @@ void dinoRun() {
 	dinoState->yPos = DINO_GROUND_Y;
 }
 
-void dinoDuck() {
+void dinoDuck(DINO_STATE * dinoState) {
 	dinoState->frame = 0;
 	dinoState->frameCounter = 0;
 	dinoState->frameTime = DUCK_FRAME;
@@ -171,7 +174,7 @@ void resetDino(DINO_STATE * dino) {
 	dino->frame = 0;
 	dino->frameCounter = 0;
 	dino->frameTime = RUN_FRAME;
-	dinoState->animSI = animRun;
+	dino->animSI = animRun;
 }
 
 void addPoint(int add, int *base, int *point) {
@@ -183,7 +186,7 @@ void addPoint(int add, int *base, int *point) {
 	}
 }
 
-bool collisionCheck() {
+bool collisionCheck(DINO_STATE * dinoState, HORIZON_STATE * horizonState) {
     int tW = ((dinoState->status == DUCKING) ? DINO_WIDTH_DUCK : DINO_WIDTH) - 2;
     int tH = ((dinoState->status == DUCKING) ? DINO_HEIGHT_DUCK : DINO_HEIGHT) - 2;
     int tX = dinoState->xPos + 1;

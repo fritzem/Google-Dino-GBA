@@ -37,12 +37,6 @@ INLINE void resetState(GAME_STATE * state) {
     state->playing = true;
 }
 
-void resetGame();
-
-extern DINO_STATE * dinoState;
-extern HORIZON_STATE * horizonState;
-extern METER_STATE * meterState;
-
 extern OBJ_ATTR obj_buffer[];
 
 #endif //DINO_GBA_GAME_H

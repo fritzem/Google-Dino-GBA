@@ -1,6 +1,7 @@
 .idea
 vbalink.ini
 cmake-build
+bin
 *.gba
 *.elf
 *.nlz

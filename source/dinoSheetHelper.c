@@ -159,7 +159,7 @@ void setDinoPos(DINO_OBJ_SET *set, int x, int y) {
 	obj_set_pos(set->dinoWink, x + 24, y);
 }
 
-void dinoGraphicsUpdate(DINO_OBJ_SET *set) {
+void dinoGraphicsUpdate(DINO_STATE *dinoState, DINO_OBJ_SET *set) {
 	int y = SCREEN_HEIGHT - 48 - dinoState->yPos;
 	int crouchY = SCREEN_HEIGHT - 32 - dinoState->yPos;
 	switch (dinoState->status) {
@@ -367,7 +367,6 @@ void setObstacleSet(OBSTACLE_OBJ_SET *set, int type, int size) {
 	}
 }
 
-//Use size parameter for flap if dactyl
 void setObstaclePos(OBSTACLE_OBJ_SET *set, int type, int size, int x, int y) {
 	switch (type * TYPEM + size) {
 		case CACTUS_SMALL_0:
@@ -476,9 +475,6 @@ void initSets() {
 	starsSet = createStarsSet(&obj_buffer[50]);
 	
 	titleSet = createTitleSet(&obj_buffer[52]);
-
-	
-	
 
 	trackers = createTrackers();
 }

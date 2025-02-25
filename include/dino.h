@@ -6,6 +6,7 @@
 #include "hitbox.h"
 #include "obstacle.h"
 #include "state.h"
+#include "horizon.h"
 
 #define SPEED 2946
 //6000
@@ -52,22 +53,6 @@
 
 typedef enum {CRASHED, DUCKING, JUMPING, RUNNING, WAITING} DINO_STATUS;
 
-void inputDino(GAME_STATE * gameState);
-void updateDino();
-
-bool collisionCheck();
-
-void updateJump();
-void endJump();
-void updateBlink();
-int getBlinkTime();
-void dinoRun();
-void dinoDuck();
-
-void addPoint(int add, int *base, int *point);
-
-
-
 typedef struct DINO_STATE {
 	int xPos;
 	int yPos;
@@ -90,24 +75,16 @@ typedef struct DINO_STATE {
 	const int * animSI;
 } DINO_STATE, DINO_STATE;
 
+void updateDino(DINO_STATE * dinoState);
+void inputDino(DINO_STATE * dinoState, GAME_STATE * gameState);
+
+bool collisionCheck(DINO_STATE * dinoState, HORIZON_STATE * horizonState);
+
+void addPoint(int add, int *base, int *point);
+
 INLINE void initDino(DINO_STATE * dino) {
-	dino->xPos = 0;
 	dino->yPos = DINO_GROUND_Y;
-	dino->jumpVelocity = 0;
-
 	dino->status = WAITING;
-	dino->speedDrop = false;
-	dino->jumped = false;
-	dino->reachedMin = false;
-
-	dino->frame = 0;
-	dino->frameCounter = 0;
-	dino->frameTime = 0;
-
-	dino->blinkTime = 0;
-	dino->blinks = 0;
-	dino->blinkFrame = 0;
-	dino->blinking = false;
 }
 
 void resetDino(DINO_STATE * dino);

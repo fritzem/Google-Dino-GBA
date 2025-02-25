@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 #include "tonc.h"
+#include "dino.h"
 
 #define attr0Visibility 0x200
 
@@ -252,7 +253,7 @@ void setHiPos(HI_OBJ_SET *set, int x, int y);
 
 DINO_OBJ_SET *createDinoSet(OBJ_ATTR *index);
 void setDinoPos(DINO_OBJ_SET *set, int x, int y);
-void dinoGraphicsUpdate(DINO_OBJ_SET *set);
+void dinoGraphicsUpdate(DINO_STATE *dinoState, DINO_OBJ_SET *set);
 void setDinoAnim(DINO_OBJ_SET *set, int frame);
 void setDinoUpright(DINO_OBJ_SET *set);
 void setDinoDucking(DINO_OBJ_SET *set);
@@ -278,11 +279,11 @@ void setObstaclePos(OBSTACLE_OBJ_SET *set, int type, int size, int x, int y);
 bool toggleDactylFlap(OBSTACLE_OBJ_SET *set, bool flap);
 
 GAMEOVER_OBJ_SET *createGameoverSet(OBJ_ATTR *index);
-void showGameover(GAMEOVER_OBJ_SET * set);
-void hideGameover(GAMEOVER_OBJ_SET * set);
+void showGameover(GAMEOVER_OBJ_SET *set);
+void hideGameover(GAMEOVER_OBJ_SET *set);
 
 TITLE_OBJ_SET *createTitleSet(OBJ_ATTR *index);
-void hideTitle(TITLE_OBJ_SET * set);
+void hideTitle(TITLE_OBJ_SET *set);
 
 void initSets();
 void assembleSets();

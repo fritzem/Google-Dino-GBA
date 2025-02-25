@@ -1,8 +1,36 @@
 #include "horizon.h"
-#include "game.h"
 #include "dinoSheetHelper.h"
+#include "dino.h"
 
-void updateHorizon(GAME_STATE * gameState) {
+#define MIN_CLOUD_GAP 100
+#define MAX_CLOUD_GAP 400
+#define MIN_SKY_LEVEL 71
+#define MAX_SKY_LEVEL 30
+
+#define STAR_MAX_Y 70
+#define STAR_SPEED 3
+#define STAR_MOVE_THRESHOLD 10
+
+#define FADE_SKY_FRAMES 29
+
+#define MOON_SPEED 25
+#define MOON_MOVE_THRESHOLD 100
+#define MOON_WIDTH 40
+
+#define INVERT_DISTANCE 150
+#define INVERT_FADE_DURATION 720
+
+bool randomBool();
+
+void initCloud(CLOUD * cloud, int cloudNum);
+bool updateCloud(CLOUD * cloud);
+
+void placeStars(HORIZON_STATE * horizonState);
+
+void updateObstacles(HORIZON_STATE * horizonState, int scrollSpeed, int gameSpeed);
+void addObstacle(HORIZON_STATE * horizonState, int speed);
+
+void updateHorizon(HORIZON_STATE * horizonState, GAME_STATE * gameState) {
     int scrollSpeed = (gameState->speed + horizonState->extraScroll);
     int scrolled =  scrollSpeed >> SPEED_POINT_DIV;
     horizonState->extraScroll = (gameState->speed + horizonState->extraScroll) & SPEED_REM;
@@ -34,17 +62,20 @@ void updateHorizon(GAME_STATE * gameState) {
         int preCount = horizonState->cloudCount;
         for (int i = 0; i < preCount; i++) {
             lastCursor = tempCursor;
-            updateCloud((horizonState->clouds) + tempCursor);
+            if (updateCloud((horizonState->clouds) + tempCursor)) {
+                horizonState->cloudCursor = (horizonState->cloudCursor + 1) % MAX_CLOUDS;
+                horizonState->cloudCount -= 1;
+            }
             tempCursor = (tempCursor + 1) % MAX_CLOUDS;
         }
 
         if ((horizonState->cloudCount < MAX_CLOUDS &&
              ((SCREEN_WIDTH - ((horizonState->clouds + lastCursor)->xPos)) >
               (horizonState->clouds + lastCursor)->cloudGap)) && randomBool()) {
-            addCloud();
+            addCloud(horizonState);
         }
     } else {
-        addCloud();
+        addCloud(horizonState);
     }
 
     //night
@@ -105,18 +136,18 @@ void updateHorizon(GAME_STATE * gameState) {
 
     //obstacles
     if (gameState->spawnObstacles)
-        updateObstacles(scrollSpeed, gameState->speed);
+        updateObstacles(horizonState, scrollSpeed, gameState->speed);
 
 
     REG_BG0HOFS = horizonState->scroll;
 }
 
-void updateObstacles(int scrollSpeed, int gameSpeed) {
+void updateObstacles(HORIZON_STATE * horizonState, int scrollSpeed, int gameSpeed) {
     for (int i = 0; i < MAX_OBSTACLES; i++) {
         OBSTACLE * obs = (horizonState->obstacles + i);
         if (obs->visible) {
-            updateObstacle(obs, scrollSpeed, i);
-            setObstaclePos(obstacleSets + i, obs->type, obs->size, obs->x, obs->y);
+            horizonState->obstacleCount -= updateObstacle(obs, scrollSpeed, i);;
+            setObstaclePos(obstacleSets + i, obs->type, obs->typeCategory, obs->x, obs->y);
         }
     }
 
@@ -124,30 +155,30 @@ void updateObstacles(int scrollSpeed, int gameSpeed) {
         OBSTACLE *lastObs = (horizonState->obstacles + (horizonState->lastObstacle));
         if ((horizonState->obstacleCount < MAX_OBSTACLES) &&
             (((lastObs->gap) + (lastObs->x) + (lastObs->width)) < SCREEN_WIDTH)) {
-            addObstacle(gameSpeed);
+            addObstacle(horizonState, gameSpeed);
         }
     } else {
-        addObstacle(gameSpeed);
+        addObstacle(horizonState, gameSpeed);
     }
 }
 
-void addObstacle(int speed) {
+void addObstacle(HORIZON_STATE * horizonState, int speed) {
     OBSTACLE *obs = (OBSTACLE*)(horizonState->obstacles + (horizonState->obstacleCursor));
-    switch (qran_range(0,(OBSTACLE_TYPES - (speed < DACTYL_MIN_SPEED)))) {
+    switch (qran_range(0,(OBSTACLE_TYPE_COUNT - (speed < DACTYL_MIN_SPEED)))) {
         case CACTUS_SMALL:
             createCactusSmall(obs, speed);
-            setObstacleSet(obstacleSets + horizonState->obstacleCursor, CACTUS_SMALL, obs->size);
+            setObstacleSet(obstacleSets + horizonState->obstacleCursor, CACTUS_SMALL, obs->cactusSize);
             break;
         case CACTUS_LARGE:
             createCactusLarge(obs, speed);
-            setObstacleSet(obstacleSets + horizonState->obstacleCursor, CACTUS_LARGE, obs->size);
+            setObstacleSet(obstacleSets + horizonState->obstacleCursor, CACTUS_LARGE, obs->cactusSize);
             break;
         case PTERODACTYL:
             createPterodactyl(obs, speed);
-            setObstacleSet(obstacleSets + horizonState->obstacleCursor, PTERODACTYL, obs->size);
+            setObstacleSet(obstacleSets + horizonState->obstacleCursor, PTERODACTYL, obs->cactusSize);
             break;
     }
-    setObstaclePos(obstacleSets + (horizonState->obstacleCursor), obs->type, obs->size, obs->x, obs->y);
+    setObstaclePos(obstacleSets + (horizonState->obstacleCursor), obs->type, obs->typeCategory, obs->x, obs->y);
     horizonState->obstacleCount += 1;
     horizonState->lastObstacle = horizonState->obstacleCursor;
     horizonState->obstacleCursor += 1;
@@ -155,13 +186,13 @@ void addObstacle(int speed) {
         horizonState->obstacleCursor = 0;
 }
 
-void updateNight() {
+void updateNight(HORIZON_STATE * horizonState, METER_STATE * meterState) {
     if (!(horizonState->night) && meterState->invertCounter >= INVERT_DISTANCE) {
         meterState->invertCounter -= INVERT_DISTANCE;
         horizonState->night = true;
         horizonState->inverting = true;
         horizonState->fading = true;
-        placeStars();
+        placeStars(horizonState);
         horizonState->moonPhase = incrementMoonPhase(moonSet, horizonState->moonPhase);
     } else if ((horizonState->night) && horizonState->invertTimer >= INVERT_FADE_DURATION) {
         horizonState->invertTimer = 0;
@@ -173,7 +204,7 @@ void updateNight() {
     }
 }
 
-void placeStars() {
+void placeStars(HORIZON_STATE * horizonState) {
     horizonState->star0X = qran_range(0, SCREEN_WIDTH / 2);
     horizonState->star0Y = qran_range(0, STAR_MAX_Y);
     horizonState->star1X = qran_range(SCREEN_WIDTH / 2, SCREEN_WIDTH);
@@ -187,23 +218,66 @@ void placeStars() {
     );
 }
 
-void addCloud() {
-    int newCursor = (horizonState->cloudCursor + horizonState->cloudCount) % MAX_CLOUDS;
-    horizonState->cloudCount += 1;
-
-
-    initCloud(((horizonState->clouds) + newCursor), newCursor);
+bool randomBool() {
+    return ((qran_range(0, 1000) > 500) ? true : false);
 }
 
-void updateCloud(CLOUD * cloud) {
-    cloud->xPos -= 1;
-    setCloudPos((clouds + (cloud->cloudNum)), cloud->xPos, cloud->yPos);
-    if (!cloudVisible(cloud)) {
-        horizonState->cloudCursor = (horizonState->cloudCursor + 1) % MAX_CLOUDS;
-        horizonState->cloudCount -= 1;
+void initHorizon(HORIZON_STATE * horizon) {
+    horizon->nextScrollTile = 31;
+    horizon->terrainScroll = 31;
+    horizon->bumpy = false;
+
+    horizon->clouds = malloc(MAX_CLOUDS * sizeof(CLOUD));
+
+    horizon->night = false;
+    horizon->inverting = false;
+    horizon->fading = false;
+
+    horizon->moonPhase = -1;
+    horizon->moonX = SCREEN_WIDTH - 50;
+
+    horizon->obstacles = malloc(MAX_OBSTACLES * sizeof(OBSTACLE));
+    for (int i = 0; i < MAX_OBSTACLES; i++) {
+        (horizon->obstacles + i)->colBox = malloc(MAX_HITBOXES * sizeof(COLLISION_BOX));
+        (horizon->obstacles + i)->visible = false;
     }
 }
 
-bool cloudVisible(CLOUD * cloud) {
-    return ((cloud->xPos) > -CLOUD_WIDTH);
+void resetHorizon(HORIZON_STATE * horizon) {
+    horizon->scroll = 0;
+    horizon->nextScrollTile = 31;
+    horizon->scrolled = 0;
+    horizon->terrainScroll = 31;
+    horizon->bumpy = false;
+    horizon->extraScroll = 0;
+
+    if (horizon->night) {
+        horizon->night = false;
+        horizon->inverting = true;
+        horizon->fading = true;
+    }
+
+    horizon->obstacleCount = 0;
+    horizon->obstacleCursor = 0;
+    horizon->lastObstacle = 0;
+}
+
+void initCloud(CLOUD * cloud, int cloudNum) {
+    cloud->xPos = SCREEN_WIDTH;
+    cloud->yPos = qran_range(MIN_SKY_LEVEL, MAX_SKY_LEVEL);
+    cloud->cloudGap = qran_range(MIN_CLOUD_GAP, MAX_CLOUD_GAP);
+    cloud->cloudNum = cloudNum;
+}
+
+void addCloud(HORIZON_STATE * horizonState) {
+    int newCursor = (horizonState->cloudCursor + horizonState->cloudCount) % MAX_CLOUDS;
+    horizonState->cloudCount += 1;
+    initCloud(((horizonState->clouds) + newCursor), newCursor);
+}
+
+// Return true if cloud is no longer visible
+bool updateCloud(CLOUD * cloud) {
+    cloud->xPos -= 1;
+    setCloudPos((clouds + (cloud->cloudNum)), cloud->xPos, cloud->yPos);
+    return ((cloud->xPos) <= -CLOUD_WIDTH);
 }

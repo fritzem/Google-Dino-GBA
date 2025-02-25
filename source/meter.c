@@ -1,8 +1,13 @@
 #include "meter.h"
-#include "game.h"
 #include "dinoSheetHelper.h"
 
-bool updateDistanceMeter(int distance) {
+#define ACHIEVEMENT_DISTANCE 100
+#define FLASH_FRAMES 15
+#define FLASH_ITERATIONS 3
+
+int distanceConvert(int distance);
+
+bool updateDistanceMeter(METER_STATE * meterState, int distance) {
     int trueDistance = distanceConvert(distance);
     int deltaDistance = (trueDistance - meterState->distance);
     meterState->invertCounter += deltaDistance;
@@ -43,6 +48,3 @@ int distanceConvert(int distance) {
     return distance / 40; // (* 0.025)
 }
 
-bool randomBool() {
-    return ((qran_range(0, 1000) > 500) ? true : false);
-}

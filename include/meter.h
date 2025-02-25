@@ -3,10 +3,6 @@
 
 #include "tonc.h"
 
-#define ACHIEVEMENT_DISTANCE 100
-#define FLASH_FRAMES 15
-#define FLASH_ITERATIONS 3
-
 typedef struct METER_STATE {
     int distance;
     int invertCounter;
@@ -25,8 +21,6 @@ INLINE void initMeter(METER_STATE * meter) {
     meter->flashIteration = 0;
 }
 
-bool updateDistanceMeter(int distance);
-int distanceConvert(int distance);
-bool randomBool();
+bool updateDistanceMeter(METER_STATE * meterState, int distance);
 
 #endif //DINO_GBA_METER_H

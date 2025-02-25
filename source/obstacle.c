@@ -1,27 +1,33 @@
 #include "obstacle.h"
 #include "dino.h"
-#include "game.h"
 #include "dinoSheetHelper.h"
 
-void updateObstacle(OBSTACLE * obs, int scrollSpeed, int index) {
+/**
+ *
+ * @param obs Obstacle to update
+ * @param scrollSpeed
+ * @param index
+ * @return True if obstacle is out of play.
+ */
+bool updateObstacle(OBSTACLE * obs, int scrollSpeed, int index) {
     int speedOffset = (obs->speedOffset + obs->extraSpeed) >> SPEED_POINT_DIV;
     obs->extraSpeed = (obs->speedOffset + obs->extraSpeed) & SPEED_REM;
 
     obs->x -= (scrollSpeed >> SPEED_POINT_DIV) + speedOffset;
     obs->visible = (obs->x > -(obs->width));
     if (!(obs->visible)) {
-        horizonState->obstacleCount -= 1;
-        return;
+        return true;
     }
 
     if (obs->type == PTERODACTYL) {
         obs->frames += 1;
         if (obs->frames == DACTYL_FRAMES) {
             obs->frames = 0;
-            obs->size = toggleDactylFlap(obstacleSets + index, obs->size);
+            obs->flap = toggleDactylFlap(obstacleSets + index, obs->flap);
         }
     }
 
+    return false;
 }
 
 const COLLISION_BOX cactSmallBoxes[] = {
@@ -48,9 +54,9 @@ void createCactusSmall(OBSTACLE * obs, int speed) {
     obs->type = CACTUS_SMALL;
     obs->x = SCREEN_WIDTH;
     obs->y = CACTUS_SMALL_Y;
-    obs->size = (speed >> SPEED_POINT_DIV >= CACTUS_SMALL_MULTI_SPEED) ?
-                qran_range(1, MAX_OBSTACLE_SIZE + 1) : 1;
-    obs->width = CACTUS_SMALL_WIDTH * obs->size;
+    obs->cactusSize = (speed >> SPEED_POINT_DIV >= CACTUS_SMALL_MULTI_SPEED) ?
+                      qran_range(1, MAX_CACTUS_SIZE + 1) : 1;
+    obs->width = CACTUS_SMALL_WIDTH * obs->cactusSize;
     obs->height = CACTUS_SMALL_HEIGHT;
     obs->gap = qran_range(((speed) * (obs->width) + (CACTUS_GAP / 10 * 6)) >> SPEED_POINT_DIV,
                           ((CACTUS_GAP + CACTUS_GAP / 2) >> SPEED_POINT_DIV) + 1);
@@ -62,16 +68,16 @@ void createCactusSmall(OBSTACLE * obs, int speed) {
     obs->numBoxes = CACT_COLLISION_BOXES;
     obs->spriteY = obs->y + CACTUS_SMALL_Y_SPRITE_OFFSET;
     cloneBox(obs->colBox, cactSmallBoxes, obs->numBoxes);
-    adjustBox(obs->colBox, obs->size, obs->width);
+    adjustBox(obs->colBox, obs->cactusSize, obs->width);
 }
 
 void createCactusLarge(OBSTACLE * obs, int speed) {
     obs->type = CACTUS_LARGE;
     obs->x = SCREEN_WIDTH;
     obs->y = CACTUS_LARGE_Y;
-    obs->size = (speed >> SPEED_POINT_DIV >= CACTUS_LARGE_MULTI_SPEED) ?
-                qran_range(1, MAX_OBSTACLE_SIZE + 1) : 1;
-    obs->width = CACTUS_LARGE_WIDTH * obs->size;
+    obs->cactusSize = (speed >> SPEED_POINT_DIV >= CACTUS_LARGE_MULTI_SPEED) ?
+                      qran_range(1, MAX_CACTUS_SIZE + 1) : 1;
+    obs->width = CACTUS_LARGE_WIDTH * obs->cactusSize;
     obs->height = CACTUS_LARGE_HEIGHT;
     obs->gap = qran_range((obs->width * speed + (CACTUS_GAP / 10 * 6)) >> SPEED_POINT_DIV,
                           ((CACTUS_GAP + CACTUS_GAP / 2) >> SPEED_POINT_DIV) + 1);
@@ -83,7 +89,7 @@ void createCactusLarge(OBSTACLE * obs, int speed) {
     obs->numBoxes = CACT_COLLISION_BOXES;
     obs->spriteY = CACTUS_LARGE_Y;
     cloneBox(obs->colBox, cactLargeBoxes, obs->numBoxes);
-    adjustBox(obs->colBox, obs->size, obs->width);
+    adjustBox(obs->colBox, obs->cactusSize, obs->width);
 }
 
 const int dactylHeights[3] = {100,75,50};
@@ -92,7 +98,7 @@ void createPterodactyl(OBSTACLE * obs, int speed) {
     obs->type = PTERODACTYL;
     obs->x = SCREEN_WIDTH;
     obs->y = dactylHeights[qran_range(0,3)];
-    obs->size = 0;
+    obs->flap = false;
     obs->width = DACTYL_WIDTH;
     obs->height = DACTYL_HEIGHT;
     obs->gap = qran_range((obs->width * speed + (DACTYL_GAP / 10 * 6)) >> SPEED_POINT_DIV,

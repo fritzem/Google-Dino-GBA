@@ -18,15 +18,14 @@ OBJ_ATTR obj_buffer[128];
 
 typedef struct {
     GAME_STATE gameState;
+    DINO_STATE dinoState;
+    HORIZON_STATE horizonState;
+    METER_STATE meterState;
 } STATE;
-
-DINO_STATE *dinoState;
-HORIZON_STATE *horizonState;
-METER_STATE *meterState;
 
 void input(STATE * state);
 void updateGame(STATE * state);
-void gameOver(GAME_STATE * state);
+void gameOver(GAME_STATE * gameState, METER_STATE * meterState);
 
 STATE * initGame();
 void resetGame(STATE * state);
@@ -58,13 +57,13 @@ int main() {
 
 void input(STATE * state) {
     key_poll();
-    inputDino(&state->gameState);
+    inputDino(&state->dinoState, &state->gameState);
 
     if (JUMP_HIT && !state->gameState.playing) {
         hideTitle(titleSet);
         dinoUnBlink(dinoSet);
     } else if (JUMP_RELEASED) {
-        if (dinoState->status == CRASHED && state->gameState.gameoverFrames >= RESET_FRAMES) {
+        if (state->dinoState.status == CRASHED && state->gameState.gameoverFrames >= RESET_FRAMES) {
             resetGame(state);
         }
     }
@@ -72,22 +71,25 @@ void input(STATE * state) {
 }
 
 void updateGame(STATE * state) {
-    // #using state->gameState
+    // #using state
     GAME_STATE * gameState = &state->gameState;
+    DINO_STATE * dinoState = &state->dinoState;
+    HORIZON_STATE * horizonState = &state->horizonState;
+    METER_STATE * meterState = &state->meterState;
 
-    updateDino();
+    updateDino(dinoState);
     if (!gameState->playing) {
         if (dinoState->status == RUNNING) {
             // First landing, start intro
             gameState->playingIntro = true;
             gameState->playing = true;
             sqran(gameState->randoFrames);
-            addCloud();
+            addCloud(horizonState);
         } else {
             // Waiting at title
             gameState->randoFrames += 1;
             gameState->gameoverFrames += 1;
-            dinoGraphicsUpdate(dinoSet);
+            dinoGraphicsUpdate(dinoState, dinoSet);
             return;
         }
 
@@ -107,11 +109,11 @@ void updateGame(STATE * state) {
         }
         REG_BG1HOFS = gameState->curtainScroll;
     } else {
-        updateHorizon(gameState);
+        updateHorizon(horizonState, gameState);
     }
 
     bool collision = gameState->spawnObstacles &&
-                     collisionCheck();
+                     collisionCheck(dinoState, horizonState);
 
     if (!collision) {
         addPoint(gameState->speed, &gameState->distanceRan, &gameState->distanceRanPoint);
@@ -119,13 +121,14 @@ void updateGame(STATE * state) {
         if (gameState->speed < SPEED_MAX)
             gameState->speed += ACCELERATION;
     } else {
-        gameOver(gameState);
+        dinoState->status = CRASHED;
+        gameOver(gameState, meterState);
     }
 
-    if (updateDistanceMeter((gameState->distanceRan) + ((gameState->distanceRanPoint) ? 1 : 0)))
+    if (updateDistanceMeter(meterState, (gameState->distanceRan) + ((gameState->distanceRanPoint) ? 1 : 0)))
         mmEffect(SFX_SCORE_REACHED);
 
-    updateNight();
+    updateNight(horizonState, meterState);
 
     dinoState->frameCounter += 1;
     if ((DINO_ANIMATING) && (dinoState->frameCounter >= dinoState->frameTime)) {
@@ -134,13 +137,11 @@ void updateGame(STATE * state) {
     }
     if (DINO_ANIMATING) setDinoAnim(dinoSet, dinoState->animSI[dinoState->frame]);
 
-    dinoGraphicsUpdate(dinoSet);
+    dinoGraphicsUpdate(dinoState, dinoSet);
 }
 
-void gameOver(GAME_STATE * gameState) {
+void gameOver(GAME_STATE * gameState, METER_STATE * meterState) {
     mmEffect(SFX_HIT);
-
-    dinoState->status = CRASHED;
     setDinoCrashed(dinoSet);
 
     gameState->playing = false;
@@ -161,17 +162,11 @@ void gameOver(GAME_STATE * gameState) {
 STATE * initGame() {
     STATE * state = calloc(sizeof(STATE), 1);
     initState(&state->gameState);
-    dinoState = malloc(sizeof(DINO_STATE));
-    initDino(dinoState);
+    initDino(&state->dinoState);
 
-    horizonState = malloc(sizeof(HORIZON_STATE));
-    initHorizon(horizonState);
-    for (int i = 0; i < MAX_OBSTACLES; i++) {
-        (horizonState->obstacles + i)->visible = false;
-    }
+    initHorizon(&state->horizonState);
 
-    meterState = malloc(sizeof(METER_STATE));
-    initMeter(meterState);
+    initMeter(&state->meterState);
     if (readHiscore() == -1)
         setHiscore(0);
     setNumValue(hiScoreSet, readHiscore());
@@ -185,13 +180,13 @@ void resetGame(STATE * state) {
     hideGameover(gameoverSet);
 
     resetState(&state->gameState);
-    resetDino(dinoState);
-    resetHorizon(horizonState);
-    resetObstacles(horizonState->obstacles);
-    initMeter(meterState);
+    resetDino(&state->dinoState);
+    resetHorizon(&state->horizonState);
+    resetObstacles(state->horizonState.obstacles);
+    initMeter(&state->meterState);
 
     setDinoUpright(dinoSet);
-    dinoGraphicsUpdate(dinoSet);
+    dinoGraphicsUpdate(&state->dinoState, dinoSet);
 
     wipeObstacleSet(obstacleSets);
     wipeObstacleSet(obstacleSets + 1);

@@ -3,9 +3,7 @@
 
 #include "hitbox.h"
 
-#define CACTUS_SMALL 0
-#define CACTUS_LARGE 1
-#define PTERODACTYL  2
+#define MAX_CACTUS_SIZE 3
 
 #define CACTUS_SMALL_Y 113
 #define CACTUS_SMALL_Y_SPRITE_OFFSET 5
@@ -26,11 +24,17 @@
 #define DACTYL_MIN_SPEED 6000
 #define DACTYL_SPEED_OFFSET 800
 
+typedef enum {
+    CACTUS_SMALL,
+    CACTUS_LARGE,
+    PTERODACTYL,
+    OBSTACLE_TYPE_COUNT
+} OBSTACLE_TYPE;
+
 typedef struct OBSTACLE {
-    int type;
+    OBSTACLE_TYPE type;
     int x;
     int y;
-    int size;
     int width;
     int height;
     int gap;
@@ -43,6 +47,12 @@ typedef struct OBSTACLE {
     int numBoxes;
     COLLISION_BOX * colBox;
     int spriteY;
+
+    union {
+        int cactusSize;
+        bool flap;
+        int typeCategory;
+    };
 } OBSTACLE, OBSTACLE;
 
 INLINE void resetObstacles(OBSTACLE * obs) {
@@ -53,6 +63,6 @@ INLINE void resetObstacles(OBSTACLE * obs) {
 void createCactusSmall(OBSTACLE * obs, int speed);
 void createCactusLarge(OBSTACLE * obs, int speed);
 void createPterodactyl(OBSTACLE * obs, int speed);
-void updateObstacle(OBSTACLE * obs, int scrollSpeed, int index);
+bool updateObstacle(OBSTACLE * obs, int scrollSpeed, int index);
 
 #endif //DINO_GBA_OBSTACLE_H
