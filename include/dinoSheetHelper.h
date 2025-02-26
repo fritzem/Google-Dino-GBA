@@ -292,7 +292,6 @@ void assembleSets();
 void whiteOutBG();
 void backgroundInit();
 void updateHorizonTile(int bg_index, int terrainIndex, bool bumpy);
-void invertPalettes();
 void inversionUpdate(bool night, bool invertOver);
 PALETTE_TRACKER *createTrackers();
 

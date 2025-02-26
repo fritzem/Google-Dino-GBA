@@ -3,12 +3,10 @@
 #include "dino.h"
 #include "dinoSheetHelper.h"
 #include <maxmod.h>
-#include <string.h>
 #include <dino_soundbank.h>
 #include "obstacle.h"
 #include "save.h"
-#include <dino_sheet.h>
-#include <palette_bank.h>
+#include "graphics.h"
 
 //Ethan Fritz 2021, 2025
 
@@ -31,14 +29,13 @@ void gameOver(GAME_STATE * gameState, METER_STATE * meterState);
 STATE * initGame();
 void resetGame(STATE * state);
 
-void init();
 void initSound();
-void initMem();
-void initGraphics();
-
 
 int main() {
-    init();
+    key_poll();
+
+    initSound();
+    initGraphics();
 
     STATE * state = initGame();
 
@@ -194,43 +191,10 @@ void resetGame(STATE * state) {
     showNum(scoreSet);
 }
 
-void init() {
-    initSound();
-    initMem();
-    initGraphics();
-}
-
 void initSound() {
     IRQ_INIT();
 
     irq_add(II_VBLANK, mmVBlank);
     irq_enable(II_VBLANK);
     mmInitDefault((mm_addr)&dino_soundbank_bin, 8);
-}
-
-void initMem() {
-    memcpy(&tile_mem[4][0], dinoSheetTiles, dinoSheetTilesLen);
-    memcpy(&tile_mem[0][0], dinoSheetTiles, dinoSheetTilesLen);
-
-    memcpy(pal_obj_mem, defaultPal, defaultPalLen);
-    memcpy(pal_bg_mem, defaultPal, defaultPalLen);
-}
-
-void initGraphics() {
-    whiteOutBG();
-    backgroundInit();
-
-    //horizon layer
-    REG_BG0CNT = BG_PRIO(3) | BG_CBB(0) | BG_SBB(31) | BG_4BPP | BG_REG_32x32;
-    //curtain layer
-    REG_BG1CNT = BG_PRIO(0) | BG_CBB(0) | BG_SBB(29) | BG_4BPP | BG_REG_64x32;
-
-    oam_init(obj_buffer, 128);
-    initSets();
-    assembleSets();
-
-    REG_DISPCNT= DCNT_OBJ | DCNT_OBJ_2D | DCNT_BG0 | DCNT_BG1;
-    REG_BLDCNT = BLD_BUILD(BLD_OBJ, BLD_BG0, BLD_STD);
-    REG_BLDALPHA = BLDA_BUILD(0, 16);
-    REG_BLDY= BLDY_BUILD(16);
 }

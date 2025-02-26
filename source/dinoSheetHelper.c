@@ -20,19 +20,22 @@ GAMEOVER_OBJ_SET *gameoverSet;
 TITLE_OBJ_SET *titleSet;
 PALETTE_TRACKER *trackers;
 
+
+#define PAL_BG    0
 #define PAL_OBJ0  0
-#define PAL_OBJ1  1
-#define PAL_BG    2
-#define PAL_TITLE 3
+#define PAL_OBJ1  0
+#define PAL_TITLE 1
+
+#define INVERT_COUNT 10
 
 //Metasprite helper methods
 
 REPLAY_OBJ_SET *createReplaySet(OBJ_ATTR *obj, OBJ_ATTR *obj2)
 {
 	struct REPLAY_OBJ_SET *set = malloc(sizeof(REPLAY_OBJ_SET));
-	set->replay = 
+	set->replay =
 		obj_set_attr(obj, ATTR0_SQUARE | ATTR0_HIDE, ATTR1_SIZE_32,  replaySI | ATTR2_PALBANK(PAL_OBJ0));
-	set->replayTail = 
+	set->replayTail =
 		obj_set_attr(obj2, ATTR0_TALL | ATTR0_HIDE, ATTR1_SIZE_16 | ATTR1_HFLIP, replayTailSI | ATTR2_PALBANK(PAL_OBJ0));
 	return set;
 }
@@ -69,7 +72,7 @@ void setBirdPos(BIRD_OBJ_SET *set, int x, int y)
 void toggleBirdFlap(BIRD_OBJ_SET *set)
 {
 	set->birdTorso->attr2 ^= birdFlapTrans;
-	set->birdTorso->attr0 = ((set->birdTorso->attr0) & 0xFF00) | 
+	set->birdTorso->attr0 = ((set->birdTorso->attr0) & 0xFF00) |
 		(u8)(((set->birdTorso->attr0) & 0xFF) + (((-(set->flap) | 1) * 8)));
 	set->flap ^= 0x1;
 }
@@ -144,7 +147,7 @@ void setHiPos(HI_OBJ_SET *set, int x, int y) {
 //Give an index, four entries total are used
 DINO_OBJ_SET *createDinoSet(OBJ_ATTR *index) {
 	struct DINO_OBJ_SET *set = malloc(sizeof(DINO_OBJ_SET));
-	set->dinoTorso = 
+	set->dinoTorso =
 		obj_set_attr(index + 3, ATTR0_SQUARE, ATTR1_SIZE_32, dinoHeadSI | ATTR2_PALBANK(PAL_OBJ0));
 	set->dinoTail =
 		obj_set_attr(index + 1, ATTR0_SQUARE, ATTR1_SIZE_16, dinoTailSI | ATTR2_PALBANK(PAL_OBJ0));
@@ -259,9 +262,9 @@ MOON_OBJ_SET *createMoonSet(OBJ_ATTR *index) {
 		obj_set_attr(index, ATTR0_SQUARE | ATTR0_BLEND, ATTR1_SIZE_32 | ATTR1_HFLIP, moon1_SI | ATTR2_PRIO(2) | ATTR2_PALBANK(PAL_OBJ1));
 	set->moonChunk1 =
 		obj_set_attr(index + 1, ATTR0_SQUARE | ATTR0_BLEND, ATTR1_SIZE_32 | ATTR1_HFLIP | ATTR1_VFLIP, moon1_SI | ATTR2_PRIO(2) | ATTR2_PALBANK(PAL_OBJ1));
-	set->moonChunk2 = 
+	set->moonChunk2 =
 		obj_set_attr(index + 2, ATTR0_WIDE | ATTR0_BLEND | ATTR0_HIDE, ATTR1_SIZE_32, fullMoonTopSI | ATTR2_PRIO(2) | ATTR2_PALBANK(PAL_OBJ1));
-	set->moonChunk3 = 
+	set->moonChunk3 =
 		obj_set_attr(index + 3, ATTR0_SQUARE | ATTR0_BLEND | ATTR0_HIDE, ATTR1_SIZE_32, fullMoonSI | ATTR2_PRIO(2) | ATTR2_PALBANK(PAL_OBJ1));
 	return set;
 }
@@ -408,7 +411,7 @@ void setObstaclePos(OBSTACLE_OBJ_SET *set, int type, int size, int x, int y) {
 bool toggleDactylFlap(OBSTACLE_OBJ_SET *set, bool flap)
 {
 	set->obstacleChunk1->attr2 ^= birdFlapTrans;
-	set->obstacleChunk1->attr0 = ((set->obstacleChunk1->attr0) & 0xFF00) | 
+	set->obstacleChunk1->attr0 = ((set->obstacleChunk1->attr0) & 0xFF00) |
 		(u8)(((set->obstacleChunk1->attr0) & 0xFF) + (((-(flap) | 1) * 8)));
 	return flap ^ 0x1;
 }
@@ -417,28 +420,28 @@ GAMEOVER_OBJ_SET *createGameoverSet(OBJ_ATTR *index) {
 	GAMEOVER_OBJ_SET * set = malloc(sizeof(GAMEOVER_OBJ_SET));
 
 	set->g = obj_set_attr(index, ATTR0_Y(charY) | ATTR0_SQUARE | ATTR0_HIDE,
-								ATTR1_X(charXg) | ATTR1_SIZE_16, 
+								ATTR1_X(charXg) | ATTR1_SIZE_16,
 								charG_SI | ATTR2_PALBANK(PAL_OBJ0));
 	set->a = obj_set_attr(index + 1, ATTR0_Y(charY) | ATTR0_SQUARE | ATTR0_HIDE,
-								ATTR1_X(charXa) | ATTR1_SIZE_16, 
+								ATTR1_X(charXa) | ATTR1_SIZE_16,
 								charA_SI | ATTR2_PALBANK(PAL_OBJ0));
 	set->m = obj_set_attr(index + 2, ATTR0_Y(charY) | ATTR0_SQUARE | ATTR0_HIDE,
-								ATTR1_X(charXm) | ATTR1_SIZE_16, 
+								ATTR1_X(charXm) | ATTR1_SIZE_16,
 								charM_SI | ATTR2_PALBANK(PAL_OBJ0));
 	set->e = obj_set_attr(index + 3, ATTR0_Y(charY) | ATTR0_SQUARE | ATTR0_HIDE,
-								ATTR1_X(charXe) | ATTR1_SIZE_16, 
+								ATTR1_X(charXe) | ATTR1_SIZE_16,
 								charE_SI | ATTR2_PALBANK(PAL_OBJ0));
 	set->o = obj_set_attr(index + 4, ATTR0_Y(charY) | ATTR0_SQUARE | ATTR0_HIDE,
-								ATTR1_X(charXo) | ATTR1_SIZE_16, 
+								ATTR1_X(charXo) | ATTR1_SIZE_16,
 								charO_SI | ATTR2_PALBANK(PAL_OBJ0));
 	set->v = obj_set_attr(index + 5, ATTR0_Y(charY) | ATTR0_SQUARE | ATTR0_HIDE,
-								ATTR1_X(charXv) | ATTR1_SIZE_16, 
+								ATTR1_X(charXv) | ATTR1_SIZE_16,
 								charV_SI | ATTR2_PALBANK(PAL_OBJ0));
 	set->e2 = obj_set_attr(index + 6, ATTR0_Y(charY) | ATTR0_SQUARE | ATTR0_HIDE,
-								ATTR1_X(charXe2) | ATTR1_SIZE_16, 
+								ATTR1_X(charXe2) | ATTR1_SIZE_16,
 								charE_SI | ATTR2_PALBANK(PAL_OBJ0));
 	set->r = obj_set_attr(index + 7, ATTR0_Y(charY) | ATTR0_SQUARE | ATTR0_HIDE,
-								ATTR1_X(charXr) | ATTR1_SIZE_16, 
+								ATTR1_X(charXr) | ATTR1_SIZE_16,
 								charR_SI | ATTR2_PALBANK(PAL_OBJ0));
 	return set;
 }
@@ -471,14 +474,14 @@ void initSets() {
 	hiSet = createHiSet(&obj_buffer[10], &obj_buffer[11]);
 	replaySet = createReplaySet(&obj_buffer[12],&obj_buffer[13]);
 	gameoverSet = createGameoverSet(&obj_buffer[14]);
-	
+
 	dinoSet = createDinoSet(&obj_buffer[22]);
 	obstacleSets = createObstacleSets(&obj_buffer[26]);
 
 	clouds = createCloudSets(&obj_buffer[34]);
 	moonSet = createMoonSet(&obj_buffer[46]);
 	starsSet = createStarsSet(&obj_buffer[50]);
-	
+
 	titleSet = createTitleSet(&obj_buffer[52]);
 
 	trackers = createTrackers();
@@ -511,7 +514,7 @@ void backgroundInit() {
 
 void updateHorizonTile(int bg_index, int terrainIndex, bool bumpy) {
 	int top_SI = blankTile_SI;
-	if (bumpy && (terrainIndex == 16 || terrainIndex == 17 
+	if (bumpy && (terrainIndex == 16 || terrainIndex == 17
 			|| terrainIndex == 20 || terrainIndex == 21
 			|| (terrainIndex >= 56 && terrainIndex <= 61))) {
 		top_SI = firstTerrain_SI + terrainIndex + BUMPY_TOP_OFFSET;
@@ -521,19 +524,9 @@ void updateHorizonTile(int bg_index, int terrainIndex, bool bumpy) {
     se_plot(&se_mem[31][0], bg_index, GROUND_Y, firstTerrain_SI + terrainIndex);
 }
 
-void invertPalettes() {
-	for (u16 palIndex = 1; palIndex < 8; palIndex++) {
-		int red = 31 - ((*(pal_obj_mem + palIndex) & RED_MASK) >> RED_SHIFT);
-		int green = 31 - ((*(pal_obj_mem + palIndex) & GREEN_MASK) >> GREEN_SHIFT);
-		int blue = 31 - ((*(pal_obj_mem + palIndex) & BLUE_MASK) >> BLUE_SHIFT);
-		*(pal_obj_mem + palIndex) = RGB15(red, green, blue);
-		*(pal_bg_mem + palIndex) = RGB15(red, green, blue);
-	}
-}
-
 PALETTE_TRACKER *createTrackers() {
-	PALETTE_TRACKER* trackers = malloc(8 * sizeof(PALETTE_TRACKER));
-	for (u16 palIndex = 1; palIndex < 8; palIndex++) {
+	PALETTE_TRACKER *trackers = malloc(INVERT_COUNT * sizeof(PALETTE_TRACKER));
+	for (u16 palIndex = 1; palIndex < INVERT_COUNT; palIndex++) {
 		(trackers + palIndex)->maxRed = ((*(pal_obj_mem + palIndex) & RED_MASK) >> RED_SHIFT);
 		(trackers + palIndex)->minRed = 31 - ((*(pal_obj_mem + palIndex) & RED_MASK) >> RED_SHIFT);
 		(trackers + palIndex)->curRed = ((*(pal_obj_mem + palIndex) & RED_MASK) >> RED_SHIFT) * PALETTE_POINT;
@@ -557,7 +550,7 @@ void inversionUpdate(bool night, bool invertOver) {
 		int red = 0;
 		int green = 0;
 		int blue = 0;
-		for (u16 palIndex = 1; palIndex < 8; palIndex++) {
+		for (u16 palIndex = 1; palIndex < INVERT_COUNT; palIndex++) {
 			if (night) {
 				red = (trackers + palIndex)->minRed;
 				green = (trackers + palIndex)->minGreen;
@@ -571,7 +564,7 @@ void inversionUpdate(bool night, bool invertOver) {
 			*(pal_bg_mem + palIndex) = RGB15(red, green, blue);
 		}
 	} else if (night) {
-		for (u16 palIndex = 1; palIndex < 8; palIndex++) {
+		for (u16 palIndex = 1; palIndex < INVERT_COUNT; palIndex++) {
 			(trackers + palIndex)->curRed += (trackers + palIndex)->incRed;
 			(trackers + palIndex)->curGreen += (trackers + palIndex)->incGreen;
 			(trackers + palIndex)->curBlue += (trackers + palIndex)->incBlue;
@@ -582,7 +575,7 @@ void inversionUpdate(bool night, bool invertOver) {
 			*(pal_bg_mem + palIndex) = RGB15(red, green, blue);
 		}
 	} else {
-		for (u16 palIndex = 1; palIndex < 8; palIndex++) {
+		for (u16 palIndex = 1; palIndex < INVERT_COUNT; palIndex++) {
 			(trackers + palIndex)->curRed -= (trackers + palIndex)->incRed;
 			(trackers + palIndex)->curGreen -= (trackers + palIndex)->incGreen;
 			(trackers + palIndex)->curBlue -= (trackers + palIndex)->incBlue;

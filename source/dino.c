@@ -187,6 +187,7 @@ void addPoint(int add, int *base, int *point) {
 }
 
 bool collisionCheck(DINO_STATE * dinoState, HORIZON_STATE * horizonState) {
+    return false;
     int tW = ((dinoState->status == DUCKING) ? DINO_WIDTH_DUCK : DINO_WIDTH) - 2;
     int tH = ((dinoState->status == DUCKING) ? DINO_HEIGHT_DUCK : DINO_HEIGHT) - 2;
     int tX = dinoState->xPos + 1;

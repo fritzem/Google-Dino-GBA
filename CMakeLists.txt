@@ -10,6 +10,7 @@ set(GAME_SOURCES
         source/game.c
         source/horizon.c
         source/meter.c
+        source/graphics.c
 )
 add_executable(dino-gba ${GAME_SOURCES})
 
@@ -33,9 +34,20 @@ if(CMAKE_SYSTEM_NAME STREQUAL AdvancedGameBoy)
     )
 
     add_grit_library(palette_bank PALETTE
-            NO_GRAPHICS NO_MAP
+            NO_GRAPHICS NO_MAP PALETTE_COUNT 32
             graphics/default.bmp
-            graphics/GBC-UP.bmp
+            graphics/gbc/GBC-ADOWN.bmp
+            graphics/gbc/GBC-ALEFT.bmp
+            graphics/gbc/GBC-ARIGHT.bmp
+            graphics/gbc/GBC-AUP.bmp
+            graphics/gbc/GBC-BDOWN.bmp
+            graphics/gbc/GBC-BLEFT.bmp
+            graphics/gbc/GBC-BRIGHT.bmp
+            graphics/gbc/GBC-BUP.bmp
+            graphics/gbc/GBC-DOWN.bmp
+            graphics/gbc/GBC-LEFT.bmp
+            graphics/gbc/GBC-RIGHT.bmp
+            graphics/gbc/GBC-UP.bmp
     )
 
     add_grit_library(dino_sheet NO_PALETTE NO_MAP GRAPHICS_BIT_DEPTH 4
