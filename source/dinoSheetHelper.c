@@ -20,15 +20,20 @@ GAMEOVER_OBJ_SET *gameoverSet;
 TITLE_OBJ_SET *titleSet;
 PALETTE_TRACKER *trackers;
 
+#define PAL_OBJ0  0
+#define PAL_OBJ1  1
+#define PAL_BG    2
+#define PAL_TITLE 3
+
 //Metasprite helper methods
 
 REPLAY_OBJ_SET *createReplaySet(OBJ_ATTR *obj, OBJ_ATTR *obj2)
 {
 	struct REPLAY_OBJ_SET *set = malloc(sizeof(REPLAY_OBJ_SET));
 	set->replay = 
-		obj_set_attr(obj, ATTR0_SQUARE | ATTR0_HIDE, ATTR1_SIZE_32,  replaySI | ATTR2_PALBANK(0));
+		obj_set_attr(obj, ATTR0_SQUARE | ATTR0_HIDE, ATTR1_SIZE_32,  replaySI | ATTR2_PALBANK(PAL_OBJ0));
 	set->replayTail = 
-		obj_set_attr(obj2, ATTR0_TALL | ATTR0_HIDE, ATTR1_SIZE_16 | ATTR1_HFLIP, replayTailSI | ATTR2_PALBANK(0));
+		obj_set_attr(obj2, ATTR0_TALL | ATTR0_HIDE, ATTR1_SIZE_16 | ATTR1_HFLIP, replayTailSI | ATTR2_PALBANK(PAL_OBJ0));
 	return set;
 }
 
@@ -48,9 +53,9 @@ BIRD_OBJ_SET *createBirdSet(OBJ_ATTR *obj, OBJ_ATTR *obj2)
 {
 	struct BIRD_OBJ_SET *set = malloc(sizeof(BIRD_OBJ_SET));
 	set->beak =
-		obj_set_attr(obj, ATTR0_SQUARE, ATTR1_SIZE_16, birdBeakSI | ATTR2_PALBANK(0));
+		obj_set_attr(obj, ATTR0_SQUARE, ATTR1_SIZE_16, birdBeakSI | ATTR2_PALBANK(PAL_OBJ0));
 	set->birdTorso =
-		obj_set_attr(obj2, ATTR0_SQUARE, ATTR1_SIZE_32, birdFlapUpSI | ATTR2_PALBANK(0));
+		obj_set_attr(obj2, ATTR0_SQUARE, ATTR1_SIZE_32, birdFlapUpSI | ATTR2_PALBANK(PAL_OBJ0));
 	set->flap = FALSE;
 	return set;
 }
@@ -74,15 +79,15 @@ NUM_OBJ_SET *createNumSet(OBJ_ATTR *index)
 {
 	struct NUM_OBJ_SET *set = malloc(sizeof(NUM_OBJ_SET));
 	set->num0 =
-		obj_set_attr(index, ATTR0_SQUARE, ATTR1_SIZE_16, num0_SI | ATTR2_PALBANK(0) | ATTR2_PRIO(1));
+		obj_set_attr(index, ATTR0_SQUARE, ATTR1_SIZE_16, num0_SI | ATTR2_PALBANK(PAL_OBJ0) | ATTR2_PRIO(1));
 	set->num1 =
-		obj_set_attr(index + 1, ATTR0_SQUARE, ATTR1_SIZE_16, num0_SI | ATTR2_PALBANK(0) | ATTR2_PRIO(1));
+		obj_set_attr(index + 1, ATTR0_SQUARE, ATTR1_SIZE_16, num0_SI | ATTR2_PALBANK(PAL_OBJ0) | ATTR2_PRIO(1));
 	set->num2 =
-		obj_set_attr(index + 2, ATTR0_SQUARE, ATTR1_SIZE_16, num0_SI | ATTR2_PALBANK(0) | ATTR2_PRIO(1));
+		obj_set_attr(index + 2, ATTR0_SQUARE, ATTR1_SIZE_16, num0_SI | ATTR2_PALBANK(PAL_OBJ0) | ATTR2_PRIO(1));
 	set->num3 =
-		obj_set_attr(index + 3, ATTR0_SQUARE, ATTR1_SIZE_16, num0_SI | ATTR2_PALBANK(0) | ATTR2_PRIO(1));
+		obj_set_attr(index + 3, ATTR0_SQUARE, ATTR1_SIZE_16, num0_SI | ATTR2_PALBANK(PAL_OBJ0) | ATTR2_PRIO(1));
 	set->num4 =
-		obj_set_attr(index + 4, ATTR0_SQUARE, ATTR1_SIZE_16, num0_SI | ATTR2_PALBANK(0) | ATTR2_PRIO(1));
+		obj_set_attr(index + 4, ATTR0_SQUARE, ATTR1_SIZE_16, num0_SI | ATTR2_PALBANK(PAL_OBJ0) | ATTR2_PRIO(1));
 	return set;
 }
 
@@ -125,9 +130,9 @@ HI_OBJ_SET *createHiSet(OBJ_ATTR *obj0, OBJ_ATTR *obj1)
 {
 	struct HI_OBJ_SET *set = malloc(sizeof(HI_OBJ_SET));
 	set->hi0 =
-		obj_set_attr(obj0, ATTR0_SQUARE, ATTR1_SIZE_16, hiSI | ATTR2_PALBANK(0) | ATTR2_PRIO(1));
+		obj_set_attr(obj0, ATTR0_SQUARE, ATTR1_SIZE_16, hiSI | ATTR2_PALBANK(PAL_OBJ0) | ATTR2_PRIO(1));
 	set->hi1 =
-		obj_set_attr(obj1, ATTR0_TALL, ATTR1_SIZE_8, (hiSI + 2) | ATTR2_PALBANK(0) | ATTR2_PRIO(1));
+		obj_set_attr(obj1, ATTR0_TALL, ATTR1_SIZE_8, (hiSI + 2) | ATTR2_PALBANK(PAL_OBJ0) | ATTR2_PRIO(1));
 	return set;
 }
 
@@ -140,13 +145,13 @@ void setHiPos(HI_OBJ_SET *set, int x, int y) {
 DINO_OBJ_SET *createDinoSet(OBJ_ATTR *index) {
 	struct DINO_OBJ_SET *set = malloc(sizeof(DINO_OBJ_SET));
 	set->dinoTorso = 
-		obj_set_attr(index + 3, ATTR0_SQUARE, ATTR1_SIZE_32, dinoHeadSI | ATTR2_PALBANK(0));
+		obj_set_attr(index + 3, ATTR0_SQUARE, ATTR1_SIZE_32, dinoHeadSI | ATTR2_PALBANK(PAL_OBJ0));
 	set->dinoTail =
-		obj_set_attr(index + 1, ATTR0_SQUARE, ATTR1_SIZE_16, dinoTailSI | ATTR2_PALBANK(0));
+		obj_set_attr(index + 1, ATTR0_SQUARE, ATTR1_SIZE_16, dinoTailSI | ATTR2_PALBANK(PAL_OBJ0));
 	set->dinoLegs =
-		obj_set_attr(index + 2, ATTR0_WIDE, ATTR1_SIZE_32, dinoFeet0_SI | ATTR2_PALBANK(0));
+		obj_set_attr(index + 2, ATTR0_WIDE, ATTR1_SIZE_32, dinoFeet0_SI | ATTR2_PALBANK(PAL_OBJ0));
 	set->dinoWink =
-		obj_set_attr(index, ATTR0_SQUARE | ATTR0_HIDE, ATTR1_SIZE_8, dinoWinkSI);
+		obj_set_attr(index, ATTR0_SQUARE | ATTR0_HIDE, ATTR1_SIZE_8, dinoWinkSI | ATTR2_PALBANK(PAL_OBJ0));
 	return set;
 }
 
@@ -182,24 +187,24 @@ void dinoGraphicsUpdate(DINO_STATE *dinoState, DINO_OBJ_SET *set) {
 }
 
 void setDinoUpright(DINO_OBJ_SET *set) {
-	obj_set_attr(set->dinoTorso, ATTR0_SQUARE, ATTR1_SIZE_32, dinoHeadSI | ATTR2_PALBANK(0));
-	obj_set_attr(set->dinoTail, ATTR0_SQUARE, ATTR1_SIZE_16, dinoTailSI | ATTR2_PALBANK(0));
-	obj_set_attr(set->dinoLegs, ATTR0_WIDE, ATTR1_SIZE_32, dinoFeet0_SI | ATTR2_PALBANK(0));
-	obj_set_attr(set->dinoWink, ATTR0_SQUARE | ATTR0_HIDE, ATTR1_SIZE_8, dinoWinkSI | ATTR2_PALBANK(0));
+	obj_set_attr(set->dinoTorso, ATTR0_SQUARE, ATTR1_SIZE_32, dinoHeadSI | ATTR2_PALBANK(PAL_OBJ0));
+	obj_set_attr(set->dinoTail, ATTR0_SQUARE, ATTR1_SIZE_16, dinoTailSI | ATTR2_PALBANK(PAL_OBJ0));
+	obj_set_attr(set->dinoLegs, ATTR0_WIDE, ATTR1_SIZE_32, dinoFeet0_SI | ATTR2_PALBANK(PAL_OBJ0));
+	obj_set_attr(set->dinoWink, ATTR0_SQUARE | ATTR0_HIDE, ATTR1_SIZE_8, dinoWinkSI | ATTR2_PALBANK(PAL_OBJ0));
 }
 
 void setDinoAnim(DINO_OBJ_SET *set, int si) {
-	obj_set_attr(set->dinoLegs, ATTR0_WIDE, ATTR1_SIZE_32, si | ATTR2_PALBANK(0));
+	obj_set_attr(set->dinoLegs, ATTR0_WIDE, ATTR1_SIZE_32, si | ATTR2_PALBANK(PAL_OBJ0));
 }
 
 void setDinoDucking(DINO_OBJ_SET *set) {
-	obj_set_attr(set->dinoTorso, ATTR0_WIDE, ATTR1_SIZE_64, dinoCrouchSI | ATTR2_PALBANK(0));
-	obj_set_attr(set->dinoLegs, ATTR0_WIDE, ATTR1_SIZE_32, dinoCrouchFeet1_SI | ATTR2_PALBANK(0));
+	obj_set_attr(set->dinoTorso, ATTR0_WIDE, ATTR1_SIZE_64, dinoCrouchSI | ATTR2_PALBANK(PAL_OBJ0));
+	obj_set_attr(set->dinoLegs, ATTR0_WIDE, ATTR1_SIZE_32, dinoCrouchFeet1_SI | ATTR2_PALBANK(PAL_OBJ0));
 	obj_hide(set->dinoTail);
 }
 
 void setDinoCrashed(DINO_OBJ_SET *set) {
-	obj_set_attr(set->dinoTorso, ATTR0_SQUARE, ATTR1_SIZE_64, deadDinoSI | ATTR2_PALBANK(0));
+	obj_set_attr(set->dinoTorso, ATTR0_SQUARE, ATTR1_SIZE_64, deadDinoSI | ATTR2_PALBANK(PAL_OBJ0));
 	obj_hide(set->dinoLegs);
 	obj_hide(set->dinoTail);
 }
@@ -214,12 +219,12 @@ void dinoUnBlink(DINO_OBJ_SET *set) {
 
 //Give an index, twelve entries total are used
 CLOUD_OBJ_SET *createCloudSets(OBJ_ATTR *index) {
-	CLOUD_OBJ_SET* clouds = malloc(2 * MAX_CLOUDS * sizeof(CLOUD_OBJ_SET));
+	CLOUD_OBJ_SET *clouds = malloc(2 * MAX_CLOUDS * sizeof(CLOUD_OBJ_SET));
 	for (int i = 0; i < MAX_CLOUDS * 2; i += 2) {
 		(clouds + (i / 2))->cloudL =
-			obj_set_attr(index + i, ATTR0_WIDE, ATTR1_SIZE_32 | ATTR1_X(SCREEN_WIDTH), cloudLeftSI | ATTR2_PALBANK(0));
+			obj_set_attr(index + i, ATTR0_WIDE, ATTR1_SIZE_32 | ATTR1_X(SCREEN_WIDTH), cloudLeftSI | ATTR2_PALBANK(PAL_OBJ1));
 		(clouds + (i / 2))->cloudR =
-			obj_set_attr(index + i + 1, ATTR0_SQUARE, ATTR1_SIZE_16 | ATTR1_X(SCREEN_WIDTH), cloudRightSI | ATTR2_PALBANK(0));
+			obj_set_attr(index + i + 1, ATTR0_SQUARE, ATTR1_SIZE_16 | ATTR1_X(SCREEN_WIDTH), cloudRightSI | ATTR2_PALBANK(PAL_OBJ1));
 	}
 	return clouds;
 }
@@ -232,9 +237,9 @@ void setCloudPos(CLOUD_OBJ_SET *set, int x, int y) {
 STARS_OBJ_SET *createStarsSet(OBJ_ATTR *index) {
 	struct STARS_OBJ_SET *set = malloc(sizeof(STARS_OBJ_SET));
 	set->star0 =
-		obj_set_attr(index, ATTR0_SQUARE | ATTR0_BLEND, ATTR1_SIZE_16, star0_SI | ATTR2_PRIO(2) | ATTR2_PALBANK(0));
+		obj_set_attr(index, ATTR0_SQUARE | ATTR0_BLEND, ATTR1_SIZE_16, star0_SI | ATTR2_PRIO(2) | ATTR2_PALBANK(PAL_OBJ1));
 	set->star1 =
-		obj_set_attr(index + 1, ATTR0_SQUARE | ATTR0_BLEND, ATTR1_SIZE_16, star1_SI | ATTR2_PRIO(2) |ATTR2_PALBANK(0));
+		obj_set_attr(index + 1, ATTR0_SQUARE | ATTR0_BLEND, ATTR1_SIZE_16, star1_SI | ATTR2_PRIO(2) |ATTR2_PALBANK(PAL_OBJ1));
 	return set;
 }
 
@@ -251,13 +256,13 @@ void setStarPos(STARS_OBJ_SET *set, int x0, int y0, int x1, int y1) {
 MOON_OBJ_SET *createMoonSet(OBJ_ATTR *index) {
 	struct MOON_OBJ_SET *set = malloc(sizeof(MOON_OBJ_SET));
 	set->moonChunk0 =
-		obj_set_attr(index, ATTR0_SQUARE | ATTR0_BLEND, ATTR1_SIZE_32 | ATTR1_HFLIP, moon1_SI | ATTR2_PRIO(2) | ATTR2_PALBANK(0));
+		obj_set_attr(index, ATTR0_SQUARE | ATTR0_BLEND, ATTR1_SIZE_32 | ATTR1_HFLIP, moon1_SI | ATTR2_PRIO(2) | ATTR2_PALBANK(PAL_OBJ1));
 	set->moonChunk1 =
-		obj_set_attr(index + 1, ATTR0_SQUARE | ATTR0_BLEND, ATTR1_SIZE_32 | ATTR1_HFLIP | ATTR1_VFLIP, moon1_SI | ATTR2_PRIO(2) | ATTR2_PALBANK(0));
+		obj_set_attr(index + 1, ATTR0_SQUARE | ATTR0_BLEND, ATTR1_SIZE_32 | ATTR1_HFLIP | ATTR1_VFLIP, moon1_SI | ATTR2_PRIO(2) | ATTR2_PALBANK(PAL_OBJ1));
 	set->moonChunk2 = 
-		obj_set_attr(index + 2, ATTR0_WIDE | ATTR0_BLEND | ATTR0_HIDE, ATTR1_SIZE_32, fullMoonTopSI | ATTR2_PRIO(2) | ATTR2_PALBANK(0));
+		obj_set_attr(index + 2, ATTR0_WIDE | ATTR0_BLEND | ATTR0_HIDE, ATTR1_SIZE_32, fullMoonTopSI | ATTR2_PRIO(2) | ATTR2_PALBANK(PAL_OBJ1));
 	set->moonChunk3 = 
-		obj_set_attr(index + 3, ATTR0_SQUARE | ATTR0_BLEND | ATTR0_HIDE, ATTR1_SIZE_32, fullMoonSI | ATTR2_PRIO(2) | ATTR2_PALBANK(0));
+		obj_set_attr(index + 3, ATTR0_SQUARE | ATTR0_BLEND | ATTR0_HIDE, ATTR1_SIZE_32, fullMoonSI | ATTR2_PRIO(2) | ATTR2_PALBANK(PAL_OBJ1));
 	return set;
 }
 
@@ -336,33 +341,33 @@ void setObstacleSet(OBSTACLE_OBJ_SET *set, int type, int size) {
 	wipeObstacleSet(set);
 	switch (type * TYPEM + size) {
 		case CACTUS_SMALL_0:
-			obj_set_attr(set->obstacleChunk0, ATTR0_SQUARE, ATTR1_SIZE_32, smallCactusSingleSI | ATTR2_PALBANK(0));
-			obj_set_attr(set->obstacleChunk1, ATTR0_SQUARE, ATTR1_SIZE_8, smallCactusStumpSI | ATTR2_PALBANK(0));
+			obj_set_attr(set->obstacleChunk0, ATTR0_SQUARE, ATTR1_SIZE_32, smallCactusSingleSI | ATTR2_PALBANK(PAL_OBJ0));
+			obj_set_attr(set->obstacleChunk1, ATTR0_SQUARE, ATTR1_SIZE_8, smallCactusStumpSI | ATTR2_PALBANK(PAL_OBJ0));
 			break;
 		case CACTUS_SMALL_1:
-			obj_set_attr(set->obstacleChunk0, ATTR0_WIDE, ATTR1_SIZE_64, smallCactusDoubleSI | ATTR2_PALBANK(0));
-			obj_set_attr(set->obstacleChunk1, ATTR0_SQUARE, ATTR1_SIZE_8, smallCactusStumpSI | ATTR2_PALBANK(0));
-			obj_set_attr(set->obstacleChunk2, ATTR0_SQUARE, ATTR1_SIZE_8, smallCactusStumpSI | ATTR2_PALBANK(0));
+			obj_set_attr(set->obstacleChunk0, ATTR0_WIDE, ATTR1_SIZE_64, smallCactusDoubleSI | ATTR2_PALBANK(PAL_OBJ0));
+			obj_set_attr(set->obstacleChunk1, ATTR0_SQUARE, ATTR1_SIZE_8, smallCactusStumpSI | ATTR2_PALBANK(PAL_OBJ0));
+			obj_set_attr(set->obstacleChunk2, ATTR0_SQUARE, ATTR1_SIZE_8, smallCactusStumpSI | ATTR2_PALBANK(PAL_OBJ0));
 			break;
 		case CACTUS_SMALL_2:
-			obj_set_attr(set->obstacleChunk0, ATTR0_WIDE, ATTR1_SIZE_64, smallCactusTripleSI | ATTR2_PALBANK(0));
-			obj_set_attr(set->obstacleChunk1, ATTR0_SQUARE, ATTR1_SIZE_8, smallCactusStumpSI | ATTR2_PALBANK(0));
-			obj_set_attr(set->obstacleChunk2, ATTR0_SQUARE, ATTR1_SIZE_8, smallCactusStumpSI | ATTR2_PALBANK(0));
-			obj_set_attr(set->obstacleChunk3, ATTR0_SQUARE, ATTR1_SIZE_8, smallCactusStumpSI | ATTR2_PALBANK(0));
+			obj_set_attr(set->obstacleChunk0, ATTR0_WIDE, ATTR1_SIZE_64, smallCactusTripleSI | ATTR2_PALBANK(PAL_OBJ0));
+			obj_set_attr(set->obstacleChunk1, ATTR0_SQUARE, ATTR1_SIZE_8, smallCactusStumpSI | ATTR2_PALBANK(PAL_OBJ0));
+			obj_set_attr(set->obstacleChunk2, ATTR0_SQUARE, ATTR1_SIZE_8, smallCactusStumpSI | ATTR2_PALBANK(PAL_OBJ0));
+			obj_set_attr(set->obstacleChunk3, ATTR0_SQUARE, ATTR1_SIZE_8, smallCactusStumpSI | ATTR2_PALBANK(PAL_OBJ0));
 			break;
 		case CACTUS_LARGE_0:
-			obj_set_attr(set->obstacleChunk0, ATTR0_TALL, ATTR1_SIZE_64, bigCactusSingleSI | ATTR2_PALBANK(0));
+			obj_set_attr(set->obstacleChunk0, ATTR0_TALL, ATTR1_SIZE_64, bigCactusSingleSI | ATTR2_PALBANK(PAL_OBJ0));
 			break;
 		case CACTUS_LARGE_1:
-			obj_set_attr(set->obstacleChunk0, ATTR0_SQUARE, ATTR1_SIZE_64, bigCactusDoubleSI | ATTR2_PALBANK(0));
+			obj_set_attr(set->obstacleChunk0, ATTR0_SQUARE, ATTR1_SIZE_64, bigCactusDoubleSI | ATTR2_PALBANK(PAL_OBJ0));
 			break;
 		case CACTUS_LARGE_2:
-			obj_set_attr(set->obstacleChunk0, ATTR0_SQUARE, ATTR1_SIZE_64, bigCactusTripleSI | ATTR2_PALBANK(0));
-			obj_set_attr(set->obstacleChunk1, ATTR0_TALL, ATTR1_SIZE_64, bigCactusTripleRunoffSI | ATTR2_PALBANK(0));
+			obj_set_attr(set->obstacleChunk0, ATTR0_SQUARE, ATTR1_SIZE_64, bigCactusTripleSI | ATTR2_PALBANK(PAL_OBJ0));
+			obj_set_attr(set->obstacleChunk1, ATTR0_TALL, ATTR1_SIZE_64, bigCactusTripleRunoffSI | ATTR2_PALBANK(PAL_OBJ0));
 			break;
 		case PTERODACTYL_0:
-			obj_set_attr(set->obstacleChunk0, ATTR0_SQUARE, ATTR1_SIZE_16, birdBeakSI | ATTR2_PALBANK(0));
-			obj_set_attr(set->obstacleChunk1, ATTR0_SQUARE, ATTR1_SIZE_32, birdFlapUpSI | ATTR2_PALBANK(0));
+			obj_set_attr(set->obstacleChunk0, ATTR0_SQUARE, ATTR1_SIZE_16, birdBeakSI | ATTR2_PALBANK(PAL_OBJ0));
+			obj_set_attr(set->obstacleChunk1, ATTR0_SQUARE, ATTR1_SIZE_32, birdFlapUpSI | ATTR2_PALBANK(PAL_OBJ0));
 			break;
 	}
 }
@@ -413,28 +418,28 @@ GAMEOVER_OBJ_SET *createGameoverSet(OBJ_ATTR *index) {
 
 	set->g = obj_set_attr(index, ATTR0_Y(charY) | ATTR0_SQUARE | ATTR0_HIDE,
 								ATTR1_X(charXg) | ATTR1_SIZE_16, 
-								charG_SI | ATTR2_PALBANK(0));
+								charG_SI | ATTR2_PALBANK(PAL_OBJ0));
 	set->a = obj_set_attr(index + 1, ATTR0_Y(charY) | ATTR0_SQUARE | ATTR0_HIDE,
 								ATTR1_X(charXa) | ATTR1_SIZE_16, 
-								charA_SI | ATTR2_PALBANK(0));
+								charA_SI | ATTR2_PALBANK(PAL_OBJ0));
 	set->m = obj_set_attr(index + 2, ATTR0_Y(charY) | ATTR0_SQUARE | ATTR0_HIDE,
 								ATTR1_X(charXm) | ATTR1_SIZE_16, 
-								charM_SI | ATTR2_PALBANK(0));
+								charM_SI | ATTR2_PALBANK(PAL_OBJ0));
 	set->e = obj_set_attr(index + 3, ATTR0_Y(charY) | ATTR0_SQUARE | ATTR0_HIDE,
 								ATTR1_X(charXe) | ATTR1_SIZE_16, 
-								charE_SI | ATTR2_PALBANK(0));
+								charE_SI | ATTR2_PALBANK(PAL_OBJ0));
 	set->o = obj_set_attr(index + 4, ATTR0_Y(charY) | ATTR0_SQUARE | ATTR0_HIDE,
 								ATTR1_X(charXo) | ATTR1_SIZE_16, 
-								charO_SI | ATTR2_PALBANK(0));
+								charO_SI | ATTR2_PALBANK(PAL_OBJ0));
 	set->v = obj_set_attr(index + 5, ATTR0_Y(charY) | ATTR0_SQUARE | ATTR0_HIDE,
 								ATTR1_X(charXv) | ATTR1_SIZE_16, 
-								charV_SI | ATTR2_PALBANK(0));
+								charV_SI | ATTR2_PALBANK(PAL_OBJ0));
 	set->e2 = obj_set_attr(index + 6, ATTR0_Y(charY) | ATTR0_SQUARE | ATTR0_HIDE,
 								ATTR1_X(charXe2) | ATTR1_SIZE_16, 
-								charE_SI | ATTR2_PALBANK(0));
+								charE_SI | ATTR2_PALBANK(PAL_OBJ0));
 	set->r = obj_set_attr(index + 7, ATTR0_Y(charY) | ATTR0_SQUARE | ATTR0_HIDE,
 								ATTR1_X(charXr) | ATTR1_SIZE_16, 
-								charR_SI | ATTR2_PALBANK(0));
+								charR_SI | ATTR2_PALBANK(PAL_OBJ0));
 	return set;
 }
 
@@ -450,9 +455,9 @@ TITLE_OBJ_SET *createTitleSet(OBJ_ATTR *index) {
 	TITLE_OBJ_SET * set = malloc(sizeof(TITLE_OBJ_SET));
 
 	set->left = obj_set_attr(index, ATTR0_Y(40) | ATTR0_WIDE,
-									ATTR1_SIZE_64,  titleLeftSI | ATTR2_PALBANK(1));
+									ATTR1_SIZE_64,  titleLeftSI | ATTR2_PALBANK(PAL_TITLE));
 	set->right = obj_set_attr(index + 1, ATTR0_Y(40) | ATTR0_WIDE,
-									64 | ATTR1_SIZE_64, titleRightSI | ATTR2_PALBANK(1));
+									64 | ATTR1_SIZE_64, titleRightSI | ATTR2_PALBANK(PAL_TITLE));
 	return set;
 }
 
@@ -490,9 +495,9 @@ void assembleSets() {
 //Terrain helpers
 
 void whiteOutBG() {
-	se_fill(&se_mem[29][0], blankTile_SI);
-    se_fill(&se_mem[30][0], transparent_SI);
-    se_fill(&se_mem[31][0], blankTile_SI);
+	se_fill(&se_mem[29][0], blankTile_SI | SE_PALBANK(PAL_BG));
+    se_fill(&se_mem[30][0], transparent_SI | SE_PALBANK(PAL_BG));
+    se_fill(&se_mem[31][0], blankTile_SI | SE_PALBANK(PAL_BG));
 }
 
 //x1819
@@ -500,7 +505,7 @@ void backgroundInit() {
 	REG_BG1HOFS = STARTING_CURTAIN_SCROLL;
 
 	for (int i = 0; i < 31; i++) {
-		se_plot(&se_mem[31][0], i, GROUND_Y, firstTerrain_SI + i);
+		se_plot(&se_mem[31][0], i, GROUND_Y, (firstTerrain_SI + i) | SE_PALBANK(PAL_BG));
 	}
 }
 

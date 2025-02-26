@@ -33,9 +33,9 @@ if(CMAKE_SYSTEM_NAME STREQUAL AdvancedGameBoy)
     )
 
     add_grit_library(palette_bank PALETTE
-            PALETTE_COUNT 32
             NO_GRAPHICS NO_MAP
             graphics/default.bmp
+            graphics/GBC-UP.bmp
     )
 
     add_grit_library(dino_sheet NO_PALETTE NO_MAP GRAPHICS_BIT_DEPTH 4
