@@ -25,7 +25,6 @@ target_include_directories(dino-gba PRIVATE ${GAME_INCLUDES})
 if(CMAKE_SYSTEM_NAME STREQUAL AdvancedGameBoy)
     find_package(librom REQUIRED) # GBA ROM runtime library
     find_package(tonclib REQUIRED) # Tonc C development library
-    find_package(agbabi REQUIRED) # GBA optimized functions library
     find_package(maxmod REQUIRED) # GBA music and sound solution
     find_package(grit REQUIRED) # GBA bitmap converter
 
@@ -80,7 +79,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL AdvancedGameBoy)
         target_compile_definitions(dino-gba PRIVATE VERBOSE=1)
     endif()
 
-    target_link_libraries(dino-gba PRIVATE librom tonclib agbabi maxmod
+    target_link_libraries(dino-gba PRIVATE librom tonclib maxmod
             dino_soundbank dino_sheet palette_bank)
 
     # ROM header info

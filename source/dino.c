@@ -200,7 +200,7 @@ void addPoint(int add, int *base, int *point) {
 	}
 }
 
-bool collisionCheck(DINO_STATE * dinoState, HORIZON_STATE * horizonState) {
+OBSTACLE * collisionCheck(DINO_STATE * dinoState, HORIZON_STATE * horizonState) {
     int tW = ((dinoState->status == DUCKING) ? DINO_WIDTH_DUCK : DINO_WIDTH) - 2;
     int tH = ((dinoState->status == DUCKING) ? DINO_HEIGHT_DUCK : DINO_HEIGHT) - 2;
     int tX = dinoState->xPos + 1;
@@ -223,7 +223,7 @@ bool collisionCheck(DINO_STATE * dinoState, HORIZON_STATE * horizonState) {
                     for (int k = 0; k < obs->numBoxes; k++) {
                         if (boxCheckOffset(duckBoxes, (obs->colBox + k),
                                            tX, tY, oBox.x, oBox.y)) {
-                            return true;
+                            return obs;
                         }
                     }
                 } else {
@@ -231,7 +231,7 @@ bool collisionCheck(DINO_STATE * dinoState, HORIZON_STATE * horizonState) {
                         for (int k = 0; k < obs->numBoxes; k++) {
                             if (boxCheckOffset(dinoBoxes + i, (obs->colBox + k),
                                                tX, tY, oBox.x, oBox.y)) {
-                                return true;
+                                return obs;
                             }
                         }
                     }
@@ -240,7 +240,7 @@ bool collisionCheck(DINO_STATE * dinoState, HORIZON_STATE * horizonState) {
         }
     }
 
-    return false;
+    return 0;
 }
 
 

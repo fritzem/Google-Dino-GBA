@@ -109,28 +109,43 @@ void updateGame(STATE * state) {
         }
         REG_BG1HOFS = gameState->curtainScroll;
     } else {
-        updateHorizon(horizonState, gameState);
+        updateHorizon(state, horizonState);
     }
 
-    bool collision = gameState->spawnObstacles && collisionCheck(dinoState, horizonState)
-            && dinoState->status != CRASHED;
+    OBSTACLE * collided = collisionCheck(dinoState, horizonState);
+    bool collision = gameState->spawnObstacles && collided && dinoState->status != CRASHED;
+
     if (!collision) {
         addPoint(gameState->speed, &gameState->distanceRan, &gameState->distanceRanPoint);
 
         if (gameState->speed < SPEED_MAX)
             gameState->speed += ACCELERATION;
     } else {
-        mmEffect(SFX_HIT);
-        dinoCrash(dinoState);
+        if (state->mode == COOP && collided->type == REVIVE) {
+            despawnObstacle(collided);
+            mmEffect(SFX_SCORE_REACHED);
+            if (minoState->status == CRASHED)
+                dinoRevive(minoState);
+        } else {
+            mmEffect(SFX_HIT);
+            dinoCrash(dinoState);
+        }
     }
 
     if (state->mode == COOP) {
         // Check for mino collision, decide Co-Op game over
-        collision = gameState->spawnObstacles && collisionCheck(minoState, horizonState)
-                && minoState->status != CRASHED;
+        collided = collisionCheck(minoState, horizonState);
+        collision = gameState->spawnObstacles && collided && minoState->status != CRASHED;
         if (collision) {
-            mmEffect(SFX_HIT);
-            dinoCrash(minoState);
+            if (collided->type == REVIVE) {
+                despawnObstacle(collided);
+                mmEffect(SFX_SCORE_REACHED);
+                if (dinoState->status == CRASHED)
+                    dinoRevive(dinoState);
+            } else {
+                mmEffect(SFX_HIT);
+                dinoCrash(minoState);
+            }
         }
         if (state->dinoState.status == CRASHED && state->minoState.status == CRASHED) {
             gameOver(gameState, meterState);

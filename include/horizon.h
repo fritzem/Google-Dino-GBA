@@ -22,7 +22,7 @@ typedef struct CLOUD {
 } CLOUD, CLOUD;
 
 void updateNight(HORIZON_STATE * horizonState, METER_STATE * meterState);
-void updateHorizon(HORIZON_STATE * horizonState, GAME_STATE * gameState);
+void updateHorizon(STATE * state, HORIZON_STATE * horizonState);
 
 void addCloud(HORIZON_STATE * horizonState);
 

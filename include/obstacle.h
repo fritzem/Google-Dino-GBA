@@ -24,7 +24,13 @@
 #define DACTYL_MIN_SPEED 6000
 #define DACTYL_SPEED_OFFSET 800
 
+#define REVIVE_WIDTH 32
+#define REVIVE_HEIGHT 32
+#define REVIVE_GAP 150 * SPEED_POINT
+#define REVIVE_SPEED_OFFSET 800
+
 typedef enum {
+    REVIVE,
     CACTUS_SMALL,
     CACTUS_LARGE,
     PTERODACTYL,
@@ -60,9 +66,14 @@ INLINE void resetObstacles(OBSTACLE * obs) {
     (obs + 1)->visible = 0;
 }
 
+INLINE void despawnObstacle(OBSTACLE * obs) {
+    obs->x = -obs->width;
+}
+
 void createCactusSmall(OBSTACLE * obs, int speed);
 void createCactusLarge(OBSTACLE * obs, int speed);
 void createPterodactyl(OBSTACLE * obs, int speed);
+void createRevive(OBSTACLE * obs, int speed);
 bool updateObstacle(OBSTACLE * obs, int scrollSpeed, int index);
 
 #endif //DINO_GBA_OBSTACLE_H

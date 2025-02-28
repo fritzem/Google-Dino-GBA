@@ -39,6 +39,7 @@
 #define dinoFlapSI 923
 #define dinoAngelSI 925
 #define dinoAngelHeadSI 927
+#define anoNikuSI 604
 
 #define birdBeakSI 0x44
 #define birdFlapDownSI 0x80

@@ -27,10 +27,11 @@ bool updateCloud(CLOUD * cloud);
 
 void placeStars(HORIZON_STATE * horizonState);
 
-void updateObstacles(HORIZON_STATE * horizonState, int scrollSpeed, int gameSpeed);
-void addObstacle(HORIZON_STATE * horizonState, int speed);
+void updateObstacles(STATE * state, HORIZON_STATE * horizonState, int scrollSpeed);
+void addObstacle(HORIZON_STATE * horizonState, int speed, bool canSpawnRevive);
 
-void updateHorizon(HORIZON_STATE * horizonState, GAME_STATE * gameState) {
+void updateHorizon(STATE * state, HORIZON_STATE * horizonState) {
+    GAME_STATE * gameState = &state->gameState;
     int scrollSpeed = (gameState->speed + horizonState->extraScroll);
     int scrolled =  scrollSpeed >> SPEED_POINT_DIV;
     horizonState->extraScroll = (gameState->speed + horizonState->extraScroll) & SPEED_REM;
@@ -129,13 +130,15 @@ void updateHorizon(HORIZON_STATE * horizonState, GAME_STATE * gameState) {
 
     //obstacles
     if (gameState->spawnObstacles)
-        updateObstacles(horizonState, scrollSpeed, gameState->speed);
+        updateObstacles(state, horizonState, scrollSpeed);
 
 
     REG_BG0HOFS = horizonState->scroll;
 }
 
-void updateObstacles(HORIZON_STATE * horizonState, int scrollSpeed, int gameSpeed) {
+void updateObstacles(STATE * state, HORIZON_STATE * horizonState, int scrollSpeed) {
+    int gameSpeed = state->gameState.speed;
+
     for (int i = 0; i < MAX_OBSTACLES; i++) {
         OBSTACLE * obs = (horizonState->obstacles + i);
         if (obs->visible) {
@@ -143,20 +146,29 @@ void updateObstacles(HORIZON_STATE * horizonState, int scrollSpeed, int gameSpee
         }
     }
 
+    bool canRevive = state->mode == COOP
+            && (state->dinoState.status == CRASHED || state->minoState.status == CRASHED);
+
     if (horizonState->obstacleCount > 0) {
         OBSTACLE *lastObs = (horizonState->obstacles + (horizonState->lastObstacle));
         if ((horizonState->obstacleCount < MAX_OBSTACLES) &&
             (((lastObs->gap) + (lastObs->x) + (lastObs->width)) < SCREEN_WIDTH)) {
-            addObstacle(horizonState, gameSpeed);
+            addObstacle(horizonState, gameSpeed, canRevive);
         }
     } else {
-        addObstacle(horizonState, gameSpeed);
+        addObstacle(horizonState, gameSpeed, canRevive);
     }
 }
 
-void addObstacle(HORIZON_STATE * horizonState, int speed) {
+void addObstacle(HORIZON_STATE * horizonState, int speed, bool canSpawnRevive) {
     OBSTACLE *obs = (OBSTACLE*)(horizonState->obstacles + (horizonState->obstacleCursor));
-    switch (qran_range(0,(OBSTACLE_TYPE_COUNT - (speed < DACTYL_MIN_SPEED)))) {
+
+    bool reviveInPool = canSpawnRevive && (qran() > 0x6800);
+
+    switch (qran_range(true ^ reviveInPool,(OBSTACLE_TYPE_COUNT - (speed < DACTYL_MIN_SPEED)))) {
+        case REVIVE:
+            createRevive(obs, speed);
+            break;
         case CACTUS_SMALL:
             createCactusSmall(obs, speed);
             break;

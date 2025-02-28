@@ -50,6 +50,10 @@ const COLLISION_BOX pterodactylBoxes[] = {
         {10, 8, 6, 9}
 };
 
+const COLLISION_BOX reviveBoxes[] = {
+        {0, 0, 32, 32}
+};
+
 void createCactusSmall(OBSTACLE * obs, int speed) {
     obs->type = CACTUS_SMALL;
     obs->x = SCREEN_WIDTH;
@@ -113,4 +117,25 @@ void createPterodactyl(OBSTACLE * obs, int speed) {
 
     obs->numBoxes = DACTYL_COLLISION_BOXES;
     cloneBox(obs->colBox, pterodactylBoxes, obs->numBoxes);
+}
+
+void createRevive(OBSTACLE * obs, int speed) {
+    obs->type = REVIVE;
+    obs->x = SCREEN_WIDTH;
+    obs->y = dactylHeights[qran_range(0,3)];
+    obs->width = REVIVE_WIDTH;
+    obs->height = REVIVE_HEIGHT;
+    obs->gap = qran_range((obs->width * speed + (REVIVE_GAP / 10 * 6)) >> SPEED_POINT_DIV,
+                          ((REVIVE_GAP + REVIVE_GAP / 2) >> SPEED_POINT_DIV) + 1);
+    obs->speedOffset = (qran_range(0,2)) ? REVIVE_SPEED_OFFSET : -REVIVE_SPEED_OFFSET;
+    obs->visible = true;
+
+    obs->typeCategory = 0;
+    obs->frames = 0;
+    obs->extraSpeed = 0;
+
+    obs->spriteY = obs->y;
+
+    obs->numBoxes = REVIVE_COLLISION_BOXES;
+    cloneBox(obs->colBox, reviveBoxes, obs->numBoxes);
 }

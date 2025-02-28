@@ -43,6 +43,7 @@
 #define DUCK_COLLISION_BOXES 1
 #define CACT_COLLISION_BOXES 3
 #define DACTYL_COLLISION_BOXES 5
+#define REVIVE_COLLISION_BOXES 1
 #define MAX_HITBOXES 6
 
 #define DINO_ANIMATING ((dinoState->status == RUNNING) || dinoState->status == DUCKING || dinoState->status == CRASHED)
@@ -50,7 +51,7 @@
 void updateDino(DINO_STATE * dinoState);
 void inputDino(DINO_STATE * dinoState, GAME_STATE * gameState);
 
-bool collisionCheck(DINO_STATE * dinoState, HORIZON_STATE * horizonState);
+OBSTACLE * collisionCheck(DINO_STATE * dinoState, HORIZON_STATE * horizonState);
 
 void addPoint(int add, int *base, int *point);
 
@@ -64,6 +65,16 @@ INLINE void dinoCrash(DINO_STATE * state) {
     state->frameCounter = 0;
     state->frame = 0;
     state->frameTime = 48;
+}
+
+INLINE void dinoRevive(DINO_STATE * state) {
+    state->frame = 0;
+    state->frameCounter = 0;
+    state->frameTime = RUN_FRAME;
+    state->status = RUNNING;
+    state->speedDrop = false;
+    state->jumpVelocity = 0;
+    state->yPos = DINO_GROUND_Y;
 }
 
 void resetDino(DINO_STATE * dino);

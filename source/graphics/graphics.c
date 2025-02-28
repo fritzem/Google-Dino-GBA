@@ -122,9 +122,12 @@ void drawDino(GRAPHICS_CTX * ctx, DINO_STATE * dinoState, MODE mode) {
                              ATTR1_SIZE_16 | X(x + 16),
                              dinoAngelHeadSI | ATTR2_PALBANK(PAL_OBJ0));
             } else {
-                obj_set_attr(CTX_OAM++, ATTR0_SQUARE | Y(y),
+                obj_set_attr(CTX_OAM++, ATTR0_WIDE | Y(y),
                              ATTR1_SIZE_64 | X(x - 22),
                              deadDinoSI | ATTR2_PALBANK(PAL_OBJ0));
+                obj_set_attr(CTX_OAM++, ATTR0_WIDE | Y(y + 16),
+                             ATTR1_SIZE_64 | X(x - 22),
+                             (deadDinoSI + (32 * 2)) | ATTR2_PALBANK(PAL_OBJ0));
             }
             break;
         case DUCKING:
@@ -187,6 +190,7 @@ void drawDino(GRAPHICS_CTX * ctx, DINO_STATE * dinoState, MODE mode) {
 #define CACTUS_SMALL_SIZE(s) (CACTUS_SMALL * TYPEM + s)
 #define CACTUS_LARGE_SIZE(s) (CACTUS_LARGE * TYPEM + s)
 #define PTERODACTYL_FLAP(flap) (PTERODACTYL * TYPEM + flap)
+#define REVIVE_ (REVIVE * TYPEM)
 
 void drawObstacle(GRAPHICS_CTX * ctx, OBSTACLE * obstacle) {
     s32 x = obstacle->x;
@@ -260,6 +264,10 @@ void drawObstacle(GRAPHICS_CTX * ctx, OBSTACLE * obstacle) {
                          ATTR1_SIZE_32 | X(x + 16),
                          birdFlapDownSI | ATTR2_PALBANK(PAL_OBJ0));
             break;
+        case REVIVE_:
+            obj_set_attr(CTX_OAM++, ATTR0_SQUARE | Y(y),
+                         ATTR1_SIZE_32 | X(x),
+                         anoNikuSI | ATTR2_PALBANK(PAL_OBJ1));
     }
 }
 
