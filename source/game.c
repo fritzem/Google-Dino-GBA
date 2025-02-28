@@ -151,6 +151,7 @@ void updateGame(STATE * state) {
 void gameOver(GAME_STATE * gameState, METER_STATE * meterState) {
     gameState->gameOver = true;
     gameState->gameOverFrames = 0;
+    meterState->flashing = false;
     if (meterState->distance > readHiscore()) {
         setHiscore(meterState->distance);
         gameState->hiScore = meterState->distance;
