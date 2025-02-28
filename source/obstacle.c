@@ -1,6 +1,6 @@
 #include "obstacle.h"
 #include "dino.h"
-#include "graphics/dinoSheetHelper.h"
+#include "dinoSheetHelper.h"
 
 /**
  *

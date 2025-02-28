@@ -1,12 +1,11 @@
 #include "game.h"
 #include "tonc.h"
 #include "dino.h"
-#include "graphics/dinoSheetHelper.h"
 #include <maxmod.h>
 #include <dino_soundbank.h>
 #include "obstacle.h"
 #include "save.h"
-#include "graphics/graphics.h"
+#include "graphics.h"
 
 //Ethan Fritz 2021, 2025
 

@@ -1,9 +1,9 @@
 #include <memory.h>
 #include <dino_sheet.h>
 #include <palette_bank.h>
-#include "graphics/graphics.h"
+#include "graphics.h"
 #include "tonc.h"
-#include "graphics/dinoSheetHelper.h"
+#include "dinoSheetHelper.h"
 
 const int animRun[] = {dinoFeet1_SI, dinoFeet2_SI};
 const int animDuc[] = {dinoCrouchFeet0_SI, dinoCrouchFeet1_SI};
@@ -349,6 +349,7 @@ GRAPHICS_CTX * initGraphics() {
 
     REG_DISPCNT= DCNT_OBJ | DCNT_OBJ_2D | DCNT_BG0 | DCNT_BG1;
     REG_BLDCNT = BLD_BUILD(BLD_OBJ, BLD_BG0, BLD_STD);
+    REG_BLDALPHA = BLDA_BUILD(0, 16);
     REG_BLDY= BLDY_BUILD(16);
 
     GRAPHICS_CTX *ctx = calloc(sizeof(GRAPHICS_CTX), 1);
