@@ -17,13 +17,13 @@ bool updateDistanceMeter(METER_STATE * meterState, int distance) {
         if (meterState->flashIteration <= FLASH_ITERATIONS) {
             meterState->flashFrame += 1;
             if (meterState->flashFrame == 1) {
-                hideNum(scoreSet);
+                meterState->flashing = true;
             } else if (meterState->flashFrame == FLASH_FRAMES * 2) {
                 meterState->flashFrame = 0;
                 meterState->flashIteration += 1;
-                showNum(scoreSet);
+                meterState->flashing = false;
             } else if (meterState->flashFrame == FLASH_FRAMES) {
-                showNum(scoreSet);
+                meterState->flashing = false;
             }
         } else {
             meterState->flashIteration = 0;
@@ -34,13 +34,12 @@ bool updateDistanceMeter(METER_STATE * meterState, int distance) {
         if (meterState->achievementCounter >= ACHIEVEMENT_DISTANCE) {
             meterState->achievementCounter -= ACHIEVEMENT_DISTANCE;
             meterState->achieving = true;
-            setNumValue(scoreSet, trueDistance);
+            meterState->displayNumber = trueDistance;
             return true;
         } else {
-            setNumValue(scoreSet, trueDistance);
+            meterState->displayNumber = trueDistance;
         }
     }
-
     return false;
 }
 

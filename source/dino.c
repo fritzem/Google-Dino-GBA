@@ -7,9 +7,6 @@
 #include "game.h"
 #include "obstacle.h"
 
-const int animRun[] = {dinoFeet1_SI, dinoFeet2_SI};
-const int animDuc[] = {dinoCrouchFeet0_SI, dinoCrouchFeet1_SI};
-
 const COLLISION_BOX dinoBoxes[] = {
 	{22, 0, 17, 16},
 	{1, 18, 30, 9},
@@ -69,13 +66,11 @@ void inputDino(DINO_STATE * dinoState, GAME_STATE * gameState) {
 }
 
 void dinoJump(DINO_STATE * dinoState, GAME_STATE * gameState) {
-	setDinoAnim(dinoSet, dinoFeet0_SI);
-
 	dinoState->status = JUMPING;
 	dinoState->speedDrop = false;
 	dinoState->jumpVelocity = INITIAL_JUMP_VELOCITY + gameState->speed / SPEED_POINT / 10;
 	dinoState->reachedMin = false;
-
+    dinoState->blinking = false;
 	mmEffect(SFX_BUTTON_PRESSED);
 }
 
@@ -119,7 +114,6 @@ void updateBlink(DINO_STATE * dinoState) {
 		dinoState->blinkFrame += 1;
 		if (dinoState->blinkFrame >= dinoState->blinkTime) {
 			dinoState->blinking = true;
-			dinoBlink(dinoSet);
 			dinoState->blinkFrame = 0;
 		}
 	} else {
@@ -127,7 +121,6 @@ void updateBlink(DINO_STATE * dinoState) {
 		if (dinoState->blinkFrame >= BLINK_TIME) {
 			dinoState->blinking = false;
 			dinoState->blinkFrame = 0;
-			dinoUnBlink(dinoSet);
 			dinoState->blinks += 1;
 		}
 	}
@@ -141,10 +134,8 @@ void dinoRun(DINO_STATE * dinoState) {
 	dinoState->frame = 0;
 	dinoState->frameCounter = 0;
 	dinoState->frameTime = RUN_FRAME;
-	dinoState->animSI = animRun;
 
 	dinoState->status = RUNNING;
-  	setDinoUpright(dinoSet);
   	dinoState->speedDrop = false;
 
  	dinoState->jumpVelocity = 0;
@@ -155,10 +146,8 @@ void dinoDuck(DINO_STATE * dinoState) {
 	dinoState->frame = 0;
 	dinoState->frameCounter = 0;
 	dinoState->frameTime = DUCK_FRAME;
-	dinoState->animSI = animDuc;
 
 	dinoState->status = DUCKING;
-  setDinoDucking(dinoSet);
 }
 
 void resetDino(DINO_STATE * dino) {
@@ -174,7 +163,6 @@ void resetDino(DINO_STATE * dino) {
 	dino->frame = 0;
 	dino->frameCounter = 0;
 	dino->frameTime = RUN_FRAME;
-	dino->animSI = animRun;
 }
 
 void addPoint(int add, int *base, int *point) {

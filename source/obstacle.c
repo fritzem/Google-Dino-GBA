@@ -23,7 +23,7 @@ bool updateObstacle(OBSTACLE * obs, int scrollSpeed, int index) {
         obs->frames += 1;
         if (obs->frames == DACTYL_FRAMES) {
             obs->frames = 0;
-            obs->flap = toggleDactylFlap(obstacleSets + index, obs->flap);
+            obs->flap ^= 1;
         }
     }
 

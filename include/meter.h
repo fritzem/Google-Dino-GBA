@@ -2,15 +2,7 @@
 #define DINO_GBA_METER_H
 
 #include "tonc.h"
-
-typedef struct METER_STATE {
-    int distance;
-    int invertCounter;
-    int achievementCounter;
-    int flashFrame;
-    int flashIteration;
-    bool achieving;
-} METER_STATE, METER_STATE;
+#include "state.h"
 
 INLINE void initMeter(METER_STATE * meter) {
     meter->distance = 0;

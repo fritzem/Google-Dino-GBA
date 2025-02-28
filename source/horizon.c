@@ -112,12 +112,6 @@ void updateHorizon(HORIZON_STATE * horizonState, GAME_STATE * gameState) {
             horizonState->starMov -= STAR_MOVE_THRESHOLD;
             horizonState->star0X -= 1;
             horizonState->star1X -= 1;
-            setStarPos(starsSet,
-                       horizonState->star0X,
-                       horizonState->star0Y,
-                       horizonState->star1X,
-                       horizonState->star1Y
-            );
         } else {
             if (horizonState->star0X < -SCREEN_WIDTH)
                 horizonState->star0X = SCREEN_WIDTH;
@@ -128,7 +122,6 @@ void updateHorizon(HORIZON_STATE * horizonState, GAME_STATE * gameState) {
         if (horizonState->moonMov >= MOON_MOVE_THRESHOLD) {
             horizonState->moonX -= 1;
             horizonState->moonMov = 0;
-            setMoonPos(moonSet, horizonState->moonX, MOON_Y);
         } else if (horizonState->moonX < -MOON_WIDTH) {
             horizonState->moonX = SCREEN_WIDTH;
         }
@@ -147,7 +140,6 @@ void updateObstacles(HORIZON_STATE * horizonState, int scrollSpeed, int gameSpee
         OBSTACLE * obs = (horizonState->obstacles + i);
         if (obs->visible) {
             horizonState->obstacleCount -= updateObstacle(obs, scrollSpeed, i);;
-            setObstaclePos(obstacleSets + i, obs->type, obs->typeCategory, obs->x, obs->y);
         }
     }
 
@@ -167,18 +159,14 @@ void addObstacle(HORIZON_STATE * horizonState, int speed) {
     switch (qran_range(0,(OBSTACLE_TYPE_COUNT - (speed < DACTYL_MIN_SPEED)))) {
         case CACTUS_SMALL:
             createCactusSmall(obs, speed);
-            setObstacleSet(obstacleSets + horizonState->obstacleCursor, CACTUS_SMALL, obs->cactusSize);
             break;
         case CACTUS_LARGE:
             createCactusLarge(obs, speed);
-            setObstacleSet(obstacleSets + horizonState->obstacleCursor, CACTUS_LARGE, obs->cactusSize);
             break;
         case PTERODACTYL:
             createPterodactyl(obs, speed);
-            setObstacleSet(obstacleSets + horizonState->obstacleCursor, PTERODACTYL, obs->cactusSize);
             break;
     }
-    setObstaclePos(obstacleSets + (horizonState->obstacleCursor), obs->type, obs->typeCategory, obs->x, obs->y);
     horizonState->obstacleCount += 1;
     horizonState->lastObstacle = horizonState->obstacleCursor;
     horizonState->obstacleCursor += 1;
@@ -193,7 +181,8 @@ void updateNight(HORIZON_STATE * horizonState, METER_STATE * meterState) {
         horizonState->inverting = true;
         horizonState->fading = true;
         placeStars(horizonState);
-        horizonState->moonPhase = incrementMoonPhase(moonSet, horizonState->moonPhase);
+        horizonState->moonPhase++;
+        horizonState->moonPhase -= (horizonState->moonPhase == 7) * 7;
     } else if ((horizonState->night) && horizonState->invertTimer >= INVERT_FADE_DURATION) {
         horizonState->invertTimer = 0;
         horizonState->night = false;
@@ -209,13 +198,6 @@ void placeStars(HORIZON_STATE * horizonState) {
     horizonState->star0Y = qran_range(0, STAR_MAX_Y);
     horizonState->star1X = qran_range(SCREEN_WIDTH / 2, SCREEN_WIDTH);
     horizonState->star1Y = qran_range(0, STAR_MAX_Y);
-
-    setStarPos(starsSet,
-               horizonState->star0X,
-               horizonState->star0Y,
-               horizonState->star1X,
-               horizonState->star1Y
-    );
 }
 
 bool randomBool() {
@@ -278,6 +260,5 @@ void addCloud(HORIZON_STATE * horizonState) {
 // Return true if cloud is no longer visible
 bool updateCloud(CLOUD * cloud) {
     cloud->xPos -= 1;
-    setCloudPos((clouds + (cloud->cloudNum)), cloud->xPos, cloud->yPos);
     return ((cloud->xPos) <= -CLOUD_WIDTH);
 }

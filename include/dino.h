@@ -51,30 +51,6 @@
 #define JUMP_RELEASED (key_released(KEY_A) || key_released(KEY_UP))
 #define DINO_ANIMATING ((dinoState->status == RUNNING) || dinoState->status == DUCKING)
 
-typedef enum {CRASHED, DUCKING, JUMPING, RUNNING, WAITING} DINO_STATUS;
-
-typedef struct DINO_STATE {
-	int xPos;
-	int yPos;
-	int jumpVelocity;
-
-	DINO_STATUS status;
-	bool speedDrop;
-	bool jumped;
-	bool reachedMin;
-
-	int frame;
-	int frameCounter;
-	int frameTime;
-
-	int blinkTime;
-	int blinks;
-	int blinkFrame;
-	bool blinking;
-
-	const int * animSI;
-} DINO_STATE, DINO_STATE;
-
 void updateDino(DINO_STATE * dinoState);
 void inputDino(DINO_STATE * dinoState, GAME_STATE * gameState);
 

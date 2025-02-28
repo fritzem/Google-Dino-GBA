@@ -13,15 +13,6 @@
 extern const byte dino_soundbank_bin;
 const char saveType[] __attribute__((aligned(4))) = "SRAM_Vnnn";
 
-OBJ_ATTR obj_buffer[128];
-
-typedef struct {
-    GAME_STATE gameState;
-    DINO_STATE dinoState;
-    HORIZON_STATE horizonState;
-    METER_STATE meterState;
-} STATE;
-
 void input(STATE * state);
 void updateGame(STATE * state);
 void gameOver(GAME_STATE * gameState, METER_STATE * meterState);
@@ -35,7 +26,7 @@ int main() {
     key_poll();
 
     initSound();
-    initGraphics();
+    GRAPHICS_CTX *graphicsCtx = initGraphics();
 
     STATE * state = initGame();
 
@@ -48,8 +39,7 @@ int main() {
 
         input(state);
         updateGame(state);
-
-        oam_copy(oam_mem, obj_buffer, 64);
+        drawGame(graphicsCtx, state);
     }
 }
 
@@ -57,10 +47,7 @@ void input(STATE * state) {
     key_poll();
     inputDino(&state->dinoState, &state->gameState);
 
-    if (JUMP_HIT && !state->gameState.playing) {
-        hideTitle(titleSet);
-        dinoUnBlink(dinoSet);
-    } else if (JUMP_RELEASED) {
+    if (JUMP_RELEASED) {
         if (state->dinoState.status == CRASHED && state->gameState.gameoverFrames >= RESET_FRAMES) {
             resetGame(state);
         }
@@ -87,7 +74,6 @@ void updateGame(STATE * state) {
             // Waiting at title
             gameState->randoFrames += 1;
             gameState->gameoverFrames += 1;
-            dinoGraphicsUpdate(dinoState, dinoSet);
             return;
         }
 
@@ -133,62 +119,39 @@ void updateGame(STATE * state) {
         dinoState->frame = dinoState->frame == 1 ? 0 : 1;
         dinoState->frameCounter = 0;
     }
-    if (DINO_ANIMATING) setDinoAnim(dinoSet, dinoState->animSI[dinoState->frame]);
-
-    dinoGraphicsUpdate(dinoState, dinoSet);
 }
 
 void gameOver(GAME_STATE * gameState, METER_STATE * meterState) {
     mmEffect(SFX_HIT);
-    setDinoCrashed(dinoSet);
-
     gameState->playing = false;
-
-    toggleReplayHide(replaySet);
-    showGameover(gameoverSet);
-
     gameState->gameoverFrames = 0;
-
     if (meterState->distance > readHiscore()) {
         setHiscore(meterState->distance);
-        setNumValue(hiScoreSet, meterState->distance);
+        gameState->hiScore = meterState->distance;
     }
-    setNumValue(scoreSet, meterState->distance);
-    showNum(scoreSet);
 }
 
 STATE * initGame() {
     STATE * state = calloc(sizeof(STATE), 1);
     initState(&state->gameState);
     initDino(&state->dinoState);
-
     initHorizon(&state->horizonState);
-
     initMeter(&state->meterState);
+
     if (readHiscore() == -1)
         setHiscore(0);
-    setNumValue(hiScoreSet, readHiscore());
-    sqran(readHiscore());
+    state->gameState.hiScore = readHiscore();
+    sqran(state->gameState.hiScore);
 
     return state;
 }
 
 void resetGame(STATE * state) {
-    toggleReplayHide(replaySet);
-    hideGameover(gameoverSet);
-
     resetState(&state->gameState);
     resetDino(&state->dinoState);
     resetHorizon(&state->horizonState);
     resetObstacles(state->horizonState.obstacles);
     initMeter(&state->meterState);
-
-    setDinoUpright(dinoSet);
-    dinoGraphicsUpdate(&state->dinoState, dinoSet);
-
-    wipeObstacleSet(obstacleSets);
-    wipeObstacleSet(obstacleSets + 1);
-    showNum(scoreSet);
 }
 
 void initSound() {
