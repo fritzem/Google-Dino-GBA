@@ -4,7 +4,7 @@
 #include "dino.h"
 #include "game.h"
 
-#define MODE_OVERRIDE_FRAMES (1 * 5)
+#define MODE_OVERRIDE_FRAMES (60 * 5)
 
 u32 dino_input = 0;
 u32 coopFrames = 0;

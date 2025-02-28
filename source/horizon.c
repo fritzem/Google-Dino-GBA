@@ -17,7 +17,7 @@
 #define MOON_MOVE_THRESHOLD 100
 #define MOON_WIDTH 40
 
-#define INVERT_DISTANCE 150
+#define INVERT_DISTANCE 700
 #define INVERT_FADE_DURATION 720
 
 bool randomBool();
