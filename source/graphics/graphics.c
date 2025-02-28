@@ -7,6 +7,7 @@
 
 const int animRun[] = {dinoFeet1_SI, dinoFeet2_SI};
 const int animDuc[] = {dinoCrouchFeet0_SI, dinoCrouchFeet1_SI};
+const int animAng[] = { dinoAngelSI, dinoFlapSI};
 
 #define PAL_BG    0
 #define PAL_OBJ0  0
@@ -89,17 +90,49 @@ void drawNumber(GRAPHICS_CTX * ctx, u32 posX, u32 number) {
                  digit | ATTR2_PALBANK(PAL_OBJ0) | ATTR2_PRIO(1));
 }
 
-void drawDino(GRAPHICS_CTX * ctx, DINO_STATE * dinoState) {
+/**
+ * 0-31
+ */
+int floating(int x) {
+    int t;
+    if (x < 24) {
+        t = x;
+        return (t * (24 - t)) / 12;
+    } else {
+        t = x - 24;
+        return -(t * (24 - t)) / 12;
+    }
+}
+
+void drawDino(GRAPHICS_CTX * ctx, DINO_STATE * dinoState, MODE mode) {
     int x = dinoState->xPos;
     int y = CTX_H - 48 - dinoState->yPos;
     int crouchY = CTX_H - 32 - dinoState->yPos;
     switch (dinoState->status) {
         case CRASHED:
-            obj_set_attr(CTX_OAM++, ATTR0_SQUARE | Y(y),
-                         ATTR1_SIZE_64 | X(x - 22),
-                         deadDinoSI | ATTR2_PALBANK(PAL_OBJ0));
+            if (mode == COOP) {
+                u32 frameCounter = dinoState->frameCounter;
+                x += 16;
+                y += floating(frameCounter);
+                // Angel view
+                obj_set_attr(CTX_OAM++, ATTR0_TALL | Y(y),
+                             ATTR1_SIZE_32 | X(x),
+                             (dinoAngelSI - ((frameCounter & 0xF) > 12) * 2) | ATTR2_PALBANK(PAL_OBJ0));
+                obj_set_attr(CTX_OAM++, ATTR0_TALL | Y(y),
+                             ATTR1_SIZE_16 | X(x + 16),
+                             dinoAngelHeadSI | ATTR2_PALBANK(PAL_OBJ0));
+            } else {
+                obj_set_attr(CTX_OAM++, ATTR0_SQUARE | Y(y),
+                             ATTR1_SIZE_64 | X(x - 22),
+                             deadDinoSI | ATTR2_PALBANK(PAL_OBJ0));
+            }
             break;
         case DUCKING:
+            if (dinoState->hat) {
+                obj_set_attr(CTX_OAM++, ATTR0_WIDE | Y(y + 10),
+                             ATTR1_SIZE_64 | X(x + 29),
+                             dinoHatSI | ATTR2_PALBANK(PAL_OBJ0));
+            }
             obj_set_attr(CTX_OAM++, ATTR0_WIDE | Y(crouchY),
                          ATTR1_SIZE_64 | X(x),
                          dinoCrouchSI | ATTR2_PALBANK(PAL_OBJ0));
@@ -108,6 +141,11 @@ void drawDino(GRAPHICS_CTX * ctx, DINO_STATE * dinoState) {
                          animDuc[dinoState->frame] | ATTR2_PALBANK(PAL_OBJ0));
             break;
         case RUNNING:
+            if (dinoState->hat) {
+                obj_set_attr(CTX_OAM++, ATTR0_WIDE | Y(y - 9),
+                             ATTR1_SIZE_64 | X(x + 14),
+                             dinoHatSI | ATTR2_PALBANK(PAL_OBJ0));
+            }
             obj_set_attr(CTX_OAM++, ATTR0_SQUARE | Y(y),
                          ATTR1_SIZE_32 | X(x + 16),
                          dinoHeadSI | ATTR2_PALBANK(PAL_OBJ0));
@@ -123,6 +161,12 @@ void drawDino(GRAPHICS_CTX * ctx, DINO_STATE * dinoState) {
             break;
         case WAITING:
         case JUMPING:
+        case ENTERING:
+            if (dinoState->hat) {
+                obj_set_attr(CTX_OAM++, ATTR0_WIDE | Y(y - 9),
+                             ATTR1_SIZE_64 | X(x + 14),
+                             dinoHatSI | ATTR2_PALBANK(PAL_OBJ0));
+            }
             obj_set_attr(CTX_OAM++, ATTR0_SQUARE | (ATTR0_HIDE * (!dinoState->blinking)) | Y(y),
                          ATTR1_SIZE_8 | X(x + 24),
                          dinoWinkSI | ATTR2_PALBANK(PAL_OBJ0));
@@ -308,7 +352,7 @@ void drawGame(GRAPHICS_CTX * ctx, STATE * state) {
     CTX_OAM = ctx->baseOAM;
     if (state->dinoState.status == WAITING)
         drawTitle(ctx);
-    if (state->dinoState.status == CRASHED) {
+    if (state->gameState.gameOver) {
         drawReplay(ctx);
         drawGameover(ctx);
     }
@@ -316,7 +360,10 @@ void drawGame(GRAPHICS_CTX * ctx, STATE * state) {
     drawNumber(ctx, HISCORE_X, state->gameState.hiScore);
     if (!state->meterState.flashing)
         drawNumber(ctx, SCORE_X, state->meterState.displayNumber);
-    drawDino(ctx, &state->dinoState);
+    drawDino(ctx, &state->dinoState, state->mode);
+    if (state->mode == COOP) {
+        drawDino(ctx, &state->minoState, state->mode);
+    }
     for (int i = 0; i < state->horizonState.obstacleCount; i++) {
         int obstacle = (1 + i + state->horizonState.obstacleCursor) % MAX_OBSTACLES;
         drawObstacle(ctx, state->horizonState.obstacles + obstacle);

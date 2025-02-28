@@ -45,11 +45,7 @@
 #define DACTYL_COLLISION_BOXES 5
 #define MAX_HITBOXES 6
 
-
-
-#define JUMP_HIT (key_hit(KEY_A) || key_hit(KEY_UP))
-#define JUMP_RELEASED (key_released(KEY_A) || key_released(KEY_UP))
-#define DINO_ANIMATING ((dinoState->status == RUNNING) || dinoState->status == DUCKING)
+#define DINO_ANIMATING ((dinoState->status == RUNNING) || dinoState->status == DUCKING || dinoState->status == CRASHED)
 
 void updateDino(DINO_STATE * dinoState);
 void inputDino(DINO_STATE * dinoState, GAME_STATE * gameState);
@@ -61,6 +57,13 @@ void addPoint(int add, int *base, int *point);
 INLINE void initDino(DINO_STATE * dino) {
 	dino->yPos = DINO_GROUND_Y;
 	dino->status = WAITING;
+}
+
+INLINE void dinoCrash(DINO_STATE * state) {
+    state->status = CRASHED;
+    state->frameCounter = 0;
+    state->frame = 0;
+    state->frameTime = 48;
 }
 
 void resetDino(DINO_STATE * dino);

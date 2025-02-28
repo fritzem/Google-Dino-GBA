@@ -4,6 +4,7 @@
 #include "tonc.h"
 #include "hitbox.h"
 #include "obstacle.h"
+#include "input.h"
 
 const COLLISION_BOX dinoBoxes[] = {
 	{22, 0, 17, 16},
@@ -20,6 +21,7 @@ const COLLISION_BOX duckBoxes[] = {
 
 void dinoJump(DINO_STATE * dinoState, GAME_STATE * gameState);
 void updateJump(DINO_STATE * dinoState);
+void updateEntry(DINO_STATE * dinoState);
 void endJump(DINO_STATE * dinoState);
 void updateBlink(DINO_STATE * dinoState);
 void dinoRun(DINO_STATE * dinoState);
@@ -32,29 +34,37 @@ void updateDino(DINO_STATE * dinoState) {
         updateJump(dinoState);
     if (dinoState->status == WAITING)
         updateBlink(dinoState);
+    if (dinoState->status == ENTERING)
+        updateEntry(dinoState);
+
+    dinoState->frameCounter += 1;
+    if ((DINO_ANIMATING) && (dinoState->frameCounter >= dinoState->frameTime)) {
+        dinoState->frame = dinoState->frame == 1 ? 0 : 1;
+        dinoState->frameCounter = 0;
+    }
 }
 
 void inputDino(DINO_STATE * dinoState, GAME_STATE * gameState) {
-    if (dinoState->status == CRASHED) {
+    if (dinoState->status == CRASHED || dinoState->status == ENTERING) {
         return;
     }
 
-  	if (JUMP_HIT && (dinoState->status == WAITING || dinoState->status == RUNNING)) {
+  	if (HIT_UP && (dinoState->status == WAITING || dinoState->status == RUNNING)) {
         dinoJump(dinoState, gameState);
         return;
-  	} else if (JUMP_RELEASED) {
+  	} else if (RELEASE_UP) {
   		if (dinoState->status == JUMPING)
   			endJump(dinoState);
   	}
 
-  	if (key_hit(KEY_DOWN)) {
+  	if (HIT_DOWN) {
   		if (dinoState->status == JUMPING) {
   			dinoState->speedDrop = true;
   			dinoState->jumpVelocity = -1;
   		} else if (dinoState->status == RUNNING) {
   			dinoDuck(dinoState);
   		}
-  	} else if (key_released(KEY_DOWN)) {
+  	} else if (RELEASE_DOWN) {
   		if (dinoState->status == JUMPING) {
   			dinoState->speedDrop = false;
   		} else if (dinoState->status == DUCKING) {
@@ -94,7 +104,26 @@ void updateJump(DINO_STATE * dinoState) {
 		//if first landing, pull back the curtain
         dinoState->jumped |= !dinoState->jumped;
 	}
+}
 
+void updateEntry(DINO_STATE * dinoState) {
+    dinoState->yPos += (dinoState->jumpVelocity) / 10;
+    dinoState->jumpVelocity += GRAVITY;
+
+    if (dinoState->yPos > MIN_JUMP_HEIGHT || dinoState->speedDrop)
+        dinoState->reachedMin = true;
+    if (dinoState->yPos > MAX_JUMP_HEIGHT || dinoState->speedDrop)
+        endJump(dinoState);
+
+    if (dinoState->yPos < DINO_GROUND_Y && dinoState->reachedMin) {
+        bool drop = dinoState->speedDrop;
+        dinoRun(dinoState);
+        if (drop)
+            dinoDuck(dinoState);
+
+        //if first landing, pull back the curtain
+        dinoState->jumped |= !dinoState->jumped;
+    }
 }
 
 void endJump(DINO_STATE * dinoState) {
@@ -149,7 +178,6 @@ void dinoDuck(DINO_STATE * dinoState) {
 }
 
 void resetDino(DINO_STATE * dino) {
-	dino->xPos = 0;
 	dino->yPos = DINO_GROUND_Y;
 	dino->jumpVelocity = 0;
 
@@ -173,7 +201,6 @@ void addPoint(int add, int *base, int *point) {
 }
 
 bool collisionCheck(DINO_STATE * dinoState, HORIZON_STATE * horizonState) {
-    return false;
     int tW = ((dinoState->status == DUCKING) ? DINO_WIDTH_DUCK : DINO_WIDTH) - 2;
     int tH = ((dinoState->status == DUCKING) ? DINO_HEIGHT_DUCK : DINO_HEIGHT) - 2;
     int tX = dinoState->xPos + 1;

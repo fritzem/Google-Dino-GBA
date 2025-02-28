@@ -20,10 +20,11 @@ INLINE void initState(GAME_STATE * state) {
     state->randoFrames = 0;
     state->spawnObstacles = false;
 
-    state->playing = false;
+    state->startedPlaying = false;
     state->playingIntro = false;
 
-    state->gameoverFrames = 0;
+    state->gameOver = false;
+    state->gameOverFrames = 0;
 }
 
 INLINE void resetState(GAME_STATE * state) {
@@ -34,9 +35,9 @@ INLINE void resetState(GAME_STATE * state) {
     state->runningFrames = 0;
     state->spawnObstacles = false;
 
-    state->playing = true;
+    state->gameOver = false;
 }
 
-extern OBJ_ATTR obj_buffer[];
+void startGame(STATE * state);
 
 #endif //DINO_GBA_GAME_H

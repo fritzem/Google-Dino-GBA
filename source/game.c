@@ -6,6 +6,7 @@
 #include "obstacle.h"
 #include "save.h"
 #include "graphics.h"
+#include "input.h"
 
 //Ethan Fritz 2021, 2025
 
@@ -44,38 +45,54 @@ int main() {
 
 void input(STATE * state) {
     key_poll();
-    inputDino(&state->dinoState, &state->gameState);
+    inputP1(state);
 
-    if (JUMP_RELEASED) {
-        if (state->dinoState.status == CRASHED && state->gameState.gameoverFrames >= RESET_FRAMES) {
-            resetGame(state);
+    if (!state->gameState.startedPlaying) {
+        // Start game, pass input to Dino
+        if (HIT_UP) {
+            inputDino(&state->dinoState, &state->gameState);
+            return;
+        }
+        checkModeOverride(state);
+    } else if (state->gameState.gameOver) {
+        if (RELEASE_UP) {
+            if (state->dinoState.status == CRASHED && state->gameState.gameOverFrames >= RESET_FRAMES) {
+                resetGame(state);
+            }
+        }
+    } else {
+        inputDino(&state->dinoState, &state->gameState);
+        if (state->mode == COOP) {
+            inputP2(state);
+            inputDino(&state->minoState, &state->gameState);
         }
     }
-
 }
 
 void updateGame(STATE * state) {
     // #using state
     GAME_STATE * gameState = &state->gameState;
     DINO_STATE * dinoState = &state->dinoState;
+    DINO_STATE * minoState = &state->minoState;
     HORIZON_STATE * horizonState = &state->horizonState;
     METER_STATE * meterState = &state->meterState;
 
     updateDino(dinoState);
-    if (!gameState->playing) {
-        if (dinoState->status == RUNNING) {
+    if (state->mode == COOP) {
+        updateDino(minoState);
+    }
+    if (!gameState->startedPlaying) {
+        if (dinoState->status == RUNNING || dinoState->status == DUCKING) {
             // First landing, start intro
-            gameState->playingIntro = true;
-            gameState->playing = true;
-            sqran(gameState->randoFrames);
-            addCloud(horizonState);
+            startGame(state);
         } else {
             // Waiting at title
             gameState->randoFrames += 1;
-            gameState->gameoverFrames += 1;
             return;
         }
-
+    } else if (gameState->gameOver) {
+        gameState->gameOverFrames += 1;
+        return;
     }
 
     //If 3 second grace period expires, spawn obstacles
@@ -95,35 +112,45 @@ void updateGame(STATE * state) {
         updateHorizon(horizonState, gameState);
     }
 
-    bool collision = gameState->spawnObstacles &&
-                     collisionCheck(dinoState, horizonState);
-
+    bool collision = gameState->spawnObstacles && collisionCheck(dinoState, horizonState)
+            && dinoState->status != CRASHED;
     if (!collision) {
         addPoint(gameState->speed, &gameState->distanceRan, &gameState->distanceRanPoint);
 
         if (gameState->speed < SPEED_MAX)
             gameState->speed += ACCELERATION;
     } else {
-        dinoState->status = CRASHED;
-        gameOver(gameState, meterState);
+        mmEffect(SFX_HIT);
+        dinoCrash(dinoState);
+    }
+
+    if (state->mode == COOP) {
+        // Check for mino collision, decide Co-Op game over
+        collision = gameState->spawnObstacles && collisionCheck(minoState, horizonState)
+                && minoState->status != CRASHED;
+        if (collision) {
+            mmEffect(SFX_HIT);
+            dinoCrash(minoState);
+        }
+        if (state->dinoState.status == CRASHED && state->minoState.status == CRASHED) {
+            gameOver(gameState, meterState);
+        }
+    } else {
+        // Regular game over check
+        if (state->dinoState.status == CRASHED) {
+            gameOver(gameState, meterState);
+        }
     }
 
     if (updateDistanceMeter(meterState, (gameState->distanceRan) + ((gameState->distanceRanPoint) ? 1 : 0)))
         mmEffect(SFX_SCORE_REACHED);
 
     updateNight(horizonState, meterState);
-
-    dinoState->frameCounter += 1;
-    if ((DINO_ANIMATING) && (dinoState->frameCounter >= dinoState->frameTime)) {
-        dinoState->frame = dinoState->frame == 1 ? 0 : 1;
-        dinoState->frameCounter = 0;
-    }
 }
 
 void gameOver(GAME_STATE * gameState, METER_STATE * meterState) {
-    mmEffect(SFX_HIT);
-    gameState->playing = false;
-    gameState->gameoverFrames = 0;
+    gameState->gameOver = true;
+    gameState->gameOverFrames = 0;
     if (meterState->distance > readHiscore()) {
         setHiscore(meterState->distance);
         gameState->hiScore = meterState->distance;
@@ -142,12 +169,23 @@ STATE * initGame() {
     state->gameState.hiScore = readHiscore();
     sqran(state->gameState.hiScore);
 
+    state->mode = NORMAL;
     return state;
+}
+
+void startGame(STATE * state) {
+    state->gameState.playingIntro = true;
+    state->gameState.startedPlaying = true;
+    sqran(state->gameState.randoFrames);
+    addCloud(&state->horizonState);
 }
 
 void resetGame(STATE * state) {
     resetState(&state->gameState);
     resetDino(&state->dinoState);
+    if (state->mode == COOP) {
+        resetDino(&state->minoState);
+    }
     resetHorizon(&state->horizonState);
     resetObstacles(state->horizonState.obstacles);
     initMeter(&state->meterState);

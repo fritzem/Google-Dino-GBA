@@ -11,6 +11,7 @@ set(GAME_SOURCES
         source/horizon.c
         source/meter.c
         source/graphics/graphics.c
+        source/input.c
 )
 add_executable(dino-gba ${GAME_SOURCES})
 

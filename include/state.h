@@ -1,6 +1,8 @@
 #ifndef DINO_GBA_STATE_H
 #define DINO_GBA_STATE_H
 
+typedef void (*FP)();
+
 typedef struct GAME_STATE {
     int speed;
     int curtainScroll;
@@ -14,13 +16,14 @@ typedef struct GAME_STATE {
     int randoFrames;
     bool spawnObstacles;
 
-    bool playing;
+    bool startedPlaying;
     bool playingIntro;
 
-    int gameoverFrames;
+    bool gameOver;
+    int gameOverFrames;
 } GAME_STATE, GAME_STATE;
 
-typedef enum {CRASHED, DUCKING, JUMPING, RUNNING, WAITING} DINO_STATUS;
+typedef enum {CRASHED, DUCKING, JUMPING, RUNNING, WAITING, ENTERING} DINO_STATUS;
 
 typedef struct DINO_STATE {
     int xPos;
@@ -40,6 +43,7 @@ typedef struct DINO_STATE {
     int blinks;
     int blinkFrame;
     bool blinking;
+    bool hat;
 } DINO_STATE, DINO_STATE;
 
 typedef struct HORIZON_STATE {
@@ -91,11 +95,15 @@ typedef struct METER_STATE {
     bool flashing;
 } METER_STATE, METER_STATE;
 
+typedef enum { NORMAL, COOP } MODE;
 typedef struct {
     GAME_STATE gameState;
     DINO_STATE dinoState;
+    DINO_STATE minoState;
     HORIZON_STATE horizonState;
     METER_STATE meterState;
+
+    MODE mode;
 } STATE;
 
 #endif //DINO_GBA_STATE_H

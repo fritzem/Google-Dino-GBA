@@ -35,6 +35,10 @@
 #define dinoCrouchFeet0_SI 0x11C
 #define dinoCrouchFeet1_SI 0x15C
 #define deadDinoSI 0x198
+#define dinoHatSI 881
+#define dinoFlapSI 923
+#define dinoAngelSI 925
+#define dinoAngelHeadSI 927
 
 #define birdBeakSI 0x44
 #define birdFlapDownSI 0x80
