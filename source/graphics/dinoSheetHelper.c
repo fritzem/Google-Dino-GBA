@@ -1,5 +1,5 @@
 #include <stdlib.h>
-#include "dinoSheetHelper.h"
+#include "graphics/dinoSheetHelper.h"
 #include "dino.h"
 #include "tonc.h"
 #include "horizon.h"

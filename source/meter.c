@@ -1,5 +1,5 @@
 #include "meter.h"
-#include "dinoSheetHelper.h"
+#include "graphics/dinoSheetHelper.h"
 
 #define ACHIEVEMENT_DISTANCE 100
 #define FLASH_FRAMES 15

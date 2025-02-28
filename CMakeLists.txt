@@ -3,19 +3,20 @@ project(DINO_GBA LANGUAGES ASM C)
 
 set(GAME_SOURCES
         source/dino.c
-        source/dinoSheetHelper.c
+        source/graphics/dinoSheetHelper.c
         source/save.c
         source/hitbox.c
         source/obstacle.c
         source/game.c
         source/horizon.c
         source/meter.c
-        source/graphics.c
+        source/graphics/graphics.c
 )
 add_executable(dino-gba ${GAME_SOURCES})
 
 set(GAME_INCLUDES
         include
+        include/graphics
 )
 target_include_directories(dino-gba PRIVATE ${GAME_INCLUDES})
 

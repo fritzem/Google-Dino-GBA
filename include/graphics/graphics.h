@@ -3,16 +3,7 @@
 
 #include "tonc.h"
 #include "dinoSheetHelper.h"
-
-typedef struct {
-    struct {
-        u32 x;
-        u32 y;
-        u32 width;
-        u32 height;
-    } viewport;
-    OBJ_ATTR * baseOAM;
-} GRAPHICS_CTX;
+#include "graphicsContext.h"
 
 GRAPHICS_CTX *initGraphics();
 

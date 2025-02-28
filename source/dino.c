@@ -2,7 +2,7 @@
 #include <maxmod.h>
 #include <dino_soundbank.h>
 #include "tonc.h"
-#include "dinoSheetHelper.h"
+#include "graphics/dinoSheetHelper.h"
 #include "hitbox.h"
 #include "game.h"
 #include "obstacle.h"
